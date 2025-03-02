@@ -18,9 +18,11 @@ const config = {
 			assets: 'build',
 			fallback: 'index.html',
 			precompress: false,
-			strict: true,
-            trailingSlash: 'always'
-        })
+			strict: true
+        }),
+        alias: {
+            'types': 'types.d.ts'
+        }
 	}
 };
 

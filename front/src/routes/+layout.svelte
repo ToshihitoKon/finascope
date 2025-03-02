@@ -1,8 +1,14 @@
 <script lang="ts">
-    export const ssr = false;
-
-	import '../app.css';
-	let { children } = $props();
+import "../app.css";
+let { children } = $props();
 </script>
 
-{@render children()}
+<nav>
+	<a href="/">Home</a>
+	<a href="/record">Records</a>
+	<a href="/view">Views</a>
+	<a href="/config">Config</a>
+</nav>
+<div class="container">
+	{@render children()}
+</div>

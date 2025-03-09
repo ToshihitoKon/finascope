@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+        "deploy": "gcloud compute scp --recurse ./build/* ${DEPLOY_GCE_USER}@${DEPLOY_GCE_HOST}:${DEPLOY_GCE_PATH}"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

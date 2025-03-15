@@ -16,6 +16,7 @@
 
 	import { today } from '@internationalized/date';
 
+	// api/*
 	import * as mock from '$lib/api/mock';
 	import { States, RecordTypes } from '$lib/api/const';
 	import type * as apitype from '$lib/api/types.d.ts';
@@ -49,6 +50,7 @@
 		await fetchConfigs();
 	});
 	let formData = $state({
+		name: '',
 		recordType: '',
 		state: '',
 		amount: 0,
@@ -59,6 +61,7 @@
 
 	const payloadFormatter = (): apitype.PutRecordRequest => {
 		return {
+			name: formData.name,
 			typeId: Number(formData.recordType),
 			stateId: Number(formData.state),
 			description: formData.description,
@@ -70,41 +73,43 @@
 	const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
 </script>
 
-<div class="container mx-auto px-4 py-6">
-	<div class="mx-auto grid gap-4 sm:max-w-sm">
-		<div class="flex flex-col gap-1">
-			<Label for="type">タイプ</Label>
-			<SegmentControl options={recordTypes} bind:selected={formData.recordType} />
-		</div>
-		<div class="flex flex-col gap-1">
-			<Label for="state">ステータス</Label>
-			<Select options={states} bind:selected={formData.state} />
-		</div>
-		<div class="flex flex-col gap-1">
-			<Label for="amount">金額</Label>
-			<Input type="number" id="amount" bind:value={formData.amount} class="w-full" />
-		</div>
-		<div class="flex flex-col gap-1">
-			<Label for="">カテゴリ</Label>
-			<Combobox options={categories} bind:selected={formData.category} />
-		</div>
-		<div class="flex flex-col gap-1">
-			<Label for="date">日付</Label>
-			<Datepicker bind:value={formData.date} />
-		</div>
-		<div class="flex flex-col gap-1">
-			<Label for="memo">メモ</Label>
-			<Input type="text" id="memo" bind:value={formData.description} class="w-full" />
-		</div>
+<div class="mx-auto grid gap-4 sm:max-w-sm">
+	<div class="flex flex-col gap-1">
+		<Label for="type">タイプ</Label>
+		<SegmentControl options={recordTypes} bind:selected={formData.recordType} />
+	</div>
+	<div class="flex flex-col gap-1">
+		<Label for="name">名前</Label>
+		<Input type="text" id="name" bind:value={formData.name} class="w-full" />
+	</div>
+	<div class="flex flex-col gap-1">
+		<Label for="state">ステータス</Label>
+		<Select options={states} bind:selected={formData.state} />
+	</div>
+	<div class="flex flex-col gap-1">
+		<Label for="amount">金額</Label>
+		<Input type="number" id="amount" bind:value={formData.amount} class="w-full" />
+	</div>
+	<div class="flex flex-col gap-1">
+		<Label for="">カテゴリ</Label>
+		<Combobox options={categories} bind:selected={formData.category} />
+	</div>
+	<div class="flex flex-col gap-1">
+		<Label for="date">日付</Label>
+		<Datepicker bind:value={formData.date} />
+	</div>
+	<div class="flex flex-col gap-1">
+		<Label for="memo">メモ</Label>
+		<Input type="text" id="memo" bind:value={formData.description} class="w-full" />
+	</div>
 
-		<div class="flex flex-col gap-1">
-			<label for="preview">preview</label>
-			<textarea
-				id="preview"
-				class="mt-2 h-32 w-full rounded-md border border-gray-300 p-2"
-				placeholder="rendered"
-				>{payload()}
-			</textarea>
-		</div>
+	<div class="flex flex-col gap-1">
+		<label for="preview">preview</label>
+		<textarea
+			id="preview"
+			class="mt-2 h-32 w-full rounded-md border border-gray-300 p-2"
+			placeholder="rendered"
+			>{payload()}
+		</textarea>
 	</div>
 </div>

@@ -15,15 +15,18 @@ export interface Category {
 
 export interface Record {
     id: string;
-    typeId: number;
-    stateId: number;
+    name: string;
+    typeLabel: string;
+    stateLabel: string;
     description: string;
     amount: number;
-    categoryId: string;
+    categoryLabel: string;
     date: string; // NOTE: ISO 8601 format
 }
 
+// Requests
 export interface PutRecordRequest {
+    name: string;
     typeId: number;
     stateId: number;
     description: string;
@@ -32,6 +35,7 @@ export interface PutRecordRequest {
     date: string; // NOTE: ISO 8601 format
 }
 
+// Responses
 export interface CategoriesResponse {
     categories: Category[];
 }

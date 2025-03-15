@@ -41,6 +41,6 @@
 		</div>
 	{/if}
 </nav>
-<div class="container">
+<div class="container mx-auto px-4 py-6">
 	{@render children()}
 </div>

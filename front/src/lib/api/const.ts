@@ -1,3 +1,6 @@
+import type * as apitype from './types';
+import { type ColumnDef } from '@tanstack/table-core';
+
 const States = [
     { id: 1, label: "予定" },
     { id: 2, label: "支払済" },
@@ -11,4 +14,35 @@ const RecordTypes = [
     { id: 3, label: "何？" },
 ]
 
-export { States, RecordTypes }
+const RecordColumnDef: ColumnDef<apitype.RecordsResponse>[] = [
+    {
+        accessorKey: 'typeLabel',
+        header: 'Type'
+    },
+    {
+        accessorKey: 'name',
+        header: 'Name'
+    },
+    {
+        accessorKey: 'amount',
+        header: 'Amount'
+    },
+    {
+        accessorKey: 'stateLabel',
+        header: 'State'
+    },
+    {
+        accessorKey: 'description',
+        header: 'Description'
+    },
+    {
+        accessorKey: 'categoryLabel',
+        header: 'Category'
+    },
+    {
+        accessorKey: 'date',
+        header: 'Date'
+    }
+];
+
+export { States, RecordTypes, RecordColumnDef }

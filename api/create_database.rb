@@ -16,8 +16,8 @@ def apply_table(model_class)
   expect = DB::TableColumnsGenerator.get_columns_set(model_class)
   if got != expect
     p "got: #{got}"
-      p "expect: #{expect}"
-      raise SchemaMismatchException
+    p "expect: #{expect}"
+    raise SchemaMismatchException
   end
 rescue SchemaMismatchException
   create_table table_name, id: false, force: true do |t|

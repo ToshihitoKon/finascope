@@ -1,8 +1,8 @@
 module DB
   class TableColumnsGenerator
-    attr_reader :columns 
+    attr_reader :columns
 
-    def self.get_columns_set ( model_class )
+    def self.get_columns_set(model_class)
       t = TableColumnsGenerator.new
       model_class.define_table_schema(t)
       t.columns
@@ -12,12 +12,13 @@ module DB
       @columns = Set.new
     end
 
-    def timestamps(*args)
+    def timestamps(*_args)
       @columns << :created_at
       @columns << :updated_at
     end
+
     # ActiveRecord::Schema.define の t.string 等をキャッチする
-    def method_missing(type, name, *args)
+    def method_missing(_type, name, *_args)
       @columns << name.to_sym
     end
   end

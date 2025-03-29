@@ -34,7 +34,7 @@ module API
       resource :records do
         get do
           page = params[:page] ||= 1
-          DB::Model::FinanceRecord.get_page(page: page, sort: {date: :asc}).map do |record|
+          DB::Model::FinanceRecord.get_page(page: page, sort: { date: :asc }).map do |record|
             category = DB::Model::Category.find(record.category_id)
             payment_method = DB::Model::PaymentMethod.find(record.payment_method_id)
             RecordResponse.new(

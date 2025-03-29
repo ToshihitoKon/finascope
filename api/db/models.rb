@@ -23,24 +23,23 @@ module DB
       # to_dto
       def self.to_dto(i)
         return nil unless i
+
         self.DTO.new(
           **i.attributes.symbolize_keys
         )
       end
 
       def self.array_to_dto(records)
-        records.map{|r| self.to_dto(r)}.compact
+        records.map { |r| to_dto(r) }.compact
       end
 
       # Accessors
       def self.findById(id)
-        to_dto(self.find(id))
+        to_dto(find(id))
       end
 
-      def self.get_page(page:, per_page: 50, sort: {created_at: :asc})
-        self.array_to_dto(
-                     self.order(sort).page(page).per(per_page)
-        )
+      def self.get_page(page:, per_page: 50, sort: { created_at: :asc })
+        array_to_dto(order(sortu.page(page).per(per_page)))
       end
     end
 
@@ -85,7 +84,7 @@ end
 module DB
   module Model
     RECORD_MODELS = [
-      FinanceRecord, 
+      FinanceRecord,
       Category,
       PaymentMethod
     ].freeze

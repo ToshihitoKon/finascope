@@ -3,11 +3,11 @@
 - Grape
 - Rack
 
-## Execute
+## Execute for development
 
 ```shell
 $ bundle install
-$ bundle exec rackup
+$ bundle exec rerun -- rackup
 ```
 
 ## Path

@@ -4,10 +4,10 @@ require "models"
 
 module API
   module V1
-    class Categories < Grape::API
-      resource :categories do
+    class PaymentMethods < Grape::API
+      resource :payment_methods do
         get do
-          DB::Model::Category.all
+          DB::Model::PaymentMethod.all
         end
       end
     end

@@ -1,6 +1,7 @@
 require "grape"
 require_relative "./records"
 require_relative "./categories"
+require_relative "./payment_methods"
 
 module API
   module V1
@@ -10,6 +11,7 @@ module API
 
       mount API::V1::Records
       mount API::V1::Categories
+      mount API::V1::PaymentMethods
 
       resource :healthcheck do
         get do

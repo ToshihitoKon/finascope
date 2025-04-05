@@ -9,7 +9,7 @@ module DB
     class Base < ActiveRecord::Base
       self.abstract_class = true
 
-      def self.DTO
+      def self.dto
         return const_get("DTO") if const_defined?("DTO")
 
         columns = DB::TableColumnsGenerator.get_columns_set(self).to_a
@@ -21,11 +21,11 @@ module DB
       end
 
       # to_dto
-      def self.to_dto(i)
-        return nil unless i
+      def self.to_dto(item)
+        return nil unless item
 
-        self.DTO.new(
-          **i.attributes.symbolize_keys
+        dto.new(
+          **item.attributes.symbolize_keys
         )
       end
 
@@ -34,12 +34,12 @@ module DB
       end
 
       # Accessors
-      def self.findById(id)
+      def self.find_by_id(id)
         to_dto(find(id))
       end
 
       def self.get_page(page:, per_page: 50, sort: { created_at: :asc })
-        array_to_dto(order(sortu.page(page).per(per_page)))
+        array_to_dto(order(sort).page(page).per(per_page))
       end
     end
 

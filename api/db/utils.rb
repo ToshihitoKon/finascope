@@ -17,9 +17,20 @@ module DB
       @columns << :updated_at
     end
 
-    # ActiveRecord::Schema.define の t.string 等をキャッチする
-    def method_missing(_type, name, *_args)
+    def belongs_to(*_args); end
+    def check_constraint(*_args); end
+    def foreign_key(*_args); end
+    def index(*_args); end
+    def references(*_args); end
+    def set_primary_key(*_args); end
+
+    def column(name, *_args)
       @columns << name.to_sym
+    end
+
+    # ActiveRecord::Schema.define の t.string 等をキャッチする
+    def method_missing(_method, name, *_args) # rubocop:disable Style/MissingRespondToMissing
+      column(name)
     end
   end
 end

@@ -1,0 +1,30 @@
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./front/static:/usr/share/finascope
+    ports:
+      - "8080:80"
+  api:
+    container_name: api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    command: ["bundle", "exec", "rerun", "--background", "--", "rackup", "-o", "0.0.0.0", "-p", "9292"]
+    volumes:
+      - ./api:/app
+  front-dev:
+    container_name: front
+    environment:
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS=front
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    command: ["sh", "-c", "pnpm install --frozen-lockfile && pnpm dev --host 0.0.0.0"]
+    volumes:
+      - ./front:/app
+      - /app/node_modules

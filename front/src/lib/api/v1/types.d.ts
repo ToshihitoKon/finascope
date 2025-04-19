@@ -15,13 +15,14 @@ export interface Category {
 
 export interface Record {
     id: string;
-    name: string;
-    typeLabel: string;
-    stateLabel: string;
-    description: string;
+    type: string;
+    title: string;
     amount: number;
-    categoryLabel: string;
+    state_id: number;
+    category: string;
+    payment_method: string;
     date: string; // NOTE: ISO 8601 format
+    description: string;
 }
 
 // Requests

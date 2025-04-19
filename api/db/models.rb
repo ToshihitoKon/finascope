@@ -1,48 +1,10 @@
 require "active_record"
-require "id"
 require "kaminari"
 
 require_relative "./utils"
 
 module DB
   module Model
-    class Base < ActiveRecord::Base
-      self.abstract_class = true
-
-      def self.dto
-        return const_get("DTO") if const_defined?("DTO")
-
-        columns = DB::TableColumnsGenerator.get_columns_set(self).to_a
-        str = Struct.new(
-          *columns,
-          keyword_init: true
-        )
-        const_set("DTO", str)
-      end
-
-      # to_dto
-      def self.to_dto(item)
-        return nil unless item
-
-        dto.new(
-          **item.attributes.symbolize_keys
-        )
-      end
-
-      def self.array_to_dto(records)
-        records.map { |r| to_dto(r) }.compact
-      end
-
-      # Accessors
-      def self.find_by_id(id)
-        to_dto(find(id))
-      end
-
-      def self.get_page(page:, per_page: 50, sort: { created_at: :asc })
-        array_to_dto(order(sort).page(page).per(per_page))
-      end
-    end
-
     class FinanceRecord < DB::Model::Base
       # define_table_schema: for ActiveRecord::Schema.define
       def self.define_table_schema(tbl)
@@ -52,6 +14,7 @@ module DB
         tbl.integer :amount, null: false
         tbl.string :category_id, null: false
         tbl.string :payment_method_id, null: false
+        tbl.integer :state, null: false # 0: 未処理, 1: 処理中, 2: 完了
         tbl.date :date, null: false
         tbl.text :description, null: true
 

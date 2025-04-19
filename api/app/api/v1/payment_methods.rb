@@ -1,6 +1,6 @@
 require "grape"
-require "id"
-require "models"
+require "lib/id"
+require "db/models"
 
 module API
   module V1

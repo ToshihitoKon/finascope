@@ -17,9 +17,9 @@
 	import { today } from '@internationalized/date';
 
 	// api/*
-	import * as mock from '$lib/api/mock';
-	import { States, RecordTypes } from '$lib/api/const';
-	import type * as apitype from '$lib/api/types.d.ts';
+	import * as mock from '$lib/api/v1/mock';
+	import { States, RecordTypes } from '$lib/api/v1/const';
+	import type * as apitype from '$lib/api/v1/types.d.ts';
 
 	const recordTypes = RecordTypes.map(
 		(i): SegmentControlOption => ({

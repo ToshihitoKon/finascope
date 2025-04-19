@@ -11,7 +11,7 @@ module API
       resource :records do
         get do
           page = params[:page] ||= 1
-          records = Service::Records.get_records(page: page).map do |record|
+          records = Service::FinanceRecords.get_records(page: page).map do |record|
             {
               id: record[:id],
               type: record[:type],

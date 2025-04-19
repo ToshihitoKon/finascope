@@ -1,7 +1,9 @@
+require "db/repositories"
+
 module Service
-  module Records
+  module FinanceRecords
     def self.get_records(page: 1)
-      records = DB::Model::FinanceRecord.get_page(page: page, sort: { date: :asc })
+      records = DB::Repository::FinanceRecord.get_page(page: page, sort: { date: :asc })
       # category_ids = records.map(&:category_id).uniq
       # categories = DB::Model::Category.where(id: category_ids)
 

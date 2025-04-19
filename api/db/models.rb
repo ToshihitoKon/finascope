@@ -1,11 +1,12 @@
 require "active_record"
 require "kaminari"
 
+require_relative "./BaseWrapper"
 require_relative "./utils"
 
 module DB
   module Model
-    class FinanceRecord < DB::Model::Base
+    class FinanceRecord < DB::Model::BaseWrapper
       # define_table_schema: for ActiveRecord::Schema.define
       def self.define_table_schema(tbl)
         tbl.string :id, null: false, primary_key: true
@@ -22,7 +23,7 @@ module DB
       end
     end
 
-    class Category < DB::Model::Base
+    class Category < DB::Model::BaseWrapper
       # define_table_schema: for ActiveRecord::Schema.define
       def self.define_table_schema(tbl)
         tbl.string :id, null: false, primary_key: true
@@ -32,7 +33,7 @@ module DB
       end
     end
 
-    class PaymentMethod < DB::Model::Base
+    class PaymentMethod < DB::Model::BaseWrapper
       # define_table_schema: for ActiveRecord::Schema.define
       def self.define_table_schema(tbl)
         tbl.string :id, null: false, primary_key: true

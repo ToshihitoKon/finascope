@@ -13,7 +13,12 @@ module DB
         str = Struct.new(
           *columns,
           keyword_init: true
-        )
+        ) do
+          def valid?
+            # TODO
+            true
+          end
+        end
         const_set("DTO", str)
       end
 

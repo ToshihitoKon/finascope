@@ -16,11 +16,11 @@ module DB
       def self.define_table_schema(t_def)
         t_def.string :id, null: false, primary_key: true
         t_def.integer :record_type_id, null: false
+        t_def.integer :state_id, null: false
         t_def.text :title, null: false
         t_def.integer :amount, null: false
         t_def.string :category_id, null: false
         t_def.string :payment_method_id, null: false
-        t_def.integer :state_id, null: false
         t_def.date :date, null: false
         t_def.text :description, null: true
 

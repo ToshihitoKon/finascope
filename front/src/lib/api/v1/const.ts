@@ -1,16 +1,16 @@
-const ApiBaseUrl = "/api/v1"
+export const ApiBaseUrl = "/api/v1"
 
-const States = [
-    { id: 1, label: "予定" },
-    { id: 2, label: "支払済" },
-    { id: 3, label: "考え中" },
-    { id: 4, label: "やめた" },
+// api/constants.ts
+export const States = [
+    { id: 0, label: "予定" },
+    { id: 1, label: "支払済" },
+    { id: 2, label: "検討中" },
+    { id: 3, label: "やめた" }
 ]
 
-const RecordTypes = [
-    { id: 1, label: "支出" },
-    { id: 2, label: "収入" },
-    { id: 3, label: "何？" },
+export const RecordTypes = [
+    { id: 0, label: "支出" },
+    { id: 1, label: "収入" },
+    { id: 2, label: "何？" }
 ]
 
-export { ApiBaseUrl, States, RecordTypes }

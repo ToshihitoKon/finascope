@@ -41,8 +41,7 @@
 				type: record.type,
 				title: record.title,
 				amount: record.amount,
-				state:
-					apiconst.States.find((state) => state.id == record.state_id)?.label ?? 'undefined id',
+				state: record.state,
 				description: record.description,
 				category: record.category,
 				payment_method: record.payment_method,

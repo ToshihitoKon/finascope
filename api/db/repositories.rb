@@ -6,6 +6,7 @@ module DB
       def self.model
         @model ||= DB::Model::FinanceRecord
       end
+      private_class_method :model
 
       def self.get_page(page:, per_page: 50, sort: { created_at: :asc })
         records = model.eager_load(:category, :payment_method)
@@ -18,6 +19,10 @@ module DB
             }
           )
         end
+      end
+
+      def self.create(dto)
+        model.create(**dto.to_h)
       end
     end
   end

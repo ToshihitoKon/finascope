@@ -18,7 +18,7 @@ export interface Record {
     type: string;
     title: string;
     amount: number;
-    state_id: number;
+    state: string;
     category: string;
     payment_method: string;
     date: string; // NOTE: ISO 8601 format

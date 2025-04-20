@@ -18,16 +18,16 @@
 
 	// api/*
 	import * as mock from '$lib/api/v1/mock';
-	import { States, RecordTypes } from '$lib/api/v1/const';
+	import * as apiconst from '$lib/api/v1/const';
 	import type * as apitype from '$lib/api/v1/types.d.ts';
 
-	const recordTypes = RecordTypes.map(
+	const recordTypes = apiconst.RecordTypes.map(
 		(i): SegmentControlOption => ({
 			label: i.label,
 			value: String(i.id)
 		})
 	);
-	const states = States.map(
+	const states = apiconst.States.map(
 		(i): SelectOption => ({
 			value: String(i.id),
 			label: i.label

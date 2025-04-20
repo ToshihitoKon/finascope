@@ -3,11 +3,15 @@
 require "irb"
 require "irb/completion"
 
-require_relative "../db/connection"
-require_relative "../db/utils"
-require_relative "../db/basewrapper"
-require_relative "../db/models"
-require_relative "../db/repositories"
+$LOAD_PATH.unshift(File.expand_path("../", __dir__))
+
+require "app/api/root"
+require "db/connection"
+# require "db/utils"
+# require "db/basewrapper"
+# require "db/models"
+# require "db/repositories"
+# require "services/records"
 
 DB::Connection.establish
 

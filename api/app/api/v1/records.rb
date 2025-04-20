@@ -12,13 +12,12 @@ module API
         get do
           page = params[:page] ||= 1
           records = Service::FinanceRecords.get_records(page: page).map do |record|
-            pp record
             {
               id: record[:id],
-              type: record[:type_id],
+              type: record[:record_type],
               title: record[:title],
               amount: record[:amount],
-              state_id: record[:state],
+              state_id: record[:state_id],
               category: record[:category],
               payment_method: record[:payment_method],
               date: record[:date],

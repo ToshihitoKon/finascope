@@ -10,24 +10,24 @@ class SchemaMismatchException < StandardError; end
 
 # https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html
 def check_schema(model_class)
-  pp model_class.table_name
+  puts model_class.table_name
 
   begin
     model_class.first
+
+    # pp build_create_table_definition(model_class.table_name)
+    got = Set.new(model_class.column_names.map(&:to_sym))
+    expect = DB::TableColumns.get_columns_set(model_class)
+    if got != expect
+      puts "Schema mismatch: #{expect.difference(got)}"
+      return
+    end
+
+    puts "Correct schema"
   rescue StandardError => e
-    pp e
-    return
+    puts "Error: #{e}"
+    nil
   end
-
-  # pp build_create_table_definition(model_class.table_name)
-  got = Set.new(model_class.column_names.map(&:to_sym))
-  expect = DB::TableColumns.get_columns_set(model_class)
-  pp "got: #{got}"
-  return unless got != expect
-
-  p "got: #{got}"
-  p "expect: #{expect}"
-  raise SchemaMismatchException
 end
 
 def apply_table(model_class, force: false)
@@ -61,8 +61,9 @@ end
 
 ActiveRecord::Schema.define do
   DB::Model::RECORD_MODELS.each do |model_class|
-    # apply_table(model_class)
+    # apply_table(model_class, force: false)
     check_schema(model_class)
+    puts
   end
 end
-pp "All Done"
+puts "End"

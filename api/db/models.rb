@@ -11,17 +11,17 @@ module DB
     class FinanceRecord < DB::Model::BaseWrapper
       belongs_to :category
       belongs_to :payment_method
-      # belongs_to :type
+      belongs_to :record_type
 
       # define_table_schema: for ActiveRecord::Schema.define
       def self.define_table_schema(t_def)
         t_def.string :id, null: false, primary_key: true
-        t_def.string :type_id, null: false
+        t_def.string :record_type_id, null: false
         t_def.text :title, null: false
         t_def.integer :amount, null: false
         t_def.string :category_id, null: false
         t_def.string :payment_method_id, null: false
-        t_def.integer :state, null: false # 0: 未処理, 1: 処理中, 2: 完了
+        t_def.integer :state_id, null: false # 0: 未処理, 1: 処理中, 2: 完了
         t_def.date :date, null: false
         t_def.text :description, null: true
 
@@ -47,12 +47,39 @@ module DB
     end
 
     class PaymentMethod < DB::Model::BaseWrapper
-      has_many :finance_records
+      has_many :finance_record
+      has_many :invoice_record
 
       # define_table_schema: for ActiveRecord::Schema.define
       def self.define_table_schema(t_def)
         t_def.string :id, null: false, primary_key: true
         t_def.string :label, null: false
+
+        t_def.timestamps null: false
+      end
+    end
+
+    class RecordType < DB::Model::BaseWrapper
+      has_many :finance_record
+
+      # define_table_schema: for ActiveRecord::Schema.define
+      def self.define_table_schema(t_def)
+        t_def.string :id, null: false, primary_key: true
+        t_def.string :label, null: false
+
+        t_def.timestamps null: false
+      end
+    end
+
+    class InvoiceRecord < DB::Model::BaseWrapper
+      belongs_to :payment_method
+
+      # define_table_schema: for ActiveRecord::Schema.define
+      def self.define_table_schema(t_def)
+        t_def.string :id, null: false, primary_key: true
+        t_def.string :label, null: false
+        t_def.string :payment_method_id, null: false
+        t_def.date :withdrawal_day, null: false
 
         t_def.timestamps null: false
       end
@@ -65,7 +92,9 @@ module DB
     RECORD_MODELS = [
       FinanceRecord,
       Category,
-      PaymentMethod
+      PaymentMethod,
+      RecordType,
+      InvoiceRecord
     ].freeze
   end
 end

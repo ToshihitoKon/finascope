@@ -17,7 +17,7 @@ module API
               type: record[:record_type],
               title: record[:title],
               amount: record[:amount],
-              state_id: record[:state_id],
+              state: record[:state],
               category: record[:category],
               payment_method: record[:payment_method],
               date: record[:date],

@@ -61,8 +61,8 @@ end
 
 ActiveRecord::Schema.define do
   DB::Model::RECORD_MODELS.each do |model_class|
-    # apply_table(model_class, force: false)
     check_schema(model_class)
+    apply_table(model_class, force: true)
     puts
   end
 end

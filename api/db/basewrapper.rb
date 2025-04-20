@@ -1,15 +1,15 @@
-require "active_record"
-require "kaminari"
-
 module DB
   module Model
+    # BaseWrapper
+    # DTO を自動生成する
+    # TODO: TableColumns を使っているので便利メソッド作れそう
     class BaseWrapper < ActiveRecord::Base
       self.abstract_class = true
 
       def self.dto
         return const_get("DTO") if const_defined?("DTO")
 
-        columns = DB::TableColumnsGenerator.get_columns_set(self).to_a
+        columns = DB::TableColumns.get_columns_set(self).to_a
         str = Struct.new(
           *columns,
           keyword_init: true
@@ -17,7 +17,6 @@ module DB
         const_set("DTO", str)
       end
 
-      # to_dto
       def self.to_dto(item)
         return nil unless item
 

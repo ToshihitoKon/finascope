@@ -1,12 +1,9 @@
-require "active_record"
-require "kaminari"
-
 module DB
-  class TableColumnsGenerator
+  class TableColumns
     attr_reader :columns
 
     def self.get_columns_set(model_class)
-      t = TableColumnsGenerator.new
+      t = TableColumns.new
       model_class.define_table_schema(t)
       t.columns
     end
@@ -15,6 +12,8 @@ module DB
       @columns = Set.new
     end
 
+    # Override ActiveRecord::ConnectionAdapters::TableDefinition methods
+    # ref. https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html
     def timestamps(*_args)
       @columns << :created_at
       @columns << :updated_at
@@ -23,6 +22,7 @@ module DB
     def belongs_to(*_args); end
     def check_constraint(*_args); end
     def foreign_key(*_args); end
+
     def index(*_args); end
     def references(*_args); end
     def set_primary_key(*_args); end

@@ -1,45 +1,60 @@
 require "active_record"
-require "kaminari"
 
 require_relative "./BaseWrapper"
 require_relative "./utils"
 
+# NOTE: Relationship definitions document
+# https://api.rubyonrails.org/v8.0/classes/ActiveRecord/Associations/ClassMethods
+
 module DB
   module Model
     class FinanceRecord < DB::Model::BaseWrapper
-      # define_table_schema: for ActiveRecord::Schema.define
-      def self.define_table_schema(tbl)
-        tbl.string :id, null: false, primary_key: true
-        tbl.string :type_id, null: false
-        tbl.text :title, null: false
-        tbl.integer :amount, null: false
-        tbl.string :category_id, null: false
-        tbl.string :payment_method_id, null: false
-        tbl.integer :state, null: false # 0: 未処理, 1: 処理中, 2: 完了
-        tbl.date :date, null: false
-        tbl.text :description, null: true
+      belongs_to :category
+      belongs_to :payment_method
+      # belongs_to :type
 
-        tbl.timestamps null: false
+      # define_table_schema: for ActiveRecord::Schema.define
+      def self.define_table_schema(t_def)
+        t_def.string :id, null: false, primary_key: true
+        t_def.string :type_id, null: false
+        t_def.text :title, null: false
+        t_def.integer :amount, null: false
+        t_def.string :category_id, null: false
+        t_def.string :payment_method_id, null: false
+        t_def.integer :state, null: false # 0: 未処理, 1: 処理中, 2: 完了
+        t_def.date :date, null: false
+        t_def.text :description, null: true
+
+        t_def.timestamps null: false
+      end
+
+      # TODO: add_index, remove_index に対応する
+      def self.define_index
+        [{}]
       end
     end
 
     class Category < DB::Model::BaseWrapper
-      # define_table_schema: for ActiveRecord::Schema.define
-      def self.define_table_schema(tbl)
-        tbl.string :id, null: false, primary_key: true
-        tbl.string :label, null: false
+      has_many :finance_record
 
-        tbl.timestamps null: false
+      # define_table_schema: for ActiveRecord::Schema.define
+      def self.define_table_schema(t_def)
+        t_def.string :id, null: false, primary_key: true
+        t_def.string :label, null: false
+
+        t_def.timestamps null: false
       end
     end
 
     class PaymentMethod < DB::Model::BaseWrapper
-      # define_table_schema: for ActiveRecord::Schema.define
-      def self.define_table_schema(tbl)
-        tbl.string :id, null: false, primary_key: true
-        tbl.string :label, null: false
+      has_many :finance_records
 
-        tbl.timestamps null: false
+      # define_table_schema: for ActiveRecord::Schema.define
+      def self.define_table_schema(t_def)
+        t_def.string :id, null: false, primary_key: true
+        t_def.string :label, null: false
+
+        t_def.timestamps null: false
       end
     end
   end

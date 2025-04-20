@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
     command: ["sh", "-c", "bundle config set frozen true && bundle install && bundle exec rerun --background --force-polling -- rackup -o 0.0.0.0 -p 9292"]
     volumes:
-      - ./api:/app:ro
+      - ./api:/app
   front-dev:
     container_name: front
     environment:

@@ -1,4 +1,3 @@
-require "active_record"
 require "kaminari"
 
 module DB
@@ -8,14 +7,16 @@ module DB
         @model ||= DB::Model::FinanceRecord
       end
 
-      def self.find_by_id(id)
-        record = model.find(id: id)
-        model.to_dto(record)
-      end
-
       def self.get_page(page:, per_page: 50, sort: { created_at: :asc })
-        records = model.order(sort).page(page).per(per_page)
-        model.array_to_dto(records)
+        records = model.eager_load(:category, :payment_method).order(sort).page(page).per(per_page)
+        records.map do |record|
+          model.to_dto(record).to_h.merge(
+            {
+              category: record.category&.label,
+              payment_method: record.payment_method&.label
+            }
+          )
+        end
       end
     end
   end

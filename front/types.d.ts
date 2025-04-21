@@ -1,9 +1,9 @@
 export interface DatepickerProps {
-    value: <DateValue | undefined>;    
+  value: DateValue | undefined;
 }
 
 export interface RecordType {
-    id: string;
-    value: string;
-    label: string;
+  id: string;
+  value: string;
+  label: string;
 }

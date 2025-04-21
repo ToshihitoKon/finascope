@@ -25,5 +25,29 @@ module DB
         model.create(**dto.to_h)
       end
     end
+
+    class Category
+      def self.model
+        @model ||= DB::Model::Category
+      end
+      private_class_method :model
+
+      def self.all
+        model.all.map do |record|
+          model.to_dto(record).to_h
+        end
+      end
+
+      # def self.get_page(page:, per_page: 50, sort: { created_at: :asc })
+      #   records = model.order(sort).page(page).per(per_page)
+      #   records.map do |record|
+      #     model.to_dto(record).to_h
+      #   end
+      # end
+
+      def self.create(dto)
+        model.create(**dto.to_h)
+      end
+    end
   end
 end

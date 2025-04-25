@@ -64,7 +64,7 @@ export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => 
 
 export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
   return {
-    paymentMethods: [
+    payment_methods: [
       {
         id: 'P7rTvK2Q',
         label: '現金'

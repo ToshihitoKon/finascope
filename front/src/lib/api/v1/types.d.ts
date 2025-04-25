@@ -36,7 +36,7 @@ export interface CategoriesResponse {
 }
 
 export interface PaymentMethodsResponse {
-  paymentMethods: PaymentMethod[];
+  payment_methods: PaymentMethod[];
 }
 
 export interface RecordsResponse {
@@ -50,11 +50,11 @@ export interface PutRecordResponse {
 // Requests
 export interface PutRecordRequest {
   title: string;
-  typeId: number;
-  stateId: number;
+  type_id: number;
+  state_id: number;
   description: string;
   amount: number;
-  categoryId: string;
-  paymentMethodId: string;
+  category_id: string;
+  payment_method_id: string;
   date: string; // NOTE: ISO 8601 format
 }

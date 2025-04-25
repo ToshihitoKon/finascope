@@ -19,7 +19,7 @@
   import { today } from '@internationalized/date';
 
   // api/*
-  import * as mock from '$lib/api/v1/mock';
+  // import * as mock from '$lib/api/v1/mock';
   import * as api from '$lib/api/v1/api';
   import * as apiconst from '$lib/api/v1/const';
   import type * as apitype from '$lib/api/v1/types.d.ts';
@@ -49,8 +49,8 @@
       })
     );
 
-    const paymentMethodsResponse = await mock.fetchPaymentMethods();
-    paymentMethods = paymentMethodsResponse.paymentMethods.map(
+    const paymentMethodsResponse = await api.fetchPaymentMethods();
+    paymentMethods = paymentMethodsResponse.payment_methods.map(
       (i): ComboboxOption => ({
         value: i.id,
         label: i.label
@@ -75,12 +75,12 @@
   const payloadFormatter = (): apitype.PutRecordRequest => {
     return {
       title: formData.title,
-      typeId: Number(formData.recordType),
-      stateId: Number(formData.state),
+      type_id: Number(formData.recordType),
+      state_id: Number(formData.state),
       description: formData.description,
       amount: formData.amount,
-      categoryId: formData.category,
-      paymentMethodId: formData.paymentMethod,
+      category_id: formData.category,
+      payment_method_id: formData.paymentMethod,
       date: formData.date.toDate('UTC').toISOString()
     };
   };

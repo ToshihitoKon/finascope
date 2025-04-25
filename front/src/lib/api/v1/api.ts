@@ -9,7 +9,7 @@ const getOpts = {
 };
 
 export const fetchRecords = async (): Promise<apitype.RecordsResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/records`, getOpts).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/records`, getOpts).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to fetch records');
     }
@@ -18,9 +18,18 @@ export const fetchRecords = async (): Promise<apitype.RecordsResponse> => {
 };
 
 export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/categories`, getOpts).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/categories`, getOpts).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to fetch categories');
+    }
+    return res?.json();
+  });
+};
+
+export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods`, getOpts).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to fetch payment methods');
     }
     return res?.json();
   });
@@ -29,7 +38,7 @@ export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => 
 export const putRecord = async (
   record: apitype.PutRecordRequest
 ): Promise<apitype.PutRecordResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/records`, {
+  return fetch(`${consts.ApiBaseUrl}/v1/records`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'

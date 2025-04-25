@@ -1,4 +1,4 @@
-export const ApiBaseUrl = '/api/v1';
+export const ApiBaseUrl = '/api';
 
 // api/constants.ts
 export const States = [

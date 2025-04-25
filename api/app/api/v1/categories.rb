@@ -3,19 +3,15 @@ require "lib/id"
 require "db/models"
 require "services/categories"
 
+require_relative "entities/categories"
+
 module API
   module V1
     class Categories < Grape::API
       resource :categories do
         get do
-          categories = Service::Categories.all.map do |category|
-            {
-              id: category[:id],
-              label: category[:label]
-            }
-          end
-
-          { categories: }
+          categories = Service::Categories.all
+          present categories, with: API::Entities::Categories::Category, root: :categories
         end
       end
     end

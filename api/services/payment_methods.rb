@@ -3,9 +3,9 @@ require "db/repositories"
 require "lib/id"
 
 module Service
-  module Categories
+  module PaymentMethods
     def self.all
-      DB::Repository::Category.all
+      DB::Repository::PaymentMethod.all
     end
   end
 end

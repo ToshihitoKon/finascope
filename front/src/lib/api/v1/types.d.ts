@@ -25,15 +25,9 @@ export interface Record {
   description: string;
 }
 
-// Requests
-export interface PutRecordRequest {
-  name: string;
-  typeId: number;
-  stateId: number;
-  description: string;
-  amount: number;
-  categoryId: string;
-  date: string; // NOTE: ISO 8601 format
+export interface PaymentMethod {
+  id: string;
+  label: string;
 }
 
 // Responses
@@ -41,6 +35,26 @@ export interface CategoriesResponse {
   categories: Category[];
 }
 
+export interface PaymentMethodsResponse {
+  paymentMethods: PaymentMethod[];
+}
+
 export interface RecordsResponse {
   records: Record[];
+}
+
+export interface PutRecordResponse {
+  status: string;
+}
+
+// Requests
+export interface PutRecordRequest {
+  title: string;
+  typeId: number;
+  stateId: number;
+  description: string;
+  amount: number;
+  categoryId: string;
+  paymentMethodId: string;
+  date: string; // NOTE: ISO 8601 format
 }

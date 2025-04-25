@@ -2,6 +2,7 @@
   import '../app.css';
   import { Menu, X } from 'lucide-svelte'; // アイコン用
   import { base } from '$app/paths';
+  import ToastContainer from '$lib/components/toast-container.svelte';
   let { children } = $props();
   let isOpen = $state(false);
 </script>
@@ -41,6 +42,7 @@
     </div>
   {/if}
 </nav>
+<ToastContainer />
 <div class="container mx-auto px-4 py-6">
   {@render children()}
 </div>

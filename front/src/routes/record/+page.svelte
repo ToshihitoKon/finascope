@@ -7,7 +7,6 @@
   // api/*
   // import * as mock from '$lib/api/v1/mock';
   import * as api from '$lib/api/v1/api';
-  import * as apiconst from '$lib/api/v1/const';
   import type * as apitype from '$lib/api/v1/types.d.ts';
   let records = $state<apitype.RecordsResponse>({ records: [] });
 

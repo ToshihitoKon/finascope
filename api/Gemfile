@@ -20,3 +20,5 @@ gem "sqlite3", "~> 2.6"
 gem "rerun", "~> 0.14.0"
 
 gem "kaminari", "~> 1.2"
+
+gem "grape-entity", "~> 1.0"

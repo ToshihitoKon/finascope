@@ -3,6 +3,8 @@
 
   import { Input } from '$lib/components/ui/input/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
+  import { Button } from '$lib/components/ui/button/index.js';
+  import { showToast } from '$lib/toast';
 
   // components/*
   import SegmentControl from '$lib/components/segment-control.svelte';
@@ -18,6 +20,7 @@
 
   // api/*
   import * as mock from '$lib/api/v1/mock';
+  import * as api from '$lib/api/v1/api';
   import * as apiconst from '$lib/api/v1/const';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
@@ -35,10 +38,19 @@
   );
 
   let categories = $state<ComboboxOption[]>([]);
+  let paymentMethods = $state<ComboboxOption[]>([]);
 
   const fetchConfigs = async () => {
-    const categoriesResponse = await mock.fetchCategories();
+    const categoriesResponse = await api.fetchCategories();
     categories = categoriesResponse.categories.map(
+      (i): ComboboxOption => ({
+        value: i.id,
+        label: i.label
+      })
+    );
+
+    const paymentMethodsResponse = await mock.fetchPaymentMethods();
+    paymentMethods = paymentMethodsResponse.paymentMethods.map(
       (i): ComboboxOption => ({
         value: i.id,
         label: i.label
@@ -50,40 +62,53 @@
     await fetchConfigs();
   });
   let formData = $state({
-    name: '',
+    title: '',
     recordType: '',
     state: '',
     amount: 0,
     category: '',
+    paymentMethod: '',
     description: '',
     date: today('UTC')
   });
 
   const payloadFormatter = (): apitype.PutRecordRequest => {
     return {
-      name: formData.name,
+      title: formData.title,
       typeId: Number(formData.recordType),
       stateId: Number(formData.state),
       description: formData.description,
       amount: formData.amount,
       categoryId: formData.category,
+      paymentMethodId: formData.paymentMethod,
       date: formData.date.toDate('UTC').toISOString()
     };
   };
   const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
+
+  const putRecord = async () => {
+    try {
+      const res = await api.putRecord(payloadFormatter());
+      showToast(JSON.stringify(res), 'success');
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error occurred while sending data', 'error');
+      return;
+    }
+  };
 </script>
 
 <div class="mx-auto grid gap-4 sm:max-w-sm">
   <div class="flex flex-col gap-1">
-    <Label for="type">タイプ</Label>
+    <Label>タイプ</Label>
     <SegmentControl options={recordTypes} bind:selected={formData.recordType} />
   </div>
   <div class="flex flex-col gap-1">
-    <Label for="name">名前</Label>
-    <Input type="text" id="name" bind:value={formData.name} class="w-full" />
+    <Label for="title">名前</Label>
+    <Input type="text" id="name" bind:value={formData.title} class="w-full" />
   </div>
   <div class="flex flex-col gap-1">
-    <Label for="state">ステータス</Label>
+    <Label>ステータス</Label>
     <Select options={states} bind:selected={formData.state} />
   </div>
   <div class="flex flex-col gap-1">
@@ -91,20 +116,31 @@
     <Input type="number" id="amount" bind:value={formData.amount} class="w-full" />
   </div>
   <div class="flex flex-col gap-1">
-    <Label for="">カテゴリ</Label>
+    <Label>カテゴリ</Label>
     <Combobox options={categories} bind:selected={formData.category} />
   </div>
   <div class="flex flex-col gap-1">
-    <Label for="date">日付</Label>
+    <Label>支払い方法</Label>
+    <Combobox options={paymentMethods} bind:selected={formData.paymentMethod} />
+  </div>
+  <div class="flex flex-col gap-1">
+    <Label>日付</Label>
     <Datepicker bind:value={formData.date} />
   </div>
   <div class="flex flex-col gap-1">
     <Label for="memo">メモ</Label>
     <Input type="text" id="memo" bind:value={formData.description} class="w-full" />
   </div>
+  <div class="flex flex-col gap-1">
+    <Button
+      onclick={() => {
+        putRecord();
+      }}>送信</Button
+    >
+  </div>
 
   <div class="flex flex-col gap-1">
-    <label for="preview">preview</label>
+    <Label for="preview">preview</Label>
     <textarea
       id="preview"
       class="mt-2 h-32 w-full rounded-md border border-gray-300 p-2"

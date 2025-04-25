@@ -1,41 +1,50 @@
 import type * as apitype from '../types';
 
-export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => {
-  return {
-    categories: [
-      { id: '01JNB8PFPXAC808XH263PS7TW9', label: 'DIALOGUE+' },
-      { id: '01JNB8PNR9RT2HF21PVRFSW5NV', label: 'その他' }
-    ]
-  };
-};
-
 export const fetchRecords = async (): Promise<apitype.RecordsResponse> => {
   return {
     records: [
       {
-        id: '01JNBK19Q5E0CQC3A9D7QS56Z7',
-        type_label: '支出',
-        title: 'DIALOGUE+ カクノゴトキロックンロールチケ',
-        state_label: '支払済',
-        description: '全通',
-        amount: 66800,
-        category_label: 'DIALOGUE+',
-        payment_method_label: 'クレジットカード',
-        date: '2025-02-20T00:00:00Z'
+        id: 'Xz82Klm9',
+        type: '収入',
+        title: '給与振込',
+        amount: 280000,
+        state: '検討中',
+        category: '給与',
+        payment_method: '銀行振込',
+        date: '2024-03-20',
+        description: '3月分の給与'
       },
       {
-        id: '01JPCSYGCCMKYC4YMP7Z6ZB3K9',
-        title: 'DIALOGUE+3 きゃにめ版',
-        type_label: '支出',
-        state_label: '支払済',
-        description: '81直筆サインあたった神回',
-        amount: 8800,
-        category_label: 'DIALOGUE+',
-        payment_method_label: 'クレジットカード',
-        date: '2025-02-20T00:00:00Z'
+        id: 'hY3Nc7Q1',
+        type: '支出',
+        title: '書籍購入',
+        amount: 1600,
+        state: '支払済',
+        category: '教育',
+        payment_method: 'クレジットカード',
+        date: '2024-03-24',
+        description: '技術書籍「Ruby超入門」'
+      },
+      {
+        id: 'A7f9D1bC',
+        type: '支出',
+        title: 'ランチ代',
+        amount: 850,
+        state: '支払済',
+        category: '食費',
+        payment_method: '現金',
+        date: '2024-03-25',
+        description: '社員食堂にて'
       }
     ]
   };
+};
+
+export const putRecord = async (
+  record: apitype.PutRecordRequest
+): Promise<apitype.PutRecordResponse> => {
+  console.log(record);
+  return { status: 'success' };
 };
 
 export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => {
@@ -48,14 +57,21 @@ export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => 
       {
         id: 'X2yLmV9P',
         label: '給与'
+      }
+    ]
+  };
+};
+
+export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
+  return {
+    paymentMethods: [
+      {
+        id: 'P7rTvK2Q',
+        label: '現金'
       },
       {
-        id: 'H1qWeR4K',
-        label: '教育'
-      },
-      {
-        id: 'D8nBpS6M',
-        label: '交通費'
+        id: 'M3wEcL1X',
+        label: '銀行振込'
       }
     ]
   };

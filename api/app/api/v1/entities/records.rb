@@ -1,7 +1,7 @@
 module API
   module Entities
     module Records
-      class Get < Grape::Entity
+      class Record < Grape::Entity
         format_with(:iso_timestamp, &:iso8601)
 
         expose :id, documentation: { type: Integer, desc: "Record ID" }
@@ -13,6 +13,11 @@ module API
         expose :payment_method, documentation: { type: String, desc: "Payment method used" }
         expose :date, format_with: :iso_timestamp, documentation: { type: String, desc: "Date of record" }
         expose :description, documentation: { type: String, desc: "Description of record" }
+      end
+
+      class PutResponse < Grape::Entity
+        expose :status
+        expose :id
       end
     end
   end

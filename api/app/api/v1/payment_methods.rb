@@ -15,6 +15,25 @@ module API
                   with: API::Entities::PaymentMethods::PaymentMethod,
                   root: :payment_methods
         end
+
+        put do
+          params do
+            requires :label, type: String, desc: "PaymentMethod label"
+          end
+
+          payment_method = Service::PaymentMethods.create(
+            label: params[:label]
+          )
+
+          if payment_method
+            status = "success"
+          else
+            status = "failed"
+            status 422
+          end
+          resp = { status:, id: payment_method&.id }
+          present resp, with: API::Entities::PaymentMethods::PutResponse
+        end
       end
     end
   end

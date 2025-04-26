@@ -5,6 +5,11 @@ module API
         expose :id, documentation: { type: Integer, desc: "PaymentMethod ID" }
         expose :label, documentation: { type: String, desc: "PaymentMethod label" }
       end
+
+      class PutResponse < Grape::Entity
+        expose :status
+        expose :id
+      end
     end
   end
 end

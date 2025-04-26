@@ -4,8 +4,8 @@ require "lib/id"
 
 module Service
   module FinanceRecords
-    def self.get_records(page: 1)
-      records = DB::Repository::FinanceRecord.get_page(page: page, sort: { date: :asc })
+    def self.get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
+      records = DB::Repository::FinanceRecord.get_page(sort:, page:, begin_date:, end_date:)
       records.map do |record|
         {
           **record,
@@ -15,7 +15,7 @@ module Service
       end
     end
 
-    def self.create_record(params)
+    def self.create(params)
       dto = DB::Model::FinanceRecord.dto.new(
         id: ID.generate,
         record_type_id: params[:record_type_id],

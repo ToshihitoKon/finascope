@@ -16,9 +16,13 @@ module API
       resource :records do
         get do
           page = params[:page] ||= 1
-          records = Service::FinanceRecords.get_records(page: page)
-          present records, with: API::Entities::Records::Get, root: :records
+          begin_date = Date.parse(params[:begin_date]) if params[:begin_date]
+          end_date = Date.parse(params[:end_date]) if params[:end_date]
+
+          records = Service::FinanceRecords.get_records(page:, begin_date:, end_date:)
+          present records, with: API::Entities::Records::Record, root: :records
         end
+
         put do
           params do
             requires :title, type: String, desc: "Record title"
@@ -31,8 +35,7 @@ module API
             require :payment_method_id, type: String, desc: "Payment method ID"
           end
 
-          # サービスクラスを使ってレコードを保存
-          record = Service::FinanceRecords.create_record(
+          record = Service::FinanceRecords.create(
             title: params[:title],
             record_type_id: params[:type_id],
             state_id: params[:state_id],
@@ -44,12 +47,14 @@ module API
           )
 
           if record
-            { status: "success", record_id: record.id }
+            status = "success"
           else
             status 422
-            { status: "error", message: "Failed to save record" }
+            status = "failed"
           end
-          { status: "success" }
+
+          resp = { status:, id: record&.id }
+          present resp, with: API::Entities::Records::PutResponse
         end
       end
     end

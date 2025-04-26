@@ -8,8 +8,8 @@ const getOpts = {
   }
 };
 
-export const fetchRecords = async (): Promise<apitype.RecordsResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/records`, getOpts).then((res) => {
+export const fetchRecords = async (params: string): Promise<apitype.RecordsResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/records?${params}`, getOpts).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to fetch records');
     }

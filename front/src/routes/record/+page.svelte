@@ -50,7 +50,9 @@
   };
 
   onMount(async () => {
-    records = await api.fetchRecords();
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    console.log(urlSearchParams.toString());
+    records = await api.fetchRecords(urlSearchParams.toString());
   });
 </script>
 

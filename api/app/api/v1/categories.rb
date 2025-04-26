@@ -13,6 +13,23 @@ module API
           categories = Service::Categories.all
           present categories, with: API::Entities::Categories::Category, root: :categories
         end
+
+        put do
+          params do
+            requires :label, type: String, desc: "Category label"
+          end
+
+          category = Service::Categories.create(label: params[:label])
+
+          if category
+            status = "success"
+          else
+            status = "failed"
+            status 422
+          end
+          resp = { status:, id: category&.id }
+          present resp, with: API::Entities::Categories::PutResponse
+        end
       end
     end
   end

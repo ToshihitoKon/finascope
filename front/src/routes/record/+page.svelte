@@ -1,37 +1,80 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { base } from '$app/paths';
-
-  import { Button } from '$lib/components/ui/button/index.js';
+  import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 
   // api/*
   // import * as mock from '$lib/api/v1/mock';
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
   let records = $state<apitype.RecordsResponse>({ records: [] });
+  import { getLocalTimeZone, today, startOfMonth, endOfMonth } from '@internationalized/date';
 
-  import DataTable from '$lib/shadcn/data-table/data-table.svelte';
-  import DataTableHeaderButton from '$lib/shadcn/data-table/header-button.svelte';
-  import { type ColumnDef } from '@tanstack/table-core';
-
-  import { renderComponent } from '$lib/components/ui/data-table/index.js';
+  async function fetchRecordsByDateRange() {
+    const params = new URLSearchParams(window.location.search);
+    if (value.start) {
+      params.set('begin_date', value.start.toString());
+    }
+    if (value.end) {
+      params.set('end_date', value.end.toString());
+    }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+    records = await api.fetchRecords(params.toString());
+  }
+  const ResponseToColumn = (res: apitype.RecordsResponse): RecordColumnStruct[] => {
+    return res.records.map((record) => {
+      return {
+        type: record.type,
+        title: record.title,
+        amount: record.amount,
+        state: record.state,
+        description: record.description,
+        category: record.category,
+        payment_method: record.payment_method,
+        date: new Date(record.date).toLocaleDateString()
+      };
+    });
+  };
 
   // for RangeCalendar
-  import { getLocalTimeZone, today, startOfMonth, endOfMonth } from '@internationalized/date';
   import { RangeCalendar } from '$lib/components/ui/range-calendar/index.js';
-  const start = startOfMonth(today(getLocalTimeZone()));
-  const end = endOfMonth(start);
+  const td = today(getLocalTimeZone());
   let value = $state({
-    start,
-    end
+    start: startOfMonth(td),
+    end: endOfMonth(td)
   });
+  const setBeforeMonth = () => {
+    const beforeMonth = value.start.subtract({ months: 1 });
+    value = {
+      start: startOfMonth(beforeMonth),
+      end: endOfMonth(beforeMonth)
+    };
+  };
+  const setNextMonth = () => {
+    const nextMonth = value.start.add({ months: 1 });
+    value = {
+      start: startOfMonth(nextMonth),
+      end: endOfMonth(nextMonth)
+    };
+  };
+  const setThisMonth = () => {
+    const td = today(getLocalTimeZone());
+    value = {
+      start: startOfMonth(td),
+      end: endOfMonth(td)
+    };
+  };
 
   // for Popover
   import CalendarIcon from '@lucide/svelte/icons/calendar';
   import { cn } from '$lib/utils.js';
   import * as Popover from '$lib/components/ui/popover/index.js';
-  import { buttonVariants } from '$lib/components/ui/button/index.js';
-  let contentRef = $state<HTMLElement | null>(null);
+
+  // for DataTable
+  import DataTable from '$lib/shadcn/data-table/data-table.svelte';
+  import DataTableHeaderButton from '$lib/shadcn/data-table/header-button.svelte';
+  import { type ColumnDef } from '@tanstack/table-core';
+  import { renderComponent } from '$lib/components/ui/data-table/index.js';
 
   type RecordColumnStruct = {
     type: string;
@@ -79,35 +122,11 @@
     }
   ];
 
-  const ResponseToColumn = (res: apitype.RecordsResponse): RecordColumnStruct[] => {
-    return res.records.map((record) => {
-      return {
-        type: record.type,
-        title: record.title,
-        amount: record.amount,
-        state: record.state,
-        description: record.description,
-        category: record.category,
-        payment_method: record.payment_method,
-        date: new Date(record.date).toLocaleDateString()
-      };
-    });
-  };
+  // for Dialog
+  import * as Dialog from '$lib/components/ui/dialog/index.js';
+  import DialogNewRecord from './dialog-new-record.svelte';
 
-  async function fetchRecordsByDateRange() {
-    const params = new URLSearchParams(window.location.search);
-    if (value.start) {
-      params.set('begin_date', value.start.toString());
-    }
-    if (value.end) {
-      params.set('end_date', value.end.toString());
-    }
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    history.pushState({}, '', newUrl);
-    records = await api.fetchRecords(params.toString());
-  }
-
-  // カレンダー値が変更されたら記録を再取得する
+  // base
   $effect(() => {
     if (value.start && value.end) {
       fetchRecordsByDateRange();
@@ -115,17 +134,11 @@
   });
 
   onMount(async () => {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    console.log(urlSearchParams.toString());
-    records = await api.fetchRecords(urlSearchParams.toString());
+    records = await api.fetchRecords('');
   });
 </script>
 
-<div class="container max-w-screen-lg">
-  <div class="py-4">
-    <Button href={base + '/record/new'}>new</Button>
-  </div>
-
+{#snippet header()}
   <Popover.Root>
     <Popover.Trigger
       class={cn(
@@ -139,9 +152,24 @@
       <CalendarIcon />
       {value.start ? value.start + ' - ' + value.end : 'Pick a date'}
     </Popover.Trigger>
-    <Popover.Content bind:ref={contentRef} class="w-auto p-0">
+    <Popover.Content class="w-auto p-0">
+      <div class="flex justify-center">
+        <Button variant="ghost" onclick={setBeforeMonth} class="m-2">👈️</Button>
+        <Button variant="ghost" onclick={setThisMonth} class="m-2">This Month</Button>
+        <Button variant="ghost" onclick={setNextMonth} class="m-2">👉️</Button>
+      </div>
       <RangeCalendar bind:value class="rounded-md border" />
     </Popover.Content>
   </Popover.Root>
-  <DataTable data={ResponseToColumn(records)} columns={RecordColumnDef} />
+{/snippet}
+
+<div class="container max-w-screen-lg">
+  <!-- New Record -->
+  <Dialog.Root>
+    <Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>New Record</Dialog.Trigger>
+    <Dialog.Content class="max-h-[80%] w-fit max-w-[90%] overflow-y-auto">
+      <DialogNewRecord />
+    </Dialog.Content>
+  </Dialog.Root>
+  <DataTable data={ResponseToColumn(records)} columns={RecordColumnDef} {header} />
 </div>

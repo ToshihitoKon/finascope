@@ -16,8 +16,8 @@
   };
 
   const PaymentMethodColumnDef: ColumnDef<PaymentMethodColumnStruct>[] = [
-    { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'label', header: '名前' }
+    { accessorKey: 'label', header: '名前' },
+    { accessorKey: 'id', header: 'ID' }
   ];
 
   const fetchPaymentMethods = async () => {
@@ -27,12 +27,22 @@
   onMount(async () => {
     await fetchPaymentMethods();
   });
+  import * as Dialog from '$lib/components/ui/dialog/index.js';
+  import DialogNewPaymentMethod from './dialog-new-payment-method.svelte';
+  import { buttonVariants } from '$lib/components/ui/button/index.js';
 </script>
 
+{#snippet header()}
+  <!-- New Record -->
+  <Dialog.Root>
+    <Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
+      New Payment Method
+    </Dialog.Trigger>
+    <Dialog.Content class="max-h-[80%] w-fit max-w-[90%] overflow-y-auto">
+      <DialogNewPaymentMethod />
+    </Dialog.Content>
+  </Dialog.Root>
+{/snippet}
 <div class="container max-w-screen-lg">
-  <div class="flex items-center justify-between py-4">
-    <h1 class="text-xl font-bold">支払い方法一覧</h1>
-  </div>
-
-  <DataTable data={paymentMethods.payment_methods} columns={PaymentMethodColumnDef} />
+  <DataTable data={paymentMethods.payment_methods} columns={PaymentMethodColumnDef} {header} />
 </div>

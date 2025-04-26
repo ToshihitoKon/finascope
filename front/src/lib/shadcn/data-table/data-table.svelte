@@ -16,7 +16,7 @@
   import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
   import * as Table from '$lib/components/ui/table/index.js';
 
-  let { data = [], columns = [] } = $props();
+  let { data = [], columns = [], header = null } = $props();
   let sorting = $state<SortingState>([]);
   let columnVisibility = $state<VisibilityState>({});
 
@@ -57,11 +57,10 @@
 
 <div>
   <div class="flex items-center py-4">
+    {@render header?.()}
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger>
-        {#snippet child({ props })}
-          <Button {...props} variant="outline" class="ml-auto">Columns</Button>
-        {/snippet}
+      <DropdownMenu.Trigger class="ml-auto" asChild>
+        <Button variant="outline">Columns</Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">
         {#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}

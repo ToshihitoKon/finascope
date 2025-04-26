@@ -51,11 +51,13 @@ export interface CategoriesResponse {
 }
 
 export interface PutCategoryRequest {
-  todo;
+  label: string;
 }
 
+// NOTE: 使わんかも 使わんかったら消す
 export interface PutCategoryResponse {
-  todo;
+  status: string;
+  id: string;
 }
 
 // Payment methods

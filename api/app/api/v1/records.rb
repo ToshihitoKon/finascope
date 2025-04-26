@@ -16,8 +16,8 @@ module API
       resource :records do
         get do
           page = params[:page] if params[:page]
-          begin_date = Date.parse(params[:begin_date]) if params[:begin_date]
-          end_date = Date.parse(params[:end_date]) if params[:end_date]
+          begin_date = Date.parse(params[:begin_date])&.beginning_of_day if params[:begin_date]
+          end_date = Date.parse(params[:end_date])&.end_of_day if params[:end_date]
 
           records = Service::FinanceRecords.get_records(page:, begin_date:, end_date:)
           present records, with: API::Entities::Records::Record, root: :records

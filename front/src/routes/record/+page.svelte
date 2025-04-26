@@ -16,6 +16,23 @@
 
   import { renderComponent } from '$lib/components/ui/data-table/index.js';
 
+  // for RangeCalendar
+  import { getLocalTimeZone, today, startOfMonth, endOfMonth } from '@internationalized/date';
+  import { RangeCalendar } from '$lib/components/ui/range-calendar/index.js';
+  const start = startOfMonth(today(getLocalTimeZone()));
+  const end = endOfMonth(start);
+  let value = $state({
+    start,
+    end
+  });
+
+  // for Popover
+  import CalendarIcon from '@lucide/svelte/icons/calendar';
+  import { cn } from '$lib/utils.js';
+  import * as Popover from '$lib/components/ui/popover/index.js';
+  import { buttonVariants } from '$lib/components/ui/button/index.js';
+  let contentRef = $state<HTMLElement | null>(null);
+
   type RecordColumnStruct = {
     type: string;
     title: string;
@@ -77,6 +94,26 @@
     });
   };
 
+  async function fetchRecordsByDateRange() {
+    const params = new URLSearchParams(window.location.search);
+    if (value.start) {
+      params.set('begin_date', value.start.toString());
+    }
+    if (value.end) {
+      params.set('end_date', value.end.toString());
+    }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    history.pushState({}, '', newUrl);
+    records = await api.fetchRecords(params.toString());
+  }
+
+  // カレンダー値が変更されたら記録を再取得する
+  $effect(() => {
+    if (value.start && value.end) {
+      fetchRecordsByDateRange();
+    }
+  });
+
   onMount(async () => {
     const urlSearchParams = new URLSearchParams(window.location.search);
     console.log(urlSearchParams.toString());
@@ -88,5 +125,23 @@
   <div class="py-4">
     <Button href={base + '/record/new'}>new</Button>
   </div>
+
+  <Popover.Root>
+    <Popover.Trigger
+      class={cn(
+        buttonVariants({
+          variant: 'outline',
+          class: 'w-[280px] justify-start text-left font-normal'
+        }),
+        !value && 'text-muted-foreground'
+      )}
+    >
+      <CalendarIcon />
+      {value.start ? value.start + ' - ' + value.end : 'Pick a date'}
+    </Popover.Trigger>
+    <Popover.Content bind:ref={contentRef} class="w-auto p-0">
+      <RangeCalendar bind:value class="rounded-md border" />
+    </Popover.Content>
+  </Popover.Root>
   <DataTable data={ResponseToColumn(records)} columns={RecordColumnDef} />
 </div>

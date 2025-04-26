@@ -3,6 +3,7 @@ module DB
     # BaseWrapper
     # DTO を自動生成する
     # TODO: TableColumns を使っているので便利メソッド作れそう
+    # TODO: NOT NULL を読んで Required/Optional 設定して、Validation できるようにする
     class BaseWrapper < ActiveRecord::Base
       self.abstract_class = true
 

@@ -1,6 +1,8 @@
 import type * as apitype from '../types';
 
-export const fetchRecords = async (): Promise<apitype.RecordsResponse> => {
+// Records
+export const fetchRecords = async (params: string): Promise<apitype.RecordsResponse> => {
+  console.log('mock: fetchRecords.', params);
   return {
     records: [
       {
@@ -41,12 +43,13 @@ export const fetchRecords = async (): Promise<apitype.RecordsResponse> => {
 };
 
 export const putRecord = async (
-  record: apitype.PutRecordRequest
+  req: apitype.PutRecordRequest
 ): Promise<apitype.PutRecordResponse> => {
-  console.log(record);
-  return { status: 'success' };
+  console.log('mock: putRecord.', req);
+  return { status: 'success', id: 'dummy' };
 };
 
+// Categories
 export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => {
   return {
     categories: [
@@ -62,7 +65,16 @@ export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => 
   };
 };
 
+export const putCategory = async (
+  req: apitype.PutCategoryRequest
+): Promise<apitype.PutCategoryResponse> => {
+  console.log('mock: putCategory.', req);
+  return { status: 'success', id: 'dummy' };
+};
+
+// Payment Methods
 export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
+  console.log('mock: fetchPaymentMethods.');
   return {
     payment_methods: [
       {
@@ -75,4 +87,22 @@ export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsRespo
       }
     ]
   };
+};
+export const putPaymentMethod = async (
+  req: apitype.PutPaymentMethodRequest
+): Promise<apitype.PutPaymentMethodResponse> => {
+  console.log('mock: putPaymentMethod.', req);
+  return { status: 'success', id: 'dummy' };
+};
+
+// Invoice Records
+export const fetchInvoiceRecords = async (): Promise<apitype.InvoiceRecordsResponse> => {
+  console.log('mock: fetchInvoiceRecords.');
+  return {};
+};
+export const putInvoiceRecord = async (
+  req: apitype.PutInvoiceRecordRequest
+): Promise<apitype.PutInvoiceRecordResponse> => {
+  console.log('mock: putInvoiceRecord.', req);
+  return { status: 'success', id: 'dummy' };
 };

@@ -15,7 +15,7 @@ module API
 
       resource :records do
         get do
-          page = params[:page] ||= 1
+          page = params[:page] if params[:page]
           begin_date = Date.parse(params[:begin_date]) if params[:begin_date]
           end_date = Date.parse(params[:end_date]) if params[:end_date]
 

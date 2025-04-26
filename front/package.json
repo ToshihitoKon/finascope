@@ -46,6 +46,7 @@
     "vite": "^6.3.3"
   },
   "dependencies": {
+    "@lucide/svelte": "^0.503.0",
     "@tanstack/table-core": "^8.21.3"
   }
 }

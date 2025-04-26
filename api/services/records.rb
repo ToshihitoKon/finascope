@@ -5,7 +5,8 @@ require "lib/id"
 module Service
   module FinanceRecords
     def self.get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
-      records = DB::Repository::FinanceRecord.get_page(sort:, page:, begin_date:, end_date:)
+      opts = { sort:, page:, begin_date:, end_date: }.compact
+      records = DB::Repository::FinanceRecord.get_page(**opts)
       records.map do |record|
         {
           **record,

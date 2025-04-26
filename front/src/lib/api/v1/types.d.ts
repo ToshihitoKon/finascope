@@ -69,11 +69,12 @@ export interface PaymentMethodsResponse {
 }
 
 export interface PutPaymentMethodRequest {
-  todo;
+  label: string;
 }
 
 export interface PutPaymentMethodResponse {
-  todo;
+  status: string;
+  id: string;
 }
 
 // Invoice records

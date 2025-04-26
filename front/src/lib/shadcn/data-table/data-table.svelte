@@ -7,18 +7,32 @@
   // const columns: ColumnDef<TableData>[] = [];
   // <Datatable {data} {columns} />
 
-  import { getCoreRowModel } from '@tanstack/table-core';
+  import { type SortingState, getCoreRowModel, getSortedRowModel } from '@tanstack/table-core';
   import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
   import * as Table from '$lib/components/ui/table/index.js';
 
   let { data = [], columns = [] } = $props();
+  let sorting = $state<SortingState>([]);
 
   const table = createSvelteTable({
     get data() {
       return data;
     },
     columns,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: (updater) => {
+      if (typeof updater === 'function') {
+        sorting = updater(sorting);
+      } else {
+        sorting = updater;
+      }
+    },
+    state: {
+      get sorting() {
+        return sorting;
+      }
+    }
   });
 </script>
 

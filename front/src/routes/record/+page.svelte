@@ -10,8 +10,11 @@
   import type * as apitype from '$lib/api/v1/types.d.ts';
   let records = $state<apitype.RecordsResponse>({ records: [] });
 
-  import DataTable from '$lib/shadcn/data-table.svelte';
+  import DataTable from '$lib/shadcn/data-table/data-table.svelte';
+  import DataTableHeaderButton from '$lib/shadcn/data-table/header-button.svelte';
   import { type ColumnDef } from '@tanstack/table-core';
+
+  import { renderComponent } from '$lib/components/ui/data-table/index.js';
 
   type RecordColumnStruct = {
     type: string;
@@ -23,15 +26,40 @@
     payment_method: string;
     date: string;
   };
+
   const RecordColumnDef: ColumnDef<RecordColumnStruct>[] = [
-    { accessorKey: 'type', header: 'Type' },
+    {
+      accessorKey: 'type',
+      header: ({ column }) => {
+        return renderComponent(DataTableHeaderButton, {
+          header: 'Type',
+          onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        });
+      }
+    },
     { accessorKey: 'title', header: 'Title' },
-    { accessorKey: 'amount', header: 'Amount' },
+    {
+      accessorKey: 'amount',
+      header: ({ column }) => {
+        return renderComponent(DataTableHeaderButton, {
+          header: 'Amount',
+          onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        });
+      }
+    },
     { accessorKey: 'state', header: 'State' },
     { accessorKey: 'description', header: 'Description' },
     { accessorKey: 'category', header: 'Category' },
     { accessorKey: 'payment_method', header: 'Payment Method' },
-    { accessorKey: 'date', header: 'Date' }
+    {
+      accessorKey: 'date',
+      header: ({ column }) => {
+        return renderComponent(DataTableHeaderButton, {
+          header: 'Date',
+          onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        });
+      }
+    }
   ];
 
   const ResponseToColumn = (res: apitype.RecordsResponse): RecordColumnStruct[] => {

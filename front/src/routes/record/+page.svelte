@@ -17,8 +17,6 @@
     if (value.end) {
       params.set('end_date', value.end.toString());
     }
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({}, '', newUrl);
     records = await api.fetchRecords(params.toString());
   }
   const ResponseToColumn = (res: apitype.RecordsResponse): RecordColumnStruct[] => {

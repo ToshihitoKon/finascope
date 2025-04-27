@@ -5,8 +5,8 @@
   import { showToast } from '$lib/toast';
 
   // api/*
-  import * as mock from '$lib/api/v1/mock';
-  // import * as api from '$lib/api/v1/api';
+  // import * as api from '$lib/api/v1/mock';
+  import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
   let formData = $state({
@@ -22,7 +22,7 @@
 
   const putRecord = async () => {
     try {
-      const res = await mock.putCategory(payloadFormatter());
+      const res = await api.putCategory(payloadFormatter());
       showToast(JSON.stringify(res), 'success');
     } catch (error) {
       console.error('Error:', error);

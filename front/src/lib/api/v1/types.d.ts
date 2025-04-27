@@ -81,17 +81,23 @@ export interface PutPaymentMethodResponse {
 
 // Invoice records
 export interface InvoiceRecord {
-  todo;
+  id: string;
+  amount: number;
+  payment_method: string;
+  withdrawal_date: string; // NOTE: ISO 8601 format
 }
 
 export interface InvoiceRecordsResponse {
-  todo;
+  records: InvoiceRecord[];
 }
 
 export interface PutInvoiceRecordRequest {
-  todo;
+  amount: number;
+  payment_method_id: string;
+  withdrawal_date: string; // NOTE: ISO 8601 format
 }
 
 export interface PutInvoiceRecordResponse {
-  todo;
+  status: string;
+  id: string;
 }

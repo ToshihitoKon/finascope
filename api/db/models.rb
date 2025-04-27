@@ -64,11 +64,12 @@ module DB
       # define_table_schema: for ActiveRecord::Schema.define
       def self.define_table_schema(t_def)
         t_def.string :id, null: false, primary_key: true
-        t_def.string :label, null: false
         t_def.string :payment_method_id, null: false
-        t_def.date :withdrawal_day, null: false
+        t_def.date :withdrawal_date, null: false
+        t_def.integer :amount, null: false
 
         t_def.timestamps null: false
+        # TODO: payment_method_id_withdrawal_day_index UNIQUE
       end
     end
   end

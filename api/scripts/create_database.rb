@@ -26,8 +26,9 @@ def check_schema(model_class)
     puts "Correct schema"
   rescue StandardError => e
     puts "Error: #{e}"
-    nil
+    false
   end
+  true
 end
 
 def apply_table(model_class, force: false)
@@ -61,8 +62,11 @@ end
 
 ActiveRecord::Schema.define do
   DB::Model::RECORD_MODELS.each do |model_class|
-    check_schema(model_class)
-    apply_table(model_class, force: true)
+    unless check_schema(model_class)
+      puts "Create table: #{model_class.table_name}."
+      $stdin.gets.chomp
+      apply_table(model_class, force: true)
+    end
     puts
   end
 end

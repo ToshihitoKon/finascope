@@ -80,7 +80,7 @@ module DB
       def self.monthly_records(year:, month:)
         model.eager_load(:payment_method)
              .where(
-               withdrawal_day: Date.new(year, month)...Date.new(year, month).end_of_month
+               withdrawal_date: Date.new(year, month)...Date.new(year, month).end_of_month
              ).map do |record|
           model.to_dto(record).to_h.merge(
             {

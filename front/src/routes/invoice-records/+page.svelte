@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { buttonVariants } from '$lib/components/ui/button/index.js';
 
   // api/*
   // import * as mock from '$lib/api/v1/mock';
@@ -55,31 +54,25 @@
     { accessorKey: 'state', header: 'State' }
   ];
 
-  // for Dialog
-  import * as Dialog from '$lib/components/ui/dialog/index.js';
-  import DialogNewRecord from './dialog-new-invoice-record.svelte';
+  import YearMonthForm from './year-month-form.svelte';
+  let year = $state(new Date().getFullYear().toString());
+  let month = $state((new Date().getMonth() + 1).toString());
 
-  // base
-  // $effect(() => {
-  //   if (value.start && value.end) {
-  //     fetchRecordsByDateRange();
-  //   }
-  // });
+  import { Button } from '$lib/components/ui/button/index.js';
+  const fetchRecordsByDate = async () => {
+    records = await api.fetchInvoiceRecords(`year=${year}&month=${month}`);
+  };
 
   onMount(async () => {
-    records = await api.fetchInvoiceRecords('year=2024&month=3');
+    await fetchRecordsByDate();
   });
 </script>
 
-{#snippet header()}{/snippet}
+{#snippet header()}
+  <YearMonthForm bind:year bind:month />
+  <Button variant="outline" class="ml-2" onclick={() => fetchRecordsByDate()}>Apply</Button>
+{/snippet}
 
 <div class="container max-w-screen-lg">
-  <!-- New Record -->
-  <Dialog.Root>
-    <Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>New Record</Dialog.Trigger>
-    <Dialog.Content class="max-h-[80%] w-fit max-w-[90%] overflow-y-auto">
-      <DialogNewRecord />
-    </Dialog.Content>
-  </Dialog.Root>
   <DataTable data={ResponseToColumn(records)} columns={RecordColumnDef} {header} />
 </div>

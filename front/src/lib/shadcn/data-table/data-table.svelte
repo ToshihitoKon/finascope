@@ -59,7 +59,7 @@
   <div class="flex items-center py-4">
     {@render header?.()}
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger class="ml-auto" asChild>
+      <DropdownMenu.Trigger class="ml-auto">
         <Button variant="outline">Columns</Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">

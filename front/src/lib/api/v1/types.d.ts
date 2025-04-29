@@ -82,6 +82,7 @@ export interface PutPaymentMethodResponse {
 // Invoice records
 export interface InvoiceRecord {
   id: string;
+  state: string;
   amount: number;
   payment_method: string;
   withdrawal_date: string; // NOTE: ISO 8601 format

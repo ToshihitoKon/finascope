@@ -11,7 +11,8 @@
   <div class="item-center container mx-auto flex justify-between p-4">
     <a href="{base}/" class="text-x1 font-bold">Finascope</a>
     <div class="hidden space-x-6 md:flex">
-      <a href="{base}/record" class="hover:text-primary">Records</a>
+      <a href="{base}/records" class="hover:text-primary">Records</a>
+      <a href="{base}/invoice-records" class="hover:text-primary">Invoice Records</a>
       <a href="{base}/view" class="hover:text-primary">Views</a>
       <a href="{base}/config" class="hover:text-primary">Config</a>
     </div>
@@ -29,8 +30,15 @@
     <div class="animate-fade-in border-t border-border bg-card md:hidden">
       <div class="container mx-auto flex flex-col space-y-4 p-4">
         <a href="{base}/" class="hover:text-primary" onclick={() => (isOpen = false)}> Home </a>
-        <a href="{base}/record" class="hover:text-primary" onclick={() => (isOpen = false)}>
+        <a href="{base}/records" class="hover:text-primary" onclick={() => (isOpen = false)}>
           Records
+        </a>
+        <a
+          href="{base}/invoice-records"
+          class="hover:text-primary"
+          onclick={() => (isOpen = false)}
+        >
+          Invoice Records
         </a>
         <a href="{base}/view" class="hover:text-primary" onclick={() => (isOpen = false)}>
           Views

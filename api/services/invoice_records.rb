@@ -7,7 +7,13 @@ module Service
     def self.monthly_records(year: nil, month: nil)
       year ||= Date.today.year
       month ||= Date.today.month
-      DB::Repository::InvoiceRecord.monthly_records(year:, month:)
+      records = DB::Repository::InvoiceRecord.monthly_records(year:, month:)
+      records.map do |record|
+        {
+          **record,
+          state: Constants.invoice_record_state(record[:state_id])[:label]
+        }
+      end
     end
 
     def self.create(params)

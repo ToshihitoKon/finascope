@@ -65,6 +65,7 @@ module DB
       def self.define_table_schema(t_def)
         t_def.string :id, null: false, primary_key: true
         t_def.string :payment_method_id, null: false
+        t_def.integer :state_id, null: false
         t_def.date :withdrawal_date, null: false
         t_def.integer :amount, null: false
 

@@ -88,3 +88,32 @@ export const putPaymentMethod = async (
     return res?.json();
   });
 };
+
+// Invoice Records
+export const fetchInvoiceRecords = async (
+  params: string
+): Promise<apitype.InvoiceRecordsResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records?${params}`, getOpts).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to fetch invoice records');
+    }
+    return res?.json();
+  });
+};
+
+export const putInvoiceRecord = async (
+  req: apitype.PutInvoiceRecordRequest
+): Promise<apitype.PutInvoiceRecordResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(req)
+  }).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to put invoice_records');
+    }
+    return res?.json();
+  });
+};

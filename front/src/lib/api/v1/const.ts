@@ -13,3 +13,9 @@ export const RecordTypes = [
   { id: 1, label: '収入' },
   { id: 2, label: '何？' }
 ];
+
+export const InvoiceRecordStates = [
+  { id: 0, label: '未確定' },
+  { id: 1, label: '確定' },
+  { id: 2, label: '処理済み' }
+];

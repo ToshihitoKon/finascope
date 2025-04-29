@@ -16,4 +16,13 @@ module Constants
   def self.record_type(id)
     RECORD_TYPES.find { it[:id] == id }
   end
+
+  INVOICE_RECORD_STATES = [
+    { id: 0, label: "未確定" },
+    { id: 1, label: "確定" },
+    { id: 2, label: "処理済み" }
+  ].freeze
+  def self.invoice_record_state(id)
+    INVOICE_RECORD_STATES.find { it[:id] == id }
+  end
 end

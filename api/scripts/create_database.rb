@@ -20,13 +20,13 @@ def check_schema(model_class)
     expect = DB::TableColumns.get_columns_set(model_class)
     if got != expect
       puts "Schema mismatch: #{expect.difference(got)}"
-      return
+      return false
     end
 
     puts "Correct schema"
   rescue StandardError => e
     puts "Error: #{e}"
-    false
+    return false
   end
   true
 end

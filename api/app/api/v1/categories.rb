@@ -10,7 +10,8 @@ module API
     class Categories < Grape::API
       resource :categories do
         get do
-          categories = Service::Categories.all
+          sc = Service::Categories.new(uid: request_bearer)
+          categories = sc.all
           present categories, with: API::Entities::Categories::Category, root: :categories
         end
 

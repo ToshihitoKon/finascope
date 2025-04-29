@@ -3,15 +3,27 @@ require "db/repositories"
 require "lib/id"
 
 module Service
-  module Categories
-    def self.all
-      DB::Repository::Category.all
+  class Categories
+    def initialize(uid:)
+      @uhash = UserHash.new(uid)
+      @hashed_uid = @uhash.user_hash
     end
 
-    def self.create(params)
+    def all
+      categories = DB::Repository::Category.all(@hashed_uid)
+      categories.map do |record|
+        {
+          **record,
+          label: @uhash.decrypt(record[:encrypted_label])
+        }
+      end
+    end
+
+    def create(params)
       dto = DB::Model::Category.dto.new(
         id: ID.generate,
-        label: params[:label]
+        hashed_user_id: @hashed_uid,
+        encrypted_label: @uhash.encrypt(params[:label])
       )
       raise StandardError unless dto.valid?
 

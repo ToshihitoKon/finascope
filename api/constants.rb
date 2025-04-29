@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Constants
   RECORD_STATES = [
     { id: 0, label: "予定" },
@@ -25,4 +27,14 @@ module Constants
   def self.invoice_record_state(id)
     INVOICE_RECORD_STATES.find { it[:id] == id }
   end
+
+  HASH = {
+    user_infromation_salt: "userinfo",
+    user_salt: "user",
+    algorithm: "aes-256-cbc",
+    fixed_salt: "fixedsalt123456",
+    fixed_iv: "fixediv123456789"
+  }.freeze
+
+  EXAMPLE_USER_UID = "example_user_uid"
 end

@@ -3,30 +3,38 @@ require "db/repositories"
 require "lib/id"
 
 module Service
-  module FinanceRecords
-    def self.get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
-      opts = { sort:, page:, begin_date:, end_date: }.compact
+  class FinanceRecords
+    def initialize(uid)
+      @uhash = UserHash.new(uid)
+      @uid = @uhash.user_hash
+    end
+
+    def get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
+      opts = { uid: @uid, sort:, page:, begin_date:, end_date: }.compact
       records = DB::Repository::FinanceRecord.get_page(**opts)
       records.map do |record|
         {
           **record,
+          category: @uhash.decrypt(record[:encrypted_category]),
+          payment_method: @uhash.decrypt(record[:encrypted_payment_method]),
           record_type: Constants.record_type(record[:record_type_id])[:label],
           state: Constants.record_state(record[:state_id])[:label]
         }
       end
     end
 
-    def self.create(params)
+    def create(params)
       dto = DB::Model::FinanceRecord.dto.new(
         id: ID.generate,
+        hashed_user_id: @uid,
         record_type_id: params[:record_type_id],
-        title: params[:title],
+        encrypted_title: @uhash.encrypt(params[:title]),
         amount: params[:amount],
         category_id: params[:category_id],
         payment_method_id: params[:payment_method_id],
         state_id: params[:state_id],
         date: params[:date],
-        description: params[:description]
+        encrypted_description: @uhash.encrypt(params[:description])
       )
       raise StandardError unless dto.valid? # TODO: ちゃんとした Exception を作る
 

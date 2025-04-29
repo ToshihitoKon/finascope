@@ -10,25 +10,11 @@ $ bundle install
 $ bundle exec rerun -- rackup
 ```
 
-## Path
+## セキュリティ設計
 
-- /api
-    - /v1
-        - /records
-            - GET
-            - POST
-        - /records/:id
-            - PUT
-            - DELETE
-        - /categories
-            - GET
-            - POST
-        - /categories/:id
-            - PUT
-            - DELETE
-        - /methods
-            - GET
-            - POST
-        - /methods/:id
-            - PUT
-            - DELETE
+User のレコードの特定を避けるため、以下のルールを用いてデータを暗号化する：
+
+- ユーザーから受け取るのは firebase auth の uid
+- レコードの user_id は uid を元に salt をつけた hash とする
+- ユーザーデータとテーブルのリレーション分離のため、ユーザーデータテーブルのみ専用の salt を使用
+- 他のレコードとユーザーデータテーブル間のリレーションは作成しない

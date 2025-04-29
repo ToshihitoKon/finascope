@@ -1,4 +1,5 @@
 require "kaminari"
+require "lib/user_hash"
 
 module DB
   module Repository
@@ -9,18 +10,19 @@ module DB
       private_class_method :model
 
       def self.get_page(
+        hashed_user_id:,
         begin_date: Date.today.beginning_of_month,
         end_date: Date.today.end_of_month,
         page: 1, per_page: 50, sort: { created_at: :asc }
       )
         records = model.eager_load(:category, :payment_method)
-                       .where(date: begin_date..end_date)
+                       .where(date: begin_date..end_date, hashed_user_id:)
                        .order(sort).page(page).per(per_page)
         records.map do |record|
           model.to_dto(record).to_h.merge(
             {
-              category: record.category&.label,
-              payment_method: record.payment_method&.label
+              encrypted_category: record.category&.encrypt_label,
+              encrypted_payment_method: record.payment_method&.encripted_label
             }
           )
         end
@@ -37,8 +39,8 @@ module DB
       end
       private_class_method :model
 
-      def self.all
-        model.all.map do |record|
+      def self.all(hashed_uid)
+        model.where(hashed_user_id: hashed_uid).map do |record|
           model.to_dto(record).to_h
         end
       end

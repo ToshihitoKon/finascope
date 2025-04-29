@@ -8,6 +8,7 @@ $LOAD_PATH.unshift(File.expand_path("../", __dir__))
 require "app/api/root"
 require "db/connection"
 # require "db/utils"
+require "lib/user_hash"
 # require "db/basewrapper"
 # require "db/models"
 # require "db/repositories"

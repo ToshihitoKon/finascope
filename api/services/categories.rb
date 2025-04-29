@@ -10,8 +10,9 @@ module Service
     end
 
     def all
-      categories = DB::Repository::Category.all(@hashed_uid)
-      categories.map do |record|
+      DB::Repository::Category
+        .all(hashed_user_id: @hashed_uid)
+        .map do |record|
         {
           **record,
           label: @uhash.decrypt(record[:encrypted_label])

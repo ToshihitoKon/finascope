@@ -19,7 +19,8 @@ module API
           begin_date = Date.parse(params[:begin_date])&.beginning_of_day if params[:begin_date]
           end_date = Date.parse(params[:end_date])&.end_of_day if params[:end_date]
 
-          records = Service::FinanceRecords.get_records(page:, begin_date:, end_date:)
+          finance_records_service = Service::FinanceRecords.new(uid: request_bearer)
+          records = finance_records_service.get_records(page:, begin_date:, end_date:)
           present records, with: API::Entities::Records::Record, root: :records
         end
 
@@ -35,7 +36,8 @@ module API
             require :payment_method_id, type: String, desc: "Payment method ID"
           end
 
-          record = Service::FinanceRecords.create(
+          finance_records_service = Service::FinanceRecords.new(uid: request_bearer)
+          record = finance_records_service.create(
             title: params[:title],
             record_type_id: params[:type_id],
             state_id: params[:state_id],

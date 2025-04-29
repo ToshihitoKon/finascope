@@ -5,6 +5,8 @@ require "base64"
 
 class UserHash
   def initialize(uid)
+    raise ArgumentError, "uid is nil" if uid.nil?
+
     @base_uid = uid
     @key = Digest::SHA256.digest(user_hash + Constants::HASH[:fixed_salt])
   end

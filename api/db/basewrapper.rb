@@ -16,8 +16,18 @@ module DB
           keyword_init: true
         ) do
           def valid?
-            # TODO
-            true
+            # とりあえず nil チェックだけ
+            # TODO: NOT NULL だけコレにする
+            is_valid = true
+            members.each do |m|
+              next if [:created_at, :updated_at].include?(m)
+
+              if self[m].nil?
+                is_valid = false
+                puts "Invalid: #{m} is nil" # TODO: logger にする
+              end
+            end
+            is_valid
           end
         end
         const_set("DTO", str)

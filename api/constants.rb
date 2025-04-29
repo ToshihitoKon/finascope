@@ -13,7 +13,8 @@ module Constants
 
   RECORD_TYPES = [
     { id: 0, label: "支出" },
-    { id: 1, label: "収入" }
+    { id: 1, label: "収入" },
+    { id: 2, label: "何？" }
   ].freeze
   def self.record_type(id)
     RECORD_TYPES.find { it[:id] == id }

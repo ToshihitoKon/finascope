@@ -21,8 +21,8 @@ module DB
         records.map do |record|
           model.to_dto(record).to_h.merge(
             {
-              encrypted_category: record.category&.encrypt_label,
-              encrypted_payment_method: record.payment_method&.encripted_label
+              encrypted_category: record.category&.encrypted_label,
+              encrypted_payment_method: record.payment_method&.encrypted_label
             }
           )
         end
@@ -39,8 +39,8 @@ module DB
       end
       private_class_method :model
 
-      def self.all(hashed_uid)
-        model.where(hashed_user_id: hashed_uid).map do |record|
+      def self.all(hashed_user_id:)
+        model.where(hashed_user_id:).map do |record|
           model.to_dto(record).to_h
         end
       end
@@ -56,8 +56,8 @@ module DB
       end
       private_class_method :model
 
-      def self.all
-        model.all.map do |record|
+      def self.all(hashed_user_id:)
+        model.where(hashed_user_id:).map do |record|
           model.to_dto(record).to_h
         end
       end
@@ -73,20 +73,21 @@ module DB
       end
       private_class_method :model
 
-      def self.all
-        model.all.map do |record|
+      def self.all(hashed_user_id:)
+        model.where(hashed_user_id:).map do |record|
           model.to_dto(record).to_h
         end
       end
 
-      def self.monthly_records(year:, month:)
+      def self.monthly_records(hashed_user_id:, year:, month:)
         model.eager_load(:payment_method)
              .where(
+               hashed_user_id:,
                withdrawal_date: Date.new(year, month)...Date.new(year, month).end_of_month
              ).map do |record|
           model.to_dto(record).to_h.merge(
             {
-              payment_method: record.payment_method&.label
+              payment_method: record.payment_method&.encrypted_label
             }
           )
         end

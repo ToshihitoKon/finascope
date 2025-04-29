@@ -4,17 +4,19 @@ require "lib/id"
 
 module Service
   class FinanceRecords
-    def initialize(uid)
+    def initialize(uid:)
       @uhash = UserHash.new(uid)
-      @uid = @uhash.user_hash
+      @hashed_uid = @uhash.user_hash
     end
 
     def get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
-      opts = { uid: @uid, sort:, page:, begin_date:, end_date: }.compact
+      opts = { hashed_user_id: @hashed_uid, sort:, page:, begin_date:, end_date: }.compact
       records = DB::Repository::FinanceRecord.get_page(**opts)
       records.map do |record|
         {
           **record,
+          title: @uhash.decrypt(record[:encrypted_title]),
+          description: @uhash.decrypt(record[:encrypted_description]),
           category: @uhash.decrypt(record[:encrypted_category]),
           payment_method: @uhash.decrypt(record[:encrypted_payment_method]),
           record_type: Constants.record_type(record[:record_type_id])[:label],
@@ -26,7 +28,7 @@ module Service
     def create(params)
       dto = DB::Model::FinanceRecord.dto.new(
         id: ID.generate,
-        hashed_user_id: @uid,
+        hashed_user_id: @hashed_uid,
         record_type_id: params[:record_type_id],
         encrypted_title: @uhash.encrypt(params[:title]),
         amount: params[:amount],

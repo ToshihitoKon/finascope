@@ -10,8 +10,8 @@ module API
     class Categories < Grape::API
       resource :categories do
         get do
-          sc = Service::Categories.new(uid: request_bearer)
-          categories = sc.all
+          categories_service = Service::Categories.new(uid: request_bearer)
+          categories = categories_service.all
           present categories, with: API::Entities::Categories::Category, root: :categories
         end
 
@@ -20,7 +20,8 @@ module API
             requires :label, type: String, desc: "Category label"
           end
 
-          category = Service::Categories.create(label: params[:label])
+          categories_service = Service::Categories.new(uid: request_bearer)
+          category = categories_service.create(label: params[:label])
 
           if category
             status = "success"

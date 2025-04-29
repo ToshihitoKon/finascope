@@ -18,7 +18,8 @@ module API
             month = Date.today.month
           end
 
-          records = Service::InvoiceRecords.monthly_records(year:, month:)
+          invoice_records_service = Service::InvoiceRecords.new(uid: request_bearer)
+          records = invoice_records_service.monthly_records(year:, month:)
           present records, with: API::Entities::InvoiceRecords::InvoiceRecord, root: :records
         end
 
@@ -28,6 +29,21 @@ module API
             require :payment_method_id, type: String, desc: "Payment method ID"
             require :withdrawal_date, type: String, desc: "Withdrawal date in ISO8601 format"
           end
+          invoice_records_service = Service::InvoiceRecords.new(uid: request_bearer)
+          record = invoice_records_service.create(
+            amount: params[:amount],
+            payment_method_id: params[:payment_method_id],
+            withdrawal_date: Date.parse(params[:withdrawal_date])
+          )
+
+          if record
+            status = "success"
+          else
+            status = "failed"
+            status 422
+          end
+          resp = { status:, id: record&.id }
+          present resp, with: API::Entities::InvoiceRecords::PutResponse
         end
       end
     end

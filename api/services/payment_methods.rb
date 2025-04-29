@@ -3,15 +3,28 @@ require "db/repositories"
 require "lib/id"
 
 module Service
-  module PaymentMethods
-    def self.all
-      DB::Repository::PaymentMethod.all
+  class PaymentMethods
+    def initialize(uid:)
+      @uhash = UserHash.new(uid)
+      @hashed_uid = @uhash.user_hash
     end
 
-    def self.create(params)
+    def all
+      DB::Repository::PaymentMethod
+        .all(hashed_user_id: @hashed_uid)
+        .map do |record|
+        {
+          **record,
+          label: @uhash.decrypt(record[:encrypted_label])
+        }
+      end
+    end
+
+    def create(params)
       dto = DB::Model::PaymentMethod.dto.new(
         id: ID.generate,
-        label: params[:label]
+        hashed_user_id: @hashed_uid,
+        encrypted_label: @uhash.encrypt(params[:label])
       )
       raise StandardError unless dto.valid?
 

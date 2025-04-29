@@ -10,7 +10,8 @@ module API
     class PaymentMethods < Grape::API
       resource :payment_methods do
         get do
-          payment_methods = Service::PaymentMethods.all
+          payment_methods_service = Service::PaymentMethods.new(uid: request_bearer)
+          payment_methods = payment_methods_service.all
           present payment_methods,
                   with: API::Entities::PaymentMethods::PaymentMethod,
                   root: :payment_methods
@@ -21,7 +22,8 @@ module API
             requires :label, type: String, desc: "PaymentMethod label"
           end
 
-          payment_method = Service::PaymentMethods.create(
+          payment_methods_service = Service::PaymentMethods.new(uid: request_bearer)
+          payment_method = payment_methods_service.create(
             label: params[:label]
           )
 

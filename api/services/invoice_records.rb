@@ -10,14 +10,28 @@ module Service
     end
 
     def monthly_records(year: nil, month: nil)
+      # TODO: return all payment methods
       year ||= Date.today.year
       month ||= Date.today.month
+
       records = DB::Repository::InvoiceRecord
                 .monthly_records(hashed_user_id: @hashed_uid, year:, month:)
-      records.map do |record|
+                .map do |record|
         {
           **record,
           state: Constants.invoice_record_state(record[:state_id])[:label]
+        }
+      end
+
+      DB::Repository::PaymentMethod
+        .all(hashed_user_id: @hashed_uid)
+        .map do |record|
+        {
+          payment_method: {
+            **record,
+            payment_method: @uhash.decrypt(record[:encrypted_label])
+          },
+          invoice: records.find { it[:payment_method_id] == record[:id] }
         }
       end
     end

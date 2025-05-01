@@ -20,7 +20,16 @@ module API
 
           invoice_records_service = Service::InvoiceRecords.new(uid: request_bearer)
           records = invoice_records_service.monthly_records(year:, month:)
-          present records, with: API::Entities::InvoiceRecords::InvoiceRecord, root: :records
+          res = records.map do |record|
+            {
+              id: record.dig(:invoice, :id) || "NOT FOUND",
+              amount: record.dig(:invoice, :amount) || 0,
+              withdrawal_date: record.dig(:invoice, :withdrawal_date) || Date.today, ## TODO
+              state: record.dig(:invoice, :state) || "NOT FOUND",
+              payment_method: record.dig(:payment_method, :payment_method)
+            }
+          end
+          present res, with: API::Entities::InvoiceRecords::InvoiceRecord, root: :records
         end
 
         put do

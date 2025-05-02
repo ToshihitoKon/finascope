@@ -64,6 +64,9 @@ export interface PutCategoryResponse {
 export interface PaymentMethod {
   id: string;
   label: string;
+  // withdrawal_day_of_month
+  // 0: none, -1: last day of month
+  withdrawal_day_of_month: number;
 }
 
 export interface PaymentMethodsResponse {

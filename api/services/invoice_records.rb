@@ -23,15 +23,24 @@ module Service
         }
       end
 
-      DB::Repository::PaymentMethod
-        .all(hashed_user_id: @hashed_uid)
-        .map do |record|
+      payment_methods = DB::Repository::PaymentMethod
+                        .all(hashed_user_id: @hashed_uid)
+                        .filter { it[:withdrawal_day_of_month] != 0 } # 0 は引き落とし日とかない
+
+      payment_methods.map do |record|
+        invoice = records.find { it[:payment_method_id] == record[:id] }
+        calced_withdrawal_date = calc_withdrawal_date(
+          year,
+          month,
+          record[:withdrawal_day_of_month]
+        )
         {
           payment_method: {
             **record,
             payment_method: @uhash.decrypt(record[:encrypted_label])
           },
-          invoice: records.find { it[:payment_method_id] == record[:id] }
+          invoice:,
+          calced_withdrawal_date:
         }
       end
     end
@@ -47,6 +56,28 @@ module Service
       raise StandardError unless dto.valid?
 
       DB::Repository::InvoiceRecord.create(dto)
+    end
+
+    private
+
+    def calc_withdrawal_date(year, month, day_of_month)
+      begin
+        withdrawal_date = case day_of_month == -1
+                          when 0 then nil
+                          when -1 then Date.new(year, month).end_of_month
+                          else
+                            Date.new(year, month, day_of_month)
+                          end
+
+        if withdrawal_date&.saturday?
+          withdrawal_date += 2
+        elsif withdrawal_date&.sunday?
+          withdrawal_date += 1
+        end
+      rescue Date::Error # Invalid day of month (ex. 2023-02-30)
+        Date.new(year, month).end_of_month # わからんけどとりあえず最終日を返しておく
+      end
+      withdrawal_date
     end
   end
 end

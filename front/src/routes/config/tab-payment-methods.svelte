@@ -17,6 +17,7 @@
 
   const PaymentMethodColumnDef: ColumnDef<PaymentMethodColumnStruct>[] = [
     { accessorKey: 'label', header: '名前' },
+    { accessorKey: 'withdrawal_day_of_month', header: '引き落とし日' },
     { accessorKey: 'id', header: 'ID' }
   ];
 

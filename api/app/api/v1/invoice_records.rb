@@ -21,10 +21,11 @@ module API
           invoice_records_service = Service::InvoiceRecords.new(uid: request_bearer)
           records = invoice_records_service.monthly_records(year:, month:)
           res = records.map do |record|
+            withdrawal_date = record.dig(:invoice, :withdrawal_date) || record[:calced_withdrawal_date]
             {
               id: record.dig(:invoice, :id) || "NOT FOUND",
               amount: record.dig(:invoice, :amount) || 0,
-              withdrawal_date: record.dig(:invoice, :withdrawal_date) || Date.today, ## TODO
+              withdrawal_date:,
               state: record.dig(:invoice, :state) || "NOT FOUND",
               payment_method: record.dig(:payment_method, :payment_method)
             }

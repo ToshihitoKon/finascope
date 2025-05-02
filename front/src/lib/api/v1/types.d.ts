@@ -75,6 +75,7 @@ export interface PaymentMethodsResponse {
 
 export interface PutPaymentMethodRequest {
   label: string;
+  withdrawal_day_of_month: number;
 }
 
 export interface PutPaymentMethodResponse {

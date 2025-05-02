@@ -12,7 +12,7 @@
       return {
         payment_method: record.payment_method,
         amount: record.amount,
-        withdrawal_date: new Date(record.withdrawal_date).toLocaleDateString(),
+        withdrawal_date: new Date(record.withdrawal_date),
         state: record.state
       };
     });
@@ -27,7 +27,7 @@
   type RecordColumnStruct = {
     amount: number;
     payment_method: string;
-    withdrawal_date: string;
+    withdrawal_date: Date;
     state: string;
   };
 
@@ -39,6 +39,11 @@
           header: 'Withdrawal Date',
           onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
         });
+      },
+      sortingFn: 'datetime',
+      cell: ({ cell }) => {
+        let v = cell.getValue() as Date;
+        return v.toLocaleDateString();
       }
     },
     { accessorKey: 'payment_method', header: 'Payment Method' },

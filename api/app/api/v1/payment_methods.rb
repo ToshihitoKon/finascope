@@ -20,11 +20,13 @@ module API
         put do
           params do
             requires :label, type: String, desc: "PaymentMethod label"
+            requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
           end
 
           payment_methods_service = Service::PaymentMethods.new(uid: request_bearer)
           payment_method = payment_methods_service.create(
-            label: params[:label]
+            label: params[:label],
+            withdrawal_day_of_month: params[:withdrawal_day_of_month]
           )
 
           if payment_method

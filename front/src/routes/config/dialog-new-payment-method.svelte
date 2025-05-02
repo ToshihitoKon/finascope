@@ -10,12 +10,14 @@
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
   let formData = $state({
-    label: ''
+    label: '',
+    withdrawal_day_of_month: ''
   });
 
   const payloadFormatter = (): apitype.PutPaymentMethodRequest => {
     return {
-      label: formData.label
+      label: formData.label,
+      withdrawal_day_of_month: Number(formData.withdrawal_day_of_month)
     };
   };
   const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
@@ -36,6 +38,15 @@
   <div class="flex flex-col gap-1">
     <Label for="label">支払い方法名</Label>
     <Input type="text" id="label" bind:value={formData.label} class="w-full" />
+  </div>
+  <div class="flex flex-col gap-1">
+    <Label for="day_of_month">引き落とし日</Label>
+    <Input
+      type="text"
+      id="day_of_month"
+      bind:value={formData.withdrawal_day_of_month}
+      class="w-full"
+    />
   </div>
   <div class="flex flex-col gap-1">
     <Button

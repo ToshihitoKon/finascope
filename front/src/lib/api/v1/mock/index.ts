@@ -72,6 +72,13 @@ export const putCategory = async (
   return { status: 'success', id: 'dummy' };
 };
 
+export const updateCategory = async (
+  req: apitype.UpdateCategoryRequest
+): Promise<apitype.UpdateCategoryResponse> => {
+  console.log('mock: updateCategory.', req);
+  return { status: 'success', id: 'dummy' };
+};
+
 // Payment Methods
 export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
   console.log('mock: fetchPaymentMethods.');

@@ -8,7 +8,9 @@
   let categories = $state<apitype.CategoriesResponse>({ categories: [] });
 
   import DataTable from '$lib/shadcn/data-table/data-table.svelte';
+  import { renderComponent } from '$lib/components/ui/data-table/index.js';
   import { type ColumnDef } from '@tanstack/table-core';
+  import RowMenuCategory from './row-menu-category.svelte';
 
   type CategoryColumnStruct = {
     id: string;
@@ -17,7 +19,17 @@
 
   const CategoryColumnDef: ColumnDef<CategoryColumnStruct>[] = [
     { accessorKey: 'label', header: '名前' },
-    { accessorKey: 'id', header: 'ID' }
+    { accessorKey: 'id', header: 'ID' },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        return renderComponent(RowMenuCategory, {
+          id: row.original.id,
+          label: row.original.label
+        });
+      }
+    }
   ];
 
   const fetchCategories = async () => {

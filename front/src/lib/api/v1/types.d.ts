@@ -54,8 +54,17 @@ export interface PutCategoryRequest {
   label: string;
 }
 
-// NOTE: 使わんかも 使わんかったら消す
 export interface PutCategoryResponse {
+  status: string;
+  id: string;
+}
+
+export interface UpdateCategoryRequest {
+  id: string;
+  label: string;
+}
+
+export interface UpdateCategoryResponse {
   status: string;
   id: string;
 }

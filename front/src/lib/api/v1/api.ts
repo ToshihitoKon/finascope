@@ -62,6 +62,23 @@ export const putCategory = async (
   });
 };
 
+export const updateCategory = async (
+  req: apitype.UpdateCategoryRequest
+): Promise<apitype.UpdateCategoryResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/categories`, {
+    method: 'UPDATE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(req)
+  }).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to update category');
+    }
+    return res?.json();
+  });
+};
+
 // Payment Methods
 export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
   return fetch(`${consts.ApiBaseUrl}/v1/payment_methods`, getOpts).then((res) => {

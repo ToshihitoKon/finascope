@@ -8,6 +8,23 @@ const getOpts = {
   }
 };
 
+// const postOpts = (payload: object) => ({
+//   method: 'POST',
+//   headers: {
+//     'Content-Type': 'application/json'
+//   },
+//   body: JSON.stringify(payload)
+// });
+
+// TODO: 今かなり PUT 使ってるけど同じエンドポイントに対しては POST のほうがよさそう
+const putOpts = (payload: object) => ({
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(payload)
+});
+
 // Records
 export const fetchRecords = async (params: string): Promise<apitype.RecordsResponse> => {
   return fetch(`${consts.ApiBaseUrl}/v1/records?${params}`, getOpts).then((res) => {
@@ -21,13 +38,7 @@ export const fetchRecords = async (params: string): Promise<apitype.RecordsRespo
 export const putRecord = async (
   record: apitype.PutRecordRequest
 ): Promise<apitype.PutRecordResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/records`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(record)
-  }).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/records`, putOpts(record)).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to put record');
     }
@@ -48,13 +59,7 @@ export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => 
 export const putCategory = async (
   req: apitype.PutCategoryRequest
 ): Promise<apitype.PutCategoryResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/categories`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(req)
-  }).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/categories`, putOpts(req)).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to put category');
     }
@@ -65,13 +70,7 @@ export const putCategory = async (
 export const updateCategory = async (
   req: apitype.UpdateCategoryRequest
 ): Promise<apitype.UpdateCategoryResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/categories`, {
-    method: 'UPDATE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(req)
-  }).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/categories/${req.id}`, putOpts(req)).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to update category');
     }
@@ -92,13 +91,7 @@ export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsRespo
 export const putPaymentMethod = async (
   req: apitype.PutPaymentMethodRequest
 ): Promise<apitype.PutPaymentMethodResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(req)
-  }).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods`, putOpts(req)).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to put payment method');
     }
@@ -121,13 +114,7 @@ export const fetchInvoiceRecords = async (
 export const putInvoiceRecord = async (
   req: apitype.PutInvoiceRecordRequest
 ): Promise<apitype.PutInvoiceRecordResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(req)
-  }).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records`, putOpts(req)).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to put invoice_records');
     }

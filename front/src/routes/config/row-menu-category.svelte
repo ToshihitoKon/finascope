@@ -6,7 +6,7 @@
 
   // api/*
   // import * as api from '$lib/api/v1/mock';
-  import * as api from '$lib/api/v1/api';
+  // import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
   let { id, label }: { id: string; label: string } = $props();

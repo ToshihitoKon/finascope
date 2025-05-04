@@ -33,6 +33,30 @@ module API
           resp = { status:, id: category&.id }
           present resp, with: API::Entities::CommonResponse
         end
+
+        put ":id" do
+          params do
+            requires :id, type: String, desc: "PaymentMethod ID"
+            requires :label, type: String, desc: "PaymentMethod label"
+          end
+
+          categories_service = Service::Categories.new(uid: request_bearer)
+          category = categories_service.update(
+            id: params[:id],
+            params: {
+              label: params[:label]
+            }
+          )
+
+          if category.present?
+            status = "success"
+          else
+            status = "failed"
+            status 422
+          end
+          resp = { status:, id: category&.id }
+          present resp, with: API::Entities::CommonResponse
+        end
       end
     end
   end

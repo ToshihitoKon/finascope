@@ -6,7 +6,7 @@
 
   // api/*
   // import * as api from '$lib/api/v1/mock';
-  // import * as api from '$lib/api/v1/api';
+  import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
   let { id, label }: { id: string; label: string } = $props();
@@ -21,10 +21,9 @@
     };
   };
 
-  import * as mock from '$lib/api/v1/mock';
   const updateRecord = async () => {
     try {
-      const res = await mock.updateCategory(payloadFormatter());
+      const res = await api.updateCategory(payloadFormatter());
       showToast(JSON.stringify(res), 'success');
     } catch (error) {
       console.error('Error:', error);

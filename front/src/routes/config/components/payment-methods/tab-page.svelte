@@ -13,12 +13,27 @@
   type PaymentMethodColumnStruct = {
     id: string;
     label: string;
+    withdrawal_day_of_month: string;
   };
+
+  import RowMenu from './row-menu.svelte';
+  import { renderComponent } from '$lib/components/ui/data-table/index.js';
 
   const PaymentMethodColumnDef: ColumnDef<PaymentMethodColumnStruct>[] = [
     { accessorKey: 'label', header: '名前' },
     { accessorKey: 'withdrawal_day_of_month', header: '引き落とし日' },
-    { accessorKey: 'id', header: 'ID' }
+    { accessorKey: 'id', header: 'ID' },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        return renderComponent(RowMenu, {
+          id: row.original.id,
+          label: row.original.label,
+          withdrawal_day_of_month: row.original.withdrawal_day_of_month
+        });
+      }
+    }
   ];
 
   const fetchPaymentMethods = async () => {
@@ -29,7 +44,7 @@
     await fetchPaymentMethods();
   });
   import * as Dialog from '$lib/components/ui/dialog/index.js';
-  import DialogNewPaymentMethod from './dialog-new-payment-method.svelte';
+  import DialogNewPaymentMethod from './dialog-new.svelte';
   import { buttonVariants } from '$lib/components/ui/button/index.js';
 </script>
 

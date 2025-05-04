@@ -1,7 +1,7 @@
 <script>
   import * as Tabs from '$lib/components/ui/tabs';
-  import TabPaymentMethods from './tab-payment-methods.svelte';
-  import TabCategories from './tab-categories.svelte';
+  import TabPaymentMethods from './components/payment-methods/tab-page.svelte';
+  import TabCategories from './components/categories/tab-page.svelte';
 </script>
 
 <div class="container max-w-screen-lg">

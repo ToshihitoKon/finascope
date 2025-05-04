@@ -42,10 +42,10 @@ export const fetchRecords = async (params: string): Promise<apitype.RecordsRespo
   };
 };
 
-export const putRecord = async (
-  req: apitype.PutRecordRequest
-): Promise<apitype.PutRecordResponse> => {
-  console.log('mock: putRecord.', req);
+export const createRecord = async (
+  req: apitype.CreateRecordRequest
+): Promise<apitype.CreateRecordResponse> => {
+  console.log('mock: createRecord.', req);
   return { status: 'success', id: 'dummy' };
 };
 
@@ -65,10 +65,10 @@ export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => 
   };
 };
 
-export const putCategory = async (
-  req: apitype.PutCategoryRequest
-): Promise<apitype.PutCategoryResponse> => {
-  console.log('mock: putCategory.', req);
+export const createCategory = async (
+  req: apitype.CreateCategoryRequest
+): Promise<apitype.CreateCategoryResponse> => {
+  console.log('mock: createCategory.', req);
   return { status: 'success', id: 'dummy' };
 };
 
@@ -95,10 +95,17 @@ export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsRespo
     ]
   };
 };
-export const putPaymentMethod = async (
-  req: apitype.PutPaymentMethodRequest
-): Promise<apitype.PutPaymentMethodResponse> => {
-  console.log('mock: putPaymentMethod.', req);
+export const createPaymentMethod = async (
+  req: apitype.CreatePaymentMethodRequest
+): Promise<apitype.CreatePaymentMethodResponse> => {
+  console.log('mock: createPaymentMethod.', req);
+  return { status: 'success', id: 'dummy' };
+};
+
+export const updatePaymentMethod = async (
+  req: apitype.UpdatePaymentMethodRequest
+): Promise<apitype.UpdatePaymentMethodResponse> => {
+  console.log('mock: updateCategory.', req);
   return { status: 'success', id: 'dummy' };
 };
 
@@ -107,9 +114,9 @@ export const fetchInvoiceRecords = async (): Promise<apitype.InvoiceRecordsRespo
   console.log('mock: fetchInvoiceRecords.');
   return {};
 };
-export const putInvoiceRecord = async (
-  req: apitype.PutInvoiceRecordRequest
-): Promise<apitype.PutInvoiceRecordResponse> => {
-  console.log('mock: putInvoiceRecord.', req);
+export const createInvoiceRecord = async (
+  req: apitype.CreateInvoiceRecordRequest
+): Promise<apitype.CreateInvoiceRecordResponse> => {
+  console.log('mock: createInvoiceRecord.', req);
   return { status: 'success', id: 'dummy' };
 };

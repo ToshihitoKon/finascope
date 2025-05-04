@@ -59,12 +59,17 @@ export interface CreateCategoryResponse {
   id: string;
 }
 
+export interface CreateCategoryResponse {
+  status: string;
+  id: string;
+}
+
 export interface UpdateCategoryRequest {
   id: string;
   label: string;
 }
 
-export interface CreateCategoryResponse {
+export interface UpdateCategoryResponse {
   status: string;
   id: string;
 }
@@ -88,6 +93,17 @@ export interface CreatePaymentMethodRequest {
 }
 
 export interface CreatePaymentMethodResponse {
+  status: string;
+  id: string;
+}
+
+export interface UpdatePaymentMethodRequest {
+  id: string;
+  label: string;
+  withdrawal_day_of_month: number;
+}
+
+export interface UpdatePaymentMethodResponse {
   status: string;
   id: string;
 }

@@ -52,8 +52,10 @@
     <Button
       onclick={() => {
         createRecord();
-      }}>送信</Button
+      }}
     >
+      送信
+    </Button>
   </div>
 
   <div class="flex flex-col gap-1">

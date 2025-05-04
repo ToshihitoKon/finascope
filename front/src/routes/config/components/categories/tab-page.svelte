@@ -10,7 +10,7 @@
   import DataTable from '$lib/shadcn/data-table/data-table.svelte';
   import { renderComponent } from '$lib/components/ui/data-table/index.js';
   import { type ColumnDef } from '@tanstack/table-core';
-  import RowMenuCategory from './row-menu-category.svelte';
+  import RowMenuCategory from './row-menu.svelte';
 
   type CategoryColumnStruct = {
     id: string;
@@ -41,7 +41,7 @@
   });
 
   import * as Dialog from '$lib/components/ui/dialog/index.js';
-  import DialogNewCategory from './dialog-new-category.svelte';
+  import DialogNewCategory from './dialog-new.svelte';
   import { buttonVariants } from '$lib/components/ui/button/index.js';
 </script>
 

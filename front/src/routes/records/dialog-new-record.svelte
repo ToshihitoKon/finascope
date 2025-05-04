@@ -24,6 +24,44 @@
   import * as apiconst from '$lib/api/v1/const';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
+  let categories = $state<ComboboxOption[]>([]);
+  let paymentMethods = $state<ComboboxOption[]>([]);
+
+  let formData = $state({
+    title: '',
+    recordTypeId: String(apiconst.RecordTypes[0].id),
+    state: String(apiconst.States[1].id),
+    amount: 0,
+    category: '',
+    paymentMethod: '',
+    description: '',
+    date: today('UTC')
+  });
+
+  const payloadFormatter = (): apitype.CreateRecordRequest => {
+    return {
+      title: formData.title,
+      type_id: Number(formData.recordTypeId),
+      state_id: Number(formData.state),
+      description: formData.description,
+      amount: formData.amount,
+      category_id: formData.category,
+      payment_method_id: formData.paymentMethod,
+      date: formData.date.toDate('UTC').toISOString()
+    };
+  };
+
+  const createRecord = async () => {
+    try {
+      const res = await api.createRecord(payloadFormatter());
+      showToast(JSON.stringify(res), 'success');
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error occurred while sending data', 'error');
+      return;
+    }
+  };
+
   const recordTypes = apiconst.RecordTypes.map(
     (i): SegmentControlOption => ({
       label: i.label,
@@ -36,9 +74,6 @@
       label: i.label
     })
   );
-
-  let categories = $state<ComboboxOption[]>([]);
-  let paymentMethods = $state<ComboboxOption[]>([]);
 
   const fetchConfigs = async () => {
     const categoriesResponse = await api.fetchCategories();
@@ -61,47 +96,12 @@
   onMount(async () => {
     await fetchConfigs();
   });
-  let formData = $state({
-    title: '',
-    recordType: '',
-    state: '',
-    amount: 0,
-    category: '',
-    paymentMethod: '',
-    description: '',
-    date: today('UTC')
-  });
-
-  const payloadFormatter = (): apitype.CreateRecordRequest => {
-    return {
-      title: formData.title,
-      type_id: Number(formData.recordType),
-      state_id: Number(formData.state),
-      description: formData.description,
-      amount: formData.amount,
-      category_id: formData.category,
-      payment_method_id: formData.paymentMethod,
-      date: formData.date.toDate('UTC').toISOString()
-    };
-  };
-  const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
-
-  const createRecord = async () => {
-    try {
-      const res = await api.createRecord(payloadFormatter());
-      showToast(JSON.stringify(res), 'success');
-    } catch (error) {
-      console.error('Error:', error);
-      showToast('Error occurred while sending data', 'error');
-      return;
-    }
-  };
 </script>
 
 <div class="mx-auto grid gap-4 sm:max-w-sm">
   <div class="flex flex-col gap-1">
     <Label>タイプ</Label>
-    <SegmentControl options={recordTypes} bind:selected={formData.recordType} />
+    <SegmentControl options={recordTypes} bind:selected={formData.recordTypeId} />
   </div>
   <div class="flex flex-col gap-1">
     <Label for="title">名前</Label>
@@ -137,15 +137,5 @@
         createRecord();
       }}>送信</Button
     >
-  </div>
-
-  <div class="flex flex-col gap-1">
-    <Label for="preview">preview</Label>
-    <textarea
-      id="preview"
-      class="mt-2 h-32 w-full rounded-md border border-gray-300 p-2"
-      placeholder="rendered"
-      >{payload()}
-    </textarea>
   </div>
 </div>

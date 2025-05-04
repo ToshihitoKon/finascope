@@ -9,6 +9,31 @@ module Service
       @hashed_uid = @uhash.user_hash
     end
 
+    def create(params)
+      dto = DB::Model::InvoiceRecord.dto.new(
+        id: ID.generate,
+        hashed_user_id: @hashed_uid,
+        amount: params[:amount],
+        state_id: params[:state_id],
+        payment_method_id: params[:payment_method_id],
+        withdrawal_date: params[:withdrawal_date]
+      )
+      raise Exceptions::InvalidArgument.exception("invalid dto") unless dto.valid?
+
+      DB::Repository::InvoiceRecord.create(dto)
+    end
+
+    def update(id:, params:)
+      params_dto = DB::Model::InvoiceRecord.dto.new(
+        amount: params[:amount],
+        state_id: params[:state_id],
+        withdrawal_date: params[:withdrawal_date]
+      ).to_h.compact
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+
+      DB::Repository::InvoiceRecord.update(id:, params: params_dto)
+    end
+
     def monthly_records(year: nil, month: nil)
       # TODO: return all payment methods
       year ||= Date.today.year
@@ -43,30 +68,6 @@ module Service
           calced_withdrawal_date:
         }
       end
-    end
-
-    def create(params)
-      dto = DB::Model::InvoiceRecord.dto.new(
-        id: ID.generate,
-        hashed_user_id: @hashed_uid,
-        amount: params[:amount],
-        payment_method_id: params[:payment_method_id],
-        withdrawal_date: params[:withdrawal_date]
-      )
-      raise StandardError unless dto.valid?
-
-      DB::Repository::InvoiceRecord.create(dto)
-    end
-
-    def update(id:, params:)
-      params_dto = DB::Model::InvoiceRecord.dto.new(
-        state_id: params[:state_id],
-        withdrawal_date: params[:withdrawal_date],
-        amount: params[:amount]
-      ).to_h.compact
-      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
-
-      DB::Repository::InvoiceRecord.update(id:, params: params_dto)
     end
 
     private

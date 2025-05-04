@@ -1,3 +1,9 @@
+// Common
+
+export interface CommonResponse {
+  id: string;
+  status: string;
+}
 // Records
 export interface Record {
   id: string;
@@ -133,8 +139,10 @@ export interface UpdatePaymentMethodResponse {
 export interface InvoiceRecord {
   id: string;
   state: string;
+  state_id: number;
   amount: number;
   payment_method: string;
+  payment_method_id: string;
   withdrawal_date: string; // NOTE: ISO 8601 format
 }
 
@@ -144,11 +152,14 @@ export interface InvoiceRecordsResponse {
 
 export interface CreateInvoiceRecordRequest {
   amount: number;
+  state_id: number;
   payment_method_id: string;
   withdrawal_date: string; // NOTE: ISO 8601 format
 }
 
-export interface CreateInvoiceRecordResponse {
-  status: string;
+export interface UpdateInvoiceRecordRequest {
   id: string;
+  amount: number;
+  state_id: number;
+  withdrawal_date: string; // NOTE: ISO 8601 format
 }

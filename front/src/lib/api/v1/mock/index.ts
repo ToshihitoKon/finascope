@@ -121,9 +121,17 @@ export const fetchInvoiceRecords = async (): Promise<apitype.InvoiceRecordsRespo
   console.log('mock: fetchInvoiceRecords.');
   return {};
 };
+
 export const createInvoiceRecord = async (
   req: apitype.CreateInvoiceRecordRequest
-): Promise<apitype.CreateInvoiceRecordResponse> => {
+): Promise<apitype.CommonResponse> => {
   console.log('mock: createInvoiceRecord.', req);
+  return { status: 'success', id: 'dummy' };
+};
+
+export const updateInvoiceRecord = async (
+  req: apitype.UpdateInvoiceRecordRequest
+): Promise<apitype.CommonResponse> => {
+  console.log('mock: updateInvoiceRecord.', req);
   return { status: 'success', id: 'dummy' };
 };

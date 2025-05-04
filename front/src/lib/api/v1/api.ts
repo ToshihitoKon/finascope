@@ -134,10 +134,21 @@ export const fetchInvoiceRecords = async (
 
 export const createInvoiceRecord = async (
   req: apitype.CreateInvoiceRecordRequest
-): Promise<apitype.CreateInvoiceRecordResponse> => {
+): Promise<apitype.CommonResponse> => {
   return fetch(`${consts.ApiBaseUrl}/v1/invoice_records`, postOpts(req)).then((res) => {
     if (!res.ok) {
-      throw new Error('Failed to put invoice_records');
+      throw new Error('Failed to create invoice_records');
+    }
+    return res?.json();
+  });
+};
+
+export const updateInvoiceRecord = async (
+  req: apitype.UpdateInvoiceRecordRequest
+): Promise<apitype.CommonResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records/${req.id}`, putOpts(req)).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to update invoice_records');
     }
     return res?.json();
   });

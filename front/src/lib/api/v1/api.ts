@@ -99,6 +99,17 @@ export const createPaymentMethod = async (
   });
 };
 
+export const updatePaymentMethod = async (
+  req: apitype.UpdateCategoryRequest
+): Promise<apitype.UpdateCategoryResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods/${req.id}`, putOpts(req)).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to update payment method');
+    }
+    return res?.json();
+  });
+};
+
 // Invoice Records
 export const fetchInvoiceRecords = async (
   query: string

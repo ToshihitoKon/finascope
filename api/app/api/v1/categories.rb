@@ -4,6 +4,7 @@ require "db/models"
 require "services/categories"
 
 require_relative "entities/categories"
+require_relative "entities/common"
 
 module API
   module V1
@@ -30,7 +31,7 @@ module API
             status 422
           end
           resp = { status:, id: category&.id }
-          present resp, with: API::Entities::Categories::PutResponse
+          present resp, with: API::Entities::CommonResponse
         end
       end
     end

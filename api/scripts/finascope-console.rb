@@ -16,6 +16,8 @@ require "lib/user_hash"
 
 DB::Connection.establish
 
+SampleUserHash = UserHash.new(Constants::EXAMPLE_USER_UID)
+
 puts "=== Start Finascope Console ==="
 
 IRB.start

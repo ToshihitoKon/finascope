@@ -4,6 +4,7 @@ require "db/models"
 require "services/payment_methods"
 
 require_relative "entities/payment_methods"
+require_relative "entities/common"
 
 module API
   module V1
@@ -36,7 +37,33 @@ module API
             status 422
           end
           resp = { status:, id: payment_method&.id }
-          present resp, with: API::Entities::PaymentMethods::PutResponse
+          present resp, with: API::Entities::CommonResponse
+        end
+
+        put ":id" do
+          params do
+            requires :id, type: String, desc: "PaymentMethod ID"
+            requires :label, type: String, desc: "PaymentMethod label"
+            requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
+          end
+
+          payment_methods_service = Service::PaymentMethods.new(uid: request_bearer)
+          payment_method = payment_methods_service.update(
+            id: params[:id],
+            params: {
+              label: params[:label],
+              withdrawal_day_of_month: params[:withdrawal_day_of_month]
+            }
+          )
+
+          if payment_method.present?
+            status = "success"
+          else
+            status = "failed"
+            status 422
+          end
+          resp = { status:, id: payment_method&.id }
+          present resp, with: API::Entities::CommonResponse
         end
       end
     end

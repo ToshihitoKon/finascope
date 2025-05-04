@@ -56,6 +56,10 @@ module DB
       end
       private_class_method :model
 
+      def self.get(id:)
+        model.where(id:).first
+      end
+
       def self.all(hashed_user_id:)
         model.where(hashed_user_id:).map do |record|
           model.to_dto(record).to_h
@@ -64,6 +68,13 @@ module DB
 
       def self.create(dto)
         model.create(**dto.to_h)
+      end
+
+      def self.update(id:, params:)
+        record = model.where(id:).first
+        return record if record.update(**params)
+
+        raise Exceptions::InternalServerError.exception("failed to record update #{id}")
       end
     end
 

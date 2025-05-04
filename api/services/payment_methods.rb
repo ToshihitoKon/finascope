@@ -1,6 +1,7 @@
 require "constants"
 require "db/repositories"
 require "lib/id"
+require "lib/exceptions"
 
 module Service
   class PaymentMethods
@@ -27,9 +28,19 @@ module Service
         encrypted_label: @uhash.encrypt(params[:label]),
         withdrawal_day_of_month: params[:withdrawal_day_of_month]
       )
-      raise StandardError unless dto.valid?
+      raise Exceptions::InvalidArgument unless dto.valid?
 
       DB::Repository::PaymentMethod.create(dto)
+    end
+
+    def update(id:, params:)
+      params_dto = DB::Model::PaymentMethod.dto.new(
+        encrypted_label: params[:label]&.present? ? @uhash.encrypt(params[:label]) : nil,
+        withdrawal_day_of_month: params[:withdrawal_day_of_month]&.present? ? params[:withdrawal_day_of_month] : nil
+      ).to_h.compact
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+
+      DB::Repository::PaymentMethod.update(id:, params: params_dto)
     end
   end
 end

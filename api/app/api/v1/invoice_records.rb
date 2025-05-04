@@ -4,6 +4,7 @@ require "db/models"
 require "services/invoice_records"
 
 require_relative "entities/invoice_records"
+require_relative "entities/common"
 
 module API
   module V1
@@ -53,7 +54,7 @@ module API
             status 422
           end
           resp = { status:, id: record&.id }
-          present resp, with: API::Entities::InvoiceRecords::PutResponse
+          present resp, with: API::Entities::CommonResponse
         end
       end
     end

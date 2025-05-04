@@ -7,6 +7,7 @@ require "db/models"
 require "services/records"
 
 require_relative "entities/records"
+require_relative "entities/common"
 
 module API
   module V1
@@ -56,7 +57,7 @@ module API
           end
 
           resp = { status:, id: record&.id }
-          present resp, with: API::Entities::Records::PutResponse
+          present resp, with: API::Entities::CommonResponse
         end
       end
     end

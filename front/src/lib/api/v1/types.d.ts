@@ -25,7 +25,7 @@ export interface RecordsResponse {
   records: Record[];
 }
 
-export interface PutRecordRequest {
+export interface CreateRecordRequest {
   title: string;
   type_id: number;
   state_id: number;
@@ -36,7 +36,7 @@ export interface PutRecordRequest {
   date: string; // NOTE: ISO 8601 format
 }
 
-export interface PutRecordResponse {
+export interface CreateRecordResponse {
   status: string;
 }
 
@@ -50,11 +50,11 @@ export interface CategoriesResponse {
   categories: Category[];
 }
 
-export interface PutCategoryRequest {
+export interface CreateCategoryRequest {
   label: string;
 }
 
-export interface PutCategoryResponse {
+export interface CreateCategoryResponse {
   status: string;
   id: string;
 }
@@ -64,7 +64,7 @@ export interface UpdateCategoryRequest {
   label: string;
 }
 
-export interface UpdateCategoryResponse {
+export interface CreateCategoryResponse {
   status: string;
   id: string;
 }
@@ -82,12 +82,12 @@ export interface PaymentMethodsResponse {
   payment_methods: PaymentMethod[];
 }
 
-export interface PutPaymentMethodRequest {
+export interface CreatePaymentMethodRequest {
   label: string;
   withdrawal_day_of_month: number;
 }
 
-export interface PutPaymentMethodResponse {
+export interface CreatePaymentMethodResponse {
   status: string;
   id: string;
 }
@@ -105,13 +105,13 @@ export interface InvoiceRecordsResponse {
   records: InvoiceRecord[];
 }
 
-export interface PutInvoiceRecordRequest {
+export interface CreateInvoiceRecordRequest {
   amount: number;
   payment_method_id: string;
   withdrawal_date: string; // NOTE: ISO 8601 format
 }
 
-export interface PutInvoiceRecordResponse {
+export interface CreateInvoiceRecordResponse {
   status: string;
   id: string;
 }

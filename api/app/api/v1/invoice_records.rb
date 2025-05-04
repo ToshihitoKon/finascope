@@ -33,7 +33,7 @@ module API
           present res, with: API::Entities::InvoiceRecords::InvoiceRecord, root: :records
         end
 
-        put do
+        post do
           params do
             require :amount, type: Integer, desc: "Invoice record amount"
             require :payment_method_id, type: String, desc: "Payment method ID"

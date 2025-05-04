@@ -14,7 +14,7 @@
     withdrawal_day_of_month: ''
   });
 
-  const payloadFormatter = (): apitype.PutPaymentMethodRequest => {
+  const payloadFormatter = (): apitype.CreatePaymentMethodRequest => {
     return {
       label: formData.label,
       withdrawal_day_of_month: Number(formData.withdrawal_day_of_month)
@@ -22,9 +22,9 @@
   };
   const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
 
-  const putRecord = async () => {
+  const createRecord = async () => {
     try {
-      const res = await api.putPaymentMethod(payloadFormatter());
+      const res = await api.createPaymentMethod(payloadFormatter());
       showToast(JSON.stringify(res), 'success');
     } catch (error) {
       console.error('Error:', error);
@@ -51,7 +51,7 @@
   <div class="flex flex-col gap-1">
     <Button
       onclick={() => {
-        putRecord();
+        createRecord();
       }}>送信</Button
     >
   </div>

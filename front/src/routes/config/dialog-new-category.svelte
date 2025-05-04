@@ -13,16 +13,16 @@
     label: ''
   });
 
-  const payloadFormatter = (): apitype.PutCategoryRequest => {
+  const payloadFormatter = (): apitype.CreateCategoryRequest => {
     return {
       label: formData.label
     };
   };
   const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
 
-  const putRecord = async () => {
+  const createRecord = async () => {
     try {
-      const res = await api.putCategory(payloadFormatter());
+      const res = await api.createCategory(payloadFormatter());
       showToast(JSON.stringify(res), 'success');
     } catch (error) {
       console.error('Error:', error);
@@ -40,7 +40,7 @@
   <div class="flex flex-col gap-1">
     <Button
       onclick={() => {
-        putRecord();
+        createRecord();
       }}>送信</Button
     >
   </div>

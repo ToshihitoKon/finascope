@@ -24,7 +24,7 @@ module API
           present records, with: API::Entities::Records::Record, root: :records
         end
 
-        put do
+        post do
           params do
             requires :title, type: String, desc: "Record title"
             requires :type_id, type: Integer, desc: "Record type ID"

@@ -15,7 +15,7 @@ module API
           present categories, with: API::Entities::Categories::Category, root: :categories
         end
 
-        put do
+        post do
           params do
             requires :label, type: String, desc: "Category label"
           end

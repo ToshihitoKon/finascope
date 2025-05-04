@@ -17,7 +17,7 @@ module API
                   root: :payment_methods
         end
 
-        put do
+        post do
           params do
             requires :label, type: String, desc: "PaymentMethod label"
             requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"

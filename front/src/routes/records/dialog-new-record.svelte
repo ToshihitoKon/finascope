@@ -72,7 +72,7 @@
     date: today('UTC')
   });
 
-  const payloadFormatter = (): apitype.PutRecordRequest => {
+  const payloadFormatter = (): apitype.CreateRecordRequest => {
     return {
       title: formData.title,
       type_id: Number(formData.recordType),
@@ -86,9 +86,9 @@
   };
   const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
 
-  const putRecord = async () => {
+  const createRecord = async () => {
     try {
-      const res = await api.putRecord(payloadFormatter());
+      const res = await api.createRecord(payloadFormatter());
       showToast(JSON.stringify(res), 'success');
     } catch (error) {
       console.error('Error:', error);
@@ -134,7 +134,7 @@
   <div class="flex flex-col gap-1">
     <Button
       onclick={() => {
-        putRecord();
+        createRecord();
       }}>送信</Button
     >
   </div>

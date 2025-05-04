@@ -30,5 +30,14 @@ module Service
 
       DB::Repository::Category.create(dto)
     end
+
+    def update(id:, params:)
+      params_dto = DB::Model::Category.dto.new(
+        encrypted_label: params[:label]&.present? ? @uhash.encrypt(params[:label]) : nil
+      ).to_h.compact
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+
+      DB::Repository::Category.update(id:, params: params_dto)
+    end
   end
 end

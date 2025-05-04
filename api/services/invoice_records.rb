@@ -58,6 +58,17 @@ module Service
       DB::Repository::InvoiceRecord.create(dto)
     end
 
+    def update(id:, params:)
+      params_dto = DB::Model::InvoiceRecord.dto.new(
+        state_id: params[:state_id],
+        withdrawal_date: params[:withdrawal_date],
+        amount: params[:amount]
+      ).to_h.compact
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+
+      DB::Repository::InvoiceRecord.update(id:, params: params_dto)
+    end
+
     private
 
     def calc_withdrawal_date(year, month, day_of_month)

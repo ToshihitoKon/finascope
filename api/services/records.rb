@@ -42,5 +42,21 @@ module Service
 
       DB::Repository::FinanceRecord.create(dto)
     end
+
+    def update(id:, params:)
+      params_dto = DB::Model::FinanceRecord.dto.new(
+        record_type_id: params[:record_type_id],
+        encrypted_title: @uhash.encrypt(params[:title]),
+        amount: params[:amount],
+        category_id: params[:category_id],
+        payment_method_id: params[:payment_method_id],
+        state_id: params[:state_id],
+        date: params[:date],
+        encrypted_description: @uhash.encrypt(params[:description])
+      ).to_h.compact
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+
+      DB::Repository::FinanceRecord.update(id:, params: params_dto)
+    end
   end
 end

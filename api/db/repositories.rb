@@ -31,6 +31,13 @@ module DB
       def self.create(dto)
         model.create(**dto.to_h)
       end
+
+      def self.update(id:, params:)
+        record = model.where(id:).first
+        return record if record.update(**params)
+
+        raise Exceptions::InternalServerError.exception("failed to record update #{id}")
+      end
     end
 
     class Category
@@ -47,6 +54,13 @@ module DB
 
       def self.create(dto)
         model.create(**dto.to_h)
+      end
+
+      def self.update(id:, params:)
+        record = model.where(id:).first
+        return record if record.update(**params)
+
+        raise Exceptions::InternalServerError.exception("failed to record update #{id}")
       end
     end
 
@@ -107,6 +121,13 @@ module DB
 
       def self.create(dto)
         model.create(**dto.to_h)
+      end
+
+      def self.update(id:, params:)
+        record = model.where(id:).first
+        return record if record.update(**params)
+
+        raise Exceptions::InternalServerError.exception("failed to record update #{id}")
       end
     end
   end

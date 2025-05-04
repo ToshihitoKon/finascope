@@ -6,7 +6,7 @@
   import { showToast } from '$lib/toast';
 
   // api/*
-  import * as mock from '$lib/api/v1/mock';
+  // import * as mock from '$lib/api/v1/mock';
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
   import { parseDate } from '@internationalized/date';
@@ -83,7 +83,7 @@
 
   const updateRecord = async () => {
     try {
-      const res = await mock.updateRecord(payloadFormatter());
+      const res = await api.updateRecord(payloadFormatter());
       showToast(JSON.stringify(res), 'success');
     } catch (error) {
       console.error('Error:', error);

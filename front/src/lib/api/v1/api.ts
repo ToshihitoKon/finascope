@@ -16,7 +16,6 @@ const postOpts = (payload: object) => ({
   body: JSON.stringify(payload)
 });
 
-// TODO: 今かなり PUT 使ってるけど同じエンドポイントに対しては POST のほうがよさそう
 const putOpts = (payload: object) => ({
   method: 'PUT',
   headers: {
@@ -41,6 +40,17 @@ export const createRecord = async (
   return fetch(`${consts.ApiBaseUrl}/v1/records`, postOpts(record)).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to create record');
+    }
+    return res?.json();
+  });
+};
+
+export const updateRecord = async (
+  req: apitype.UpdateRecordRequest
+): Promise<apitype.UpdateRecordResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/records/${req.id}`, putOpts(req)).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to update record');
     }
     return res?.json();
   });

@@ -4,12 +4,12 @@
 </script>
 
 {#if $toasts.length > 0}
-  <div class="fixed top-5 right-5 flex flex-col space-y-2 z-50">
+  <div class="fixed right-5 top-5 z-50 flex flex-col space-y-2">
     {#each $toasts as toast (toast.id)}
       <div
-        in:slide={{ x: 200, duration: 200 }}
-        out:slide={{  x: 200, duration: 200 }}
-        class="max-w-sm w-full shadow-lg rounded-lg p-4 flex items-center justify-between space-x-4"
+        in:slide={{ duration: 200 }}
+        out:slide={{ duration: 200 }}
+        class="flex w-full max-w-sm items-center justify-between space-x-4 rounded-lg p-4 shadow-lg"
         class:bg-green-100={toast.type === 'success'}
         class:bg-red-100={toast.type === 'error'}
         class:bg-yellow-100={toast.type === 'warning'}

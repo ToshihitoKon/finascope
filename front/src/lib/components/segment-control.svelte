@@ -9,7 +9,9 @@
     options: SegmentControlOption[];
     defaultValue?: string;
   } = $props();
-  selected = defaultValue;
+  if (defaultValue.length > 0) {
+    selected = defaultValue;
+  }
 </script>
 
 <div class="flex rounded-lg bg-gray-200 p-1">

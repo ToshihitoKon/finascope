@@ -22,6 +22,7 @@
   const ResponseToColumn = (res: apitype.RecordsResponse): RecordColumnStruct[] => {
     return res.records.map((record) => {
       return {
+        id: record.id,
         type: record.type,
         title: record.title,
         amount: record.amount,
@@ -29,7 +30,11 @@
         description: record.description,
         category: record.category,
         payment_method: record.payment_method,
-        date: new Date(record.date).toLocaleDateString()
+        date: record.date,
+        record_type_id: record.record_type_id,
+        state_id: record.state_id,
+        category_id: record.category_id,
+        payment_method_id: record.payment_method_id
       };
     });
   };
@@ -75,6 +80,7 @@
   import { renderComponent } from '$lib/components/ui/data-table/index.js';
 
   type RecordColumnStruct = {
+    id: string;
     type: string;
     title: string;
     amount: number;
@@ -83,8 +89,13 @@
     category: string;
     payment_method: string;
     date: string;
+    record_type_id: number;
+    state_id: number;
+    category_id: string;
+    payment_method_id: string;
   };
 
+  import RowMenu from './row-menu.svelte';
   const RecordColumnDef: ColumnDef<RecordColumnStruct>[] = [
     {
       accessorKey: 'type',
@@ -115,6 +126,32 @@
         return renderComponent(DataTableHeaderButton, {
           header: 'Date',
           onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        });
+      },
+      cell: ({ row }) => {
+        return new Date(row.original.date).toLocaleDateString();
+      }
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        return renderComponent(RowMenu, {
+          record: {
+            id: row.original.id,
+            title: row.original.title,
+            record_type: row.original.type,
+            state: row.original.state,
+            amount: row.original.amount,
+            category: row.original.category,
+            payment_method: row.original.payment_method,
+            description: row.original.description,
+            date: row.original.date,
+            record_type_id: row.original.record_type_id.toString(),
+            state_id: row.original.state_id.toString(),
+            category_id: row.original.category_id.toString(),
+            payment_method_id: row.original.payment_method_id.toString()
+          }
         });
       }
     }

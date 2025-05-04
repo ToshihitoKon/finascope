@@ -49,6 +49,13 @@ export const createRecord = async (
   return { status: 'success', id: 'dummy' };
 };
 
+export const updateRecord = async (
+  req: apitype.UpdateRecordRequest
+): Promise<apitype.UpdateRecordResponse> => {
+  console.log('mock: updateRecord.', req);
+  return { status: 'success', id: 'dummy' };
+};
+
 // Categories
 export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => {
   return {

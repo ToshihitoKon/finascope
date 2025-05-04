@@ -9,6 +9,10 @@ export interface Record {
   payment_method: string;
   date: string; // NOTE: ISO 8601 format
   description: string;
+  record_type_id: number;
+  state_id: number;
+  category_id: string;
+  payment_method_id: string;
 }
 
 export interface RecordType {
@@ -38,6 +42,23 @@ export interface CreateRecordRequest {
 
 export interface CreateRecordResponse {
   status: string;
+}
+
+export interface UpdateRecordRequest {
+  id: string;
+  title: string;
+  type_id: number;
+  state_id: number;
+  description: string;
+  amount: number;
+  category_id: string;
+  payment_method_id: string;
+  date: string; // NOTE: ISO 8601 format
+}
+
+export interface UpdateRecordResponse {
+  status: string;
+  id: string;
 }
 
 // Categories

@@ -12,16 +12,20 @@
   let {
     selected = $bindable<string>(''),
     options = [],
-    defaultValue = 'Select'
+    defaultValue = ''
   }: {
     selected: string;
     options: ComboboxOption[];
     defaultValue?: string;
   } = $props();
+  if (defaultValue.length > 0) {
+    selected = defaultValue;
+  }
 
   let open = $state(false);
   let triggerRef = $state<HTMLButtonElement>(null!);
-  let label = $state<string | null>(null);
+  let label = $state<string>();
+  label = options.find((option) => option.value === selected)?.label || defaultValue;
 
   // We want to refocus the trigger button when the user selects
   // an item from the list so users can continue navigating the

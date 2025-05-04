@@ -5,7 +5,7 @@
   // type TableData = {}
   // const data: TableData[] = [];
   // const columns: ColumnDef<TableData>[] = [];
-  // <Datatable {data} {columns} />
+  // <Datatable {data} {columns} /> // IMPORTANT: Required field data[].id
 
   import {
     type SortingState,
@@ -24,6 +24,7 @@
     get data() {
       return data;
     },
+    getRowId: (row) => row.id,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

@@ -1,40 +1,69 @@
 import type * as apitype from './types';
 import * as consts from './const';
+import { getLoginInfo } from '$lib/firebase';
 
-const getOpts = {
-  method: 'GET',
-  headers: {
-    'Content-Type': 'application/json'
+const getOpts = () => {
+  const opts = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const loginInfo = getLoginInfo();
+  if (loginInfo.jwt) {
+    opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
   }
+  return opts;
 };
 
-const postOpts = (payload: object) => ({
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(payload)
-});
+const postOpts = (payload: object) => {
+  const opts = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  };
+  const loginInfo = getLoginInfo();
+  if (loginInfo.jwt) {
+    opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
+  }
+  return opts;
+};
 
-const putOpts = (payload: object) => ({
-  method: 'PUT',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(payload)
-});
+const putOpts = (payload: object) => {
+  const opts = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  };
+  const loginInfo = getLoginInfo();
+  if (loginInfo.jwt) {
+    opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
+  }
+  return opts;
+};
 
-const deleteOpts = (payload: object) => ({
-  method: 'DELETE',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(payload)
-});
+const deleteOpts = (payload: object) => {
+  const opts = {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  };
+  const loginInfo = getLoginInfo();
+  if (loginInfo.jwt) {
+    opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
+  }
+  return opts;
+};
 
 // Records
 export const fetchRecords = async (query: string): Promise<apitype.RecordsResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/records?${query}`, getOpts).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/records?${query}`, getOpts()).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to fetch records');
     }
@@ -77,7 +106,7 @@ export const deleteRecord = async (
 
 // Categories
 export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/categories`, getOpts).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/categories`, getOpts()).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to fetch categories');
     }
@@ -109,7 +138,7 @@ export const updateCategory = async (
 
 // Payment Methods
 export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods`, getOpts).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods`, getOpts()).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to fetch payment methods');
     }
@@ -143,7 +172,7 @@ export const updatePaymentMethod = async (
 export const fetchInvoiceRecords = async (
   query: string
 ): Promise<apitype.InvoiceRecordsResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records?${query}`, getOpts).then((res) => {
+  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records?${query}`, getOpts()).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to fetch invoice records');
     }

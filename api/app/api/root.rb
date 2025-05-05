@@ -11,6 +11,7 @@ module API
 
       def request_bearer
         bearer = authorization_header&.gsub("Bearer ", "")
+        puts bearer
         return bearer unless bearer.blank?
 
         Constants::EXAMPLE_USER_UID

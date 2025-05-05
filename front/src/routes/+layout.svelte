@@ -15,12 +15,10 @@
   const loginHandler = async () => {
     await signInWithGoogle();
     user = getLoginInfo();
-    console.log('user', user);
   };
 
   onMount(() => {
     user = getLoginInfo();
-    console.log('user', user);
   });
 </script>
 

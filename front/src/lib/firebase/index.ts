@@ -1,0 +1,67 @@
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { showToast } from '$lib/toast';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyBTzYRjcGVQ39dS-Y6lwliLZ8I7f0HbKjQ',
+  authDomain: 'temama-finascope.firebaseapp.com',
+  projectId: 'temama-finascope',
+  storageBucket: 'temama-finascope.firebasestorage.app',
+  messagingSenderId: '207396540319',
+  appId: '1:207396540319:web:df270a6187c4aaecfdb7aa'
+};
+
+let app;
+let firebaseAuth;
+
+import { writable, get } from 'svelte/store';
+export const userJWT = writable<string>('');
+
+export const getLoginInfo = (): { isLoggedIn: boolean; jwt: string } => {
+  const jwt = get(userJWT);
+  if (jwt) {
+    return { isLoggedIn: true, jwt };
+  }
+  return { isLoggedIn: false, jwt: '' };
+};
+
+const getApp = () => {
+  if (!app) {
+    app = initializeApp(firebaseConfig);
+  }
+  return app;
+};
+const getFirebaseAuth = () => {
+  if (!firebaseAuth) {
+    firebaseAuth = getAuth(getApp());
+    firebaseAuth.languageCode = 'it';
+  }
+  return firebaseAuth;
+};
+
+const getUserJWT = async (): string => {
+  try {
+    const user = await getFirebaseAuth().currentUser;
+    if (!user) {
+      return '';
+    }
+    return user.getIdToken();
+  } catch (error) {
+    throw new Error('Error getting user JWT: ' + error);
+  }
+};
+
+export const signInWithGoogle = async () => {
+  let userCred;
+  try {
+    userCred = await signInWithPopup(getFirebaseAuth(), new GoogleAuthProvider());
+    const name = userCred.user.displayName;
+
+    const jwt = await getUserJWT();
+    userJWT.set(jwt);
+
+    showToast(`Login Successful. Welcome ${name}!`, 'success');
+  } catch (error) {
+    console.log('Error signing in with Google', error);
+  }
+};

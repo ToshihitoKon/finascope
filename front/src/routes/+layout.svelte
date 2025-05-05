@@ -1,10 +1,26 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import '../app.css';
   import { Menu, X } from 'lucide-svelte'; // アイコン用
   import { base } from '$app/paths';
   import ToastContainer from '$lib/components/toast-container.svelte';
   let { children } = $props();
   let isOpen = $state(false);
+
+  import { Button } from '$lib/components/ui/button/index.js';
+  import { signInWithGoogle, getLoginInfo } from '$lib/firebase';
+
+  let user = $state({ isLoggedIn: false, jwt: '' });
+  const loginHandler = async () => {
+    await signInWithGoogle();
+    user = await getLoginInfo();
+    console.log('user', user);
+  };
+
+  onMount(async () => {
+    user = await getLoginInfo();
+    console.log('user', user);
+  });
 </script>
 
 <nav class="bg-card text-foreground shadow-md">
@@ -15,6 +31,9 @@
       <a href="{base}/invoice-records" class="hover:text-primary">Invoice Records</a>
       <a href="{base}/view" class="hover:text-primary">Views</a>
       <a href="{base}/config" class="hover:text-primary">Config</a>
+      {#if !user.isLoggedIn}
+        <Button onclick={loginHandler} variant="outline" class="h-8">Login</Button>
+      {/if}
     </div>
     <button class="md:hidden" onclick={() => (isOpen = !isOpen)}>
       {#if isOpen}

@@ -1,4 +1,5 @@
 require "grape"
+require "lib/firebase"
 require_relative "./v1/root"
 
 module API
@@ -10,11 +11,18 @@ module API
       end
 
       def request_bearer
-        bearer = authorization_header&.gsub("Bearer ", "")
-        puts bearer
-        return bearer unless bearer.blank?
+        b = authorization_header&.gsub("Bearer ", "")
+        return Constants::EXAMPLE_USER_UID if b.blank?
 
-        Constants::EXAMPLE_USER_UID
+        b
+      end
+
+      def request_uid
+        jwt = authorization_header&.gsub("Bearer ", "")
+        return Constants::EXAMPLE_USER_UID if jwt.blank?
+
+        payload = Firebase.decode_jwt(jwt)
+        puts payload
       end
     end
 

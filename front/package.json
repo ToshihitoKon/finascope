@@ -47,6 +47,7 @@
     "vite": "^6.3.3"
   },
   "dependencies": {
-    "@tanstack/table-core": "^8.21.3"
+    "@tanstack/table-core": "^8.21.3",
+    "firebase": "^11.6.1"
   }
 }

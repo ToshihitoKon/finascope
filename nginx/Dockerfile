@@ -1,4 +1,4 @@
 FROM nginx:1
 
-COPY conf.d /etc/nginx/conf.d
+COPY files/conf.d /etc/nginx/conf.d
 RUN rm /etc/nginx/conf.d/default.conf

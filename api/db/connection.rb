@@ -1,11 +1,12 @@
 require "active_record"
+require_relative "../envs"
 
 module DB
   class Connection
     def self.establish
       ActiveRecord::Base.establish_connection(
         adapter: "sqlite3",
-        database: File.expand_path("../data/db.dev.sqlite3", __dir__)
+        database: Envs::DB_PATH
       )
     end
   end

@@ -1,4 +1,4 @@
-export const ApiBaseUrl = '/api';
+export const ApiBaseUrl = '/finascope/api';
 
 // api/constants.ts
 export const States = [

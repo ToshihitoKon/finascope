@@ -11,7 +11,8 @@ module API
     class Categories < Grape::API
       resource :categories do
         get do
-          categories_service = Service::Categories.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          categories_service = Service::Categories.new(uid:)
           categories = categories_service.all
           present categories, with: API::Entities::Categories::Category, root: :categories
         end
@@ -21,7 +22,8 @@ module API
             requires :label, type: String, desc: "Category label"
           end
 
-          categories_service = Service::Categories.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          categories_service = Service::Categories.new(uid:)
           category = categories_service.create(label: params[:label])
 
           if category
@@ -40,7 +42,8 @@ module API
             requires :label, type: String, desc: "PaymentMethod label"
           end
 
-          categories_service = Service::Categories.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          categories_service = Service::Categories.new(uid:)
           category = categories_service.update(
             id: params[:id],
             params: {

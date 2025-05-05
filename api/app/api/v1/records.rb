@@ -16,12 +16,12 @@ module API
 
       resource :records do
         get do
-          _i = request_uid # TODO: 使う
           page = params[:page].to_i if params[:page]
           begin_date = Date.parse(params[:begin_date])&.beginning_of_day if params[:begin_date]
           end_date = Date.parse(params[:end_date])&.end_of_day if params[:end_date]
 
-          finance_records_service = Service::FinanceRecords.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          finance_records_service = Service::FinanceRecords.new(uid:)
           records = finance_records_service.get_records(page:, begin_date:, end_date:)
           present records, with: API::Entities::Records::Record, root: :records
         end
@@ -38,7 +38,8 @@ module API
             require :payment_method_id, type: String, desc: "Payment method ID"
           end
 
-          finance_records_service = Service::FinanceRecords.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          finance_records_service = Service::FinanceRecords.new(uid:)
           record = finance_records_service.create(
             title: params[:title],
             record_type_id: params[:type_id],
@@ -74,7 +75,8 @@ module API
             require :payment_method_id, type: String, desc: "Payment method ID"
           end
 
-          finance_records_service = Service::FinanceRecords.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          finance_records_service = Service::FinanceRecords.new(uid:)
           record = finance_records_service.update(
             id: params[:id],
             params: {
@@ -104,7 +106,8 @@ module API
             requires :id, type: String, desc: "PaymentMethod ID"
           end
 
-          finance_records_service = Service::FinanceRecords.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          finance_records_service = Service::FinanceRecords.new(uid:)
           finance_records_service.delete( # NOTE: ダメなら exception が飛んでくる
             id: params[:id]
           )

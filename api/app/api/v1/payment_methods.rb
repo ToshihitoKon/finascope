@@ -11,7 +11,8 @@ module API
     class PaymentMethods < Grape::API
       resource :payment_methods do
         get do
-          payment_methods_service = Service::PaymentMethods.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          payment_methods_service = Service::PaymentMethods.new(uid:)
           payment_methods = payment_methods_service.all
           present payment_methods,
                   with: API::Entities::PaymentMethods::PaymentMethod,
@@ -24,7 +25,8 @@ module API
             requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
           end
 
-          payment_methods_service = Service::PaymentMethods.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          payment_methods_service = Service::PaymentMethods.new(uid:)
           payment_method = payment_methods_service.create(
             label: params[:label],
             withdrawal_day_of_month: params[:withdrawal_day_of_month]
@@ -47,7 +49,8 @@ module API
             requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
           end
 
-          payment_methods_service = Service::PaymentMethods.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          payment_methods_service = Service::PaymentMethods.new(uid:)
           payment_method = payment_methods_service.update(
             id: params[:id],
             params: {

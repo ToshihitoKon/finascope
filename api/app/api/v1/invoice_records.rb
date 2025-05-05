@@ -19,7 +19,8 @@ module API
             month = Date.today.month
           end
 
-          invoice_records_service = Service::InvoiceRecords.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          invoice_records_service = Service::InvoiceRecords.new(uid:)
           records = invoice_records_service.monthly_records(year:, month:)
           res = records.map do |record|
             withdrawal_date = record.dig(:invoice, :withdrawal_date) || record[:calced_withdrawal_date]
@@ -45,7 +46,8 @@ module API
           end
           puts params.inspect
 
-          invoice_records_service = Service::InvoiceRecords.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          invoice_records_service = Service::InvoiceRecords.new(uid:)
           record = invoice_records_service.create(
             amount: params[:amount],
             state_id: params[:state_id],
@@ -71,7 +73,8 @@ module API
             require :withdrawal_date, type: String, desc: "Withdrawal date in ISO8601 format"
           end
 
-          invoice_records_service = Service::InvoiceRecords.new(uid: request_bearer)
+          uid = request_userdata[:uid]
+          invoice_records_service = Service::InvoiceRecords.new(uid:)
           record = invoice_records_service.update(
             id: params[:id],
             params: {
@@ -97,7 +100,8 @@ module API
             requires :id, type: String, desc: "Invoice record ID"
           end
 
-          Service::InvoiceRecords.new(uid: request_bearer).delete( # NOTE: ダメなら exception が飛んでくる
+          uid = request_userdata[:uid]
+          Service::InvoiceRecords.new(uid:).delete( # NOTE: ダメなら exception が飛んでくる
             id: params[:id]
           )
 

@@ -17,12 +17,15 @@ module API
         b
       end
 
-      def request_uid
+      def request_userdata
         jwt = authorization_header&.gsub("Bearer ", "")
-        return Constants::EXAMPLE_USER_UID if jwt.blank?
+        return { uid: Constants::EXAMPLE_USER_UID } if jwt.blank?
 
-        payload = Firebase.decode_jwt(jwt)
-        puts payload
+        begin
+          Firebase.decode_jwt(jwt)
+        rescue JWT::DecodeError
+          error!({ error: "failed to validate JWT", status: 401 }, 401)
+        end
       end
     end
 

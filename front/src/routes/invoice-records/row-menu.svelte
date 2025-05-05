@@ -79,6 +79,17 @@
       label: i.label
     })
   );
+
+  const deleteRecord = async () => {
+    try {
+      const res = await api.deleteInvoiceRecord({ id: record.id });
+      showToast(JSON.stringify(res), 'success');
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error occurred while sending data', 'error');
+      return;
+    }
+  };
 </script>
 
 <Popover.Root>
@@ -112,6 +123,25 @@
                 }}>更新</Button
               >
             </div>
+          </div>
+        </Dialog.Content>
+      </Dialog.Root>
+      <Dialog.Root>
+        <Dialog.Trigger
+          class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
+        >
+          <span>Delete</span>
+        </Dialog.Trigger>
+        <Dialog.Content class="max-h-[80%] w-fit max-w-[90%] overflow-y-auto">
+          <div class="m-4 grid gap-4 sm:max-w-sm">
+            <!-- あまりにもなのでなんか良いタイトルが必要 -->
+            <span>Delete {record.withdrawal_date} ?</span>
+            <Button
+              variant="destructive"
+              onclick={() => {
+                deleteRecord();
+              }}>Delete</Button
+            >
           </div>
         </Dialog.Content>
       </Dialog.Root>

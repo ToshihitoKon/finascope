@@ -5,7 +5,7 @@
   import { showToast } from '$lib/toast';
 
   // api/*
-  // import * as api from '$lib/api/v1/mock';
+  import * as _mock from '$lib/api/v1/mock';
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 

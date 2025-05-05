@@ -65,24 +65,6 @@ module API
           resp = { status:, id: payment_method&.id }
           present resp, with: API::Entities::CommonResponse
         end
-
-        # delete ":id" do
-        #   params do
-        #     requires :id, type: String, desc: "PaymentMethod ID"
-        #   end
-        #
-        #   payment_methods_service = Service::PaymentMethods.new(uid: request_bearer)
-        #   payment_method = payment_methods_service.delete(id: params[:id])
-        #
-        #   if payment_method.present?
-        #     status = "success"
-        #   else
-        #     status = "failed"
-        #     status 422
-        #   end
-        #   resp = { status:, id: payment_method&.id }
-        #   present resp, with: API::Entities::CommonResponse
-        # end
       end
     end
   end

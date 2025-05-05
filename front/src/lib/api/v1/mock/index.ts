@@ -93,6 +93,13 @@ export const updateCategory = async (
   return { status: 'success', id: 'dummy' };
 };
 
+// export const deleteCategory = async (
+//   req: apitype.CommonIdRequest
+// ): Promise<apitype.CommonResponse> => {
+//   console.log('mock: deleteRecord.', req);
+//   return { status: 'success', id: 'dummy' };
+// };
+
 // Payment Methods
 export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
   console.log('mock: fetchPaymentMethods.');
@@ -123,6 +130,13 @@ export const updatePaymentMethod = async (
   return { status: 'success', id: 'dummy' };
 };
 
+// export const deletePaymentMethod = async (
+//   req: apitype.CommonIdRequest
+// ): Promise<apitype.CommonResponse> => {
+//   console.log('mock: deleteRecord.', req);
+//   return { status: 'success', id: 'dummy' };
+// };
+
 // Invoice Records
 export const fetchInvoiceRecords = async (): Promise<apitype.InvoiceRecordsResponse> => {
   console.log('mock: fetchInvoiceRecords.');
@@ -140,5 +154,12 @@ export const updateInvoiceRecord = async (
   req: apitype.UpdateInvoiceRecordRequest
 ): Promise<apitype.CommonResponse> => {
   console.log('mock: updateInvoiceRecord.', req);
+  return { status: 'success', id: 'dummy' };
+};
+
+export const deleteInvoiceRecord = async (
+  req: apitype.CommonIdRequest
+): Promise<apitype.CommonResponse> => {
+  console.log('mock: deleteRecord.', req);
   return { status: 'success', id: 'dummy' };
 };

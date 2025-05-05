@@ -172,3 +172,14 @@ export const updateInvoiceRecord = async (
     return res?.json();
   });
 };
+
+export const deleteInvoiceRecord = async (
+  req: apitype.CommonIdRequest
+): Promise<apitype.CommonResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records/${req.id}`, deleteOpts()).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to delete invoice record');
+    }
+    return res?.json();
+  });
+};

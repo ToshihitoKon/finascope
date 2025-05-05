@@ -136,6 +136,12 @@ module DB
 
         raise Exceptions::InternalServerError.exception("failed to record update #{id}")
       end
+
+      def self.delete(id:)
+        return if model.soft_delete(where_clause: { id: }) > 0
+
+        raise Exceptions::InternalServerError.exception("failed to delete invoice record #{id}")
+      end
     end
   end
 end

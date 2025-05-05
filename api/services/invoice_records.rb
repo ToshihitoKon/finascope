@@ -34,6 +34,10 @@ module Service
       DB::Repository::InvoiceRecord.update(id:, params: params_dto)
     end
 
+    def delete(id:)
+      DB::Repository::InvoiceRecord.delete(id:)
+    end
+
     def monthly_records(year: nil, month: nil)
       # TODO: return all payment methods
       year ||= Date.today.year

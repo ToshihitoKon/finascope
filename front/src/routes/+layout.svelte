@@ -13,12 +13,12 @@
   let user = $state({ isLoggedIn: false, jwt: '' });
   const loginHandler = async () => {
     await signInWithGoogle();
-    user = await getLoginInfo();
+    user = getLoginInfo();
     console.log('user', user);
   };
 
-  onMount(async () => {
-    user = await getLoginInfo();
+  onMount(() => {
+    user = getLoginInfo();
     console.log('user', user);
   });
 </script>

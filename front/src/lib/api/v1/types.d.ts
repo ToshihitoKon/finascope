@@ -1,9 +1,13 @@
 // Common
+export interface CommonIdRequest {
+  id: string;
+}
 
 export interface CommonResponse {
   id: string;
   status: string;
 }
+
 // Records
 export interface Record {
   id: string;

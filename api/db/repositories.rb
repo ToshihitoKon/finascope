@@ -16,7 +16,7 @@ module DB
         page: 1, per_page: 50, sort: { created_at: :asc }
       )
         records = model.eager_load(:category, :payment_method)
-                       .where(date: begin_date..end_date, hashed_user_id:)
+                       .where(deleted_at: nil, date: begin_date..end_date, hashed_user_id:)
                        .order(sort).page(page).per(per_page)
         records.map do |record|
           model.to_dto(record).to_h.merge(
@@ -38,6 +38,12 @@ module DB
 
         raise Exceptions::InternalServerError.exception("failed to record update #{id}")
       end
+
+      def self.delete(id:)
+        return if model.soft_delete(where_clause: { id: }) > 0
+
+        raise Exceptions::InternalServerError.exception("failed to record delete #{id}")
+      end
     end
 
     class Category
@@ -47,7 +53,7 @@ module DB
       private_class_method :model
 
       def self.all(hashed_user_id:)
-        model.where(hashed_user_id:).map do |record|
+        model.where(deleted_at: nil, hashed_user_id:).map do |record|
           model.to_dto(record).to_h
         end
       end
@@ -71,11 +77,11 @@ module DB
       private_class_method :model
 
       def self.get(id:)
-        model.where(id:).first
+        model.where(deleted_at: nil, id:).first
       end
 
       def self.all(hashed_user_id:)
-        model.where(hashed_user_id:).map do |record|
+        model.where(deleted_at: nil, hashed_user_id:).map do |record|
           model.to_dto(record).to_h
         end
       end
@@ -99,7 +105,7 @@ module DB
       private_class_method :model
 
       def self.all(hashed_user_id:)
-        model.where(hashed_user_id:).map do |record|
+        model.where(deleted_at: nil, hashed_user_id:).map do |record|
           model.to_dto(record).to_h
         end
       end
@@ -107,6 +113,7 @@ module DB
       def self.monthly_records(hashed_user_id:, year:, month:)
         records = model.eager_load(:payment_method)
                        .where(
+                         deleted_at: nil,
                          hashed_user_id:,
                          withdrawal_date: Date.new(year, month)...Date.new(year, month).end_of_month
                        )

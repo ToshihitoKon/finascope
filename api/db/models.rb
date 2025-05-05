@@ -26,6 +26,7 @@ module DB
         t_def.date :date, null: false
         t_def.string :encrypted_description, null: true
 
+        t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
       end
 
@@ -45,6 +46,7 @@ module DB
         t_def.string :hashed_user_id, null: false
         t_def.string :encrypted_label, null: false
 
+        t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
       end
     end
@@ -64,6 +66,7 @@ module DB
         # 0: none, -1: last day of month
         t_def.integer :withdrawal_day_of_month, null: false
 
+        t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
       end
     end
@@ -81,6 +84,7 @@ module DB
         t_def.date :withdrawal_date, null: false
         t_def.integer :amount, null: false
 
+        t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
         # TODO: payment_method_id_withdrawal_day_index UNIQUE
       end
@@ -94,6 +98,7 @@ module DB
         t_def.string :hashed_id, null: false, primary_key: true # Hashed UID with UserInformation salt
         t_def.string :username, null: false
 
+        t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
       end
     end
@@ -108,6 +113,7 @@ module DB
       def self.define_table_schema(t_def)
         t_def.string :hashed_id, null: false, primary_key: true # Hashed UID with Users salt
 
+        t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
       end
     end

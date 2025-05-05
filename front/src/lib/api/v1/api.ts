@@ -24,6 +24,14 @@ const putOpts = (payload: object) => ({
   body: JSON.stringify(payload)
 });
 
+const deleteOpts = (payload: object) => ({
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(payload)
+});
+
 // Records
 export const fetchRecords = async (query: string): Promise<apitype.RecordsResponse> => {
   return fetch(`${consts.ApiBaseUrl}/v1/records?${query}`, getOpts).then((res) => {
@@ -51,6 +59,17 @@ export const updateRecord = async (
   return fetch(`${consts.ApiBaseUrl}/v1/records/${req.id}`, putOpts(req)).then((res) => {
     if (!res.ok) {
       throw new Error('Failed to update record');
+    }
+    return res?.json();
+  });
+};
+
+export const deleteRecord = async (
+  req: apitype.CommonIdRequest
+): Promise<apitype.CommonResponse> => {
+  return fetch(`${consts.ApiBaseUrl}/v1/records/${req.id}`, deleteOpts()).then((res) => {
+    if (!res.ok) {
+      throw new Error('Failed to delete record');
     }
     return res?.json();
   });

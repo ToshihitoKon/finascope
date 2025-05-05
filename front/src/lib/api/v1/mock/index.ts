@@ -56,6 +56,13 @@ export const updateRecord = async (
   return { status: 'success', id: 'dummy' };
 };
 
+export const deleteRecord = async (
+  req: apitype.CommonIdRequest
+): Promise<apitype.CommonResponse> => {
+  console.log('mock: deleteRecord.', req);
+  return { status: 'success', id: 'dummy' };
+};
+
 // Categories
 export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => {
   return {

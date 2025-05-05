@@ -7,6 +7,13 @@ module DB
     class BaseWrapper < ActiveRecord::Base
       self.abstract_class = true
 
+      # soft_delete
+      # @return deleted record num
+      def self.soft_delete(where_clause:)
+        records = where(where_clause)
+        records.update_all(deleted_at: Time.current)
+      end
+
       def self.dto
         return const_get("DTO") if const_defined?("DTO")
 
@@ -20,7 +27,7 @@ module DB
             # TODO: NOT NULL だけコレにする
             is_valid = true
             members.each do |m|
-              next if [:created_at, :updated_at].include?(m)
+              next if [:created_at, :updated_at, :deleted_at].include?(m)
 
               if self[m].nil?
                 is_valid = false

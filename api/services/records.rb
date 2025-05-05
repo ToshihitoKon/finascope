@@ -58,5 +58,9 @@ module Service
 
       DB::Repository::FinanceRecord.update(id:, params: params_dto)
     end
+
+    def delete(id:)
+      DB::Repository::FinanceRecord.delete(id:)
+    end
   end
 end

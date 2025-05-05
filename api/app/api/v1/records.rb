@@ -97,6 +97,21 @@ module API
           resp = { status:, id: record&.id }
           present resp, with: API::Entities::CommonResponse
         end
+
+        delete ":id" do
+          params do
+            requires :id, type: String, desc: "PaymentMethod ID"
+          end
+
+          finance_records_service = Service::FinanceRecords.new(uid: request_bearer)
+          finance_records_service.delete( # NOTE: ダメなら exception が飛んでくる
+            id: params[:id]
+          )
+
+          status = "success"
+          resp = { status:, id: params[:id] }
+          present resp, with: API::Entities::CommonResponse
+        end
       end
     end
   end

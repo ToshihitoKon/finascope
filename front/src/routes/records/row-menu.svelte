@@ -6,7 +6,7 @@
   import { showToast } from '$lib/toast';
 
   // api/*
-  // import * as mock from '$lib/api/v1/mock';
+  import * as _mock from '$lib/api/v1/mock';
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
   import { parseDate } from '@internationalized/date';
@@ -91,6 +91,18 @@
       return;
     }
   };
+
+  const deleteRecord = async () => {
+    try {
+      const res = await api.deleteRecord({ id: record.id });
+      showToast(JSON.stringify(res), 'success');
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error occurred while sending data', 'error');
+      return;
+    }
+  };
+
   import * as Dialog from '$lib/components/ui/dialog/index.js';
   import { buttonVariants } from '$lib/components/ui/button/index.js';
   import * as Popover from '$lib/components/ui/popover/index.js';
@@ -179,6 +191,24 @@
                 >{payload()}
               </textarea>
             </div>
+          </div>
+        </Dialog.Content>
+      </Dialog.Root>
+      <Dialog.Root>
+        <Dialog.Trigger
+          class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
+        >
+          <span>Delete</span>
+        </Dialog.Trigger>
+        <Dialog.Content class="max-h-[80%] w-fit max-w-[90%] overflow-y-auto">
+          <div class="m-4 grid gap-4 sm:max-w-sm">
+            <span>Delete {record.title} ?</span>
+            <Button
+              variant="destructive"
+              onclick={() => {
+                deleteRecord();
+              }}>Delete</Button
+            >
           </div>
         </Dialog.Content>
       </Dialog.Root>

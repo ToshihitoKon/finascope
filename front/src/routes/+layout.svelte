@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import '../app.css';
-  import { Menu, X } from 'lucide-svelte'; // アイコン用
+  import Menu from 'lucide-svelte/icons/menu';
+  import X from 'lucide-svelte/icons/x';
   import { base } from '$app/paths';
   import ToastContainer from '$lib/components/toast-container.svelte';
   let { children } = $props();

@@ -1,6 +1,7 @@
 services:
   api:
     container_name: api
+    restart: unless-stopped
     build:
       context: ./api
       dockerfile: Dockerfile

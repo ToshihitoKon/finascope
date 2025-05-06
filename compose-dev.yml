@@ -27,7 +27,7 @@ services:
     volumes:
       - ./api:/app
       - ./db:/var/finascope/db
-      - ./bundle_cache:/var/bundle_cache
+      - bundle_cache:/var/bundle_cache
     environment:
       - FS_SQLITE_FILE=/var/finascope/db/finascope.sqlite3
       - BUNDLE_PATH=/var/bundle_cache
@@ -48,3 +48,5 @@ services:
     volumes:
       - ./front:/app
       - /app/node_modules
+volumes:
+  bundle_cache:

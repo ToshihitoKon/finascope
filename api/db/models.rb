@@ -1,6 +1,6 @@
 require "active_record"
 
-require_relative "./BaseWrapper"
+require_relative "./basewrapper"
 require_relative "./utils"
 
 # NOTE: Relationship definitions document

@@ -1,6 +1,14 @@
 $LOAD_PATH.unshift(File.expand_path("./lib", __dir__))
 
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "activerecord"
+  gem "sqlite3"
+end
 require "active_record"
+
 require_relative "../db/connection"
 require_relative "../db/models"
 

@@ -16,3 +16,5 @@ services:
       - ./db:/var/finascope/db
     environment:
       - FS_SQLITE_FILE=/var/finascope/db/finascope.sqlite3
+    ports:
+      - "9292:9292"

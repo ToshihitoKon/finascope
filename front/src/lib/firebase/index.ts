@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { toast } from 'svelte-sonner';
+import { writable, get } from 'svelte/store';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBTzYRjcGVQ39dS-Y6lwliLZ8I7f0HbKjQ',
@@ -14,9 +15,10 @@ const firebaseConfig = {
 let app;
 let firebaseAuth;
 
-import { writable, get } from 'svelte/store';
 export const userJWT = writable<string>('');
-
+export const revokeLogin = () => {
+  userJWT.set('');
+};
 export const getLoginInfo = (): { isLoggedIn: boolean; jwt: string } => {
   const jwt = get(userJWT);
   if (jwt) {

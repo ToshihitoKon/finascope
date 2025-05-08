@@ -23,8 +23,9 @@ module API
 
         begin
           Firebase.decode_jwt(jwt)
-        rescue JWT::DecodeError
-          error!({ error: "failed to validate JWT", status: 401 }, 401)
+        rescue StandardError => e
+          puts e.inspect
+          error!({ error: "Invalid JWT", status: 401 }, 401)
         end
       end
     end

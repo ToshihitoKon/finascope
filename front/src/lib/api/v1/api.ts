@@ -1,6 +1,6 @@
 import type * as apitype from './types';
 import * as consts from './const';
-import { getLoginInfo } from '$lib/firebase';
+import { getLoginInfo, revokeLogin } from '$lib/firebase';
 import { toast } from 'svelte-sonner';
 
 const apiBase = async (url: string, method: string, payload: object) => {
@@ -21,6 +21,11 @@ const apiBase = async (url: string, method: string, payload: object) => {
     }
 
     const res = await fetch(`${consts.ApiBaseUrl}/${url}`, opts);
+    if (res.status === 401) {
+      toast.error('Session expired, please login again');
+      revokeLogin();
+      return;
+    }
     if (!res.ok) {
       throw new Error('Failed to fetch data');
     }

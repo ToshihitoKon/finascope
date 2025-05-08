@@ -4,7 +4,8 @@
   import Menu from 'lucide-svelte/icons/menu';
   import X from 'lucide-svelte/icons/x';
   import { base } from '$app/paths';
-  import ToastContainer from '$lib/components/toast-container.svelte';
+  import { Toaster } from '$lib/components/ui/sonner/index.js';
+
   let { children } = $props();
   let isOpen = $state(false);
 
@@ -68,7 +69,7 @@
     </div>
   {/if}
 </nav>
-<ToastContainer />
+<Toaster richColors closeButton />
 <div class="container mx-auto px-4 py-6">
   {@render children()}
 </div>

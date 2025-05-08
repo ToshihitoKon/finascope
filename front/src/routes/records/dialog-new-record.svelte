@@ -4,7 +4,7 @@
   import { Input } from '$lib/components/ui/input/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
   import { Button } from '$lib/components/ui/button/index.js';
-  import { showToast } from '$lib/toast';
+  import { toast } from 'svelte-sonner';
 
   // components/*
   import SegmentControl from '$lib/components/segment-control.svelte';
@@ -54,10 +54,10 @@
   const createRecord = async () => {
     try {
       const res = await api.createRecord(payloadFormatter());
-      showToast(JSON.stringify(res), 'success');
+      toast.success(JSON.stringify(res));
     } catch (error) {
       console.error('Error:', error);
-      showToast('Error occurred while sending data', 'error');
+      toast.error('Error occurred while sending data');
       return;
     }
   };

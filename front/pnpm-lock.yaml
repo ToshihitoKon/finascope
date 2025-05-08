@@ -69,6 +69,9 @@ importers:
       lucide-svelte:
         specifier: ^0.475.0
         version: 0.475.0(svelte@5.28.2)
+      mode-watcher:
+        specifier: ^1.0.6
+        version: 1.0.6(svelte@5.28.2)
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
@@ -84,6 +87,9 @@ importers:
       svelte-check:
         specifier: ^4.1.6
         version: 4.1.6(picomatch@4.0.2)(svelte@5.28.2)(typescript@5.8.3)
+      svelte-sonner:
+        specifier: ^0.3.28
+        version: 0.3.28(svelte@5.28.2)
       tailwind-merge:
         specifier: ^3.2.0
         version: 3.2.0
@@ -1381,6 +1387,11 @@ packages:
     resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
     engines: {node: '>=16 || 14 >=14.17'}
 
+  mode-watcher@1.0.6:
+    resolution: {integrity: sha512-6bG6KfPPaZoaw523rLR3z8dlCK/dskIBv7z7qdRPizD5b5BDYyCCLQ33FSCRTd7Ai3i7FWIBuXCZaF5IVVC3GQ==}
+    peerDependencies:
+      svelte: ^5.27.0
+
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -1666,6 +1677,11 @@ packages:
     peerDependencies:
       svelte: ^5.7.0
 
+  runed@0.25.0:
+    resolution: {integrity: sha512-7+ma4AG9FT2sWQEA0Egf6mb7PBT2vHyuHail1ie8ropfSjvZGtEAx8YTmUjv/APCsdRRxEVvArNjALk9zFSOrg==}
+    peerDependencies:
+      svelte: ^5.7.0
+
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
@@ -1753,6 +1769,11 @@ packages:
     peerDependenciesMeta:
       svelte:
         optional: true
+
+  svelte-sonner@0.3.28:
+    resolution: {integrity: sha512-K3AmlySeFifF/cKgsYNv5uXqMVNln0NBAacOYgmkQStLa/UoU0LhfAACU6Gr+YYC8bOCHdVmFNoKuDbMEsppJg==}
+    peerDependencies:
+      svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
 
   svelte-toolbelt@0.7.1:
     resolution: {integrity: sha512-HcBOcR17Vx9bjaOceUvxkY3nGmbBmCBBbuWLLEWO6jtmWH8f/QoWmbyUfQZrpDINH39en1b8mptfPQT9VKQ1xQ==}
@@ -3284,6 +3305,12 @@ snapshots:
 
   minipass@7.1.2: {}
 
+  mode-watcher@1.0.6(svelte@5.28.2):
+    dependencies:
+      runed: 0.25.0(svelte@5.28.2)
+      svelte: 5.28.2
+      svelte-toolbelt: 0.7.1(svelte@5.28.2)
+
   mri@1.2.0: {}
 
   mrmime@2.0.1: {}
@@ -3502,6 +3529,11 @@ snapshots:
       esm-env: 1.2.2
       svelte: 5.28.2
 
+  runed@0.25.0(svelte@5.28.2):
+    dependencies:
+      esm-env: 1.2.2
+      svelte: 5.28.2
+
   sade@1.8.1:
     dependencies:
       mri: 1.2.0
@@ -3590,6 +3622,10 @@ snapshots:
       postcss: 8.5.3
       postcss-scss: 4.0.9(postcss@8.5.3)
     optionalDependencies:
+      svelte: 5.28.2
+
+  svelte-sonner@0.3.28(svelte@5.28.2):
+    dependencies:
       svelte: 5.28.2
 
   svelte-toolbelt@0.7.1(svelte@5.28.2):

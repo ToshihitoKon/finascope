@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { showToast } from '$lib/toast';
+import { toast } from 'svelte-sonner';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBTzYRjcGVQ39dS-Y6lwliLZ8I7f0HbKjQ',
@@ -60,8 +60,9 @@ export const signInWithGoogle = async () => {
     const jwt = await getUserJWT();
     userJWT.set(jwt);
 
-    showToast(`Login Successful. Welcome ${name}!`, 'success');
+    toast.success(`Login Successful. Welcome ${name}!`);
   } catch (error) {
     console.log('Error signing in with Google', error);
+    toast.error('Error signing in with Google');
   }
 };

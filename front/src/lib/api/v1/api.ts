@@ -1,214 +1,113 @@
 import type * as apitype from './types';
 import * as consts from './const';
 import { getLoginInfo } from '$lib/firebase';
+import { toast } from 'svelte-sonner';
 
-const getOpts = () => {
+const apiBase = async (url: string, method: string, payload: object) => {
   const opts = {
-    method: 'GET',
+    method: method,
     headers: {
       'Content-Type': 'application/json'
     }
   };
-  const loginInfo = getLoginInfo();
-  if (loginInfo.jwt) {
-    opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
+  if (method !== 'GET' && payload) {
+    opts.body = JSON.stringify(payload);
   }
-  return opts;
-};
 
-const postOpts = (payload: object) => {
-  const opts = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  };
-  const loginInfo = getLoginInfo();
-  if (loginInfo.jwt) {
-    opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
-  }
-  return opts;
-};
+  try {
+    const loginInfo = getLoginInfo();
+    if (loginInfo.jwt) {
+      opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
+    }
 
-const putOpts = (payload: object) => {
-  const opts = {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  };
-  const loginInfo = getLoginInfo();
-  if (loginInfo.jwt) {
-    opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
-  }
-  return opts;
-};
-
-const deleteOpts = (payload: object) => {
-  const opts = {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  };
-  const loginInfo = getLoginInfo();
-  if (loginInfo.jwt) {
-    opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
-  }
-  return opts;
-};
-
-// Records
-export const fetchRecords = async (query: string): Promise<apitype.RecordsResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/records?${query}`, getOpts()).then((res) => {
+    const res = await fetch(`${consts.ApiBaseUrl}/${url}`, opts);
     if (!res.ok) {
-      throw new Error('Failed to fetch records');
+      throw new Error('Failed to fetch data');
     }
-    return res?.json();
-  });
+    return res.json();
+  } catch (error) {
+    toast.error('Failed to request API ' + url);
+    throw error;
+  }
+};
+
+export const fetchRecords = async (query: string): Promise<apitype.RecordsResponse> => {
+  return apiBase(`v1/records?${query}`, 'GET', {});
 };
 
 export const createRecord = async (
-  record: apitype.CreateRecordRequest
+  req: apitype.CreateRecordRequest
 ): Promise<apitype.CreateRecordResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/records`, postOpts(record)).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to create record');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/records`, 'POST', req);
 };
 
 export const updateRecord = async (
   req: apitype.UpdateRecordRequest
 ): Promise<apitype.UpdateRecordResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/records/${req.id}`, putOpts(req)).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to update record');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/records/${req.id}`, 'PUT', req);
 };
 
 export const deleteRecord = async (
   req: apitype.CommonIdRequest
 ): Promise<apitype.CommonResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/records/${req.id}`, deleteOpts()).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to delete record');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/records/${req.id}`, 'DELETE', {});
 };
 
 // Categories
 export const fetchCategories = async (): Promise<apitype.CategoriesResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/categories`, getOpts()).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to fetch categories');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/categories`, 'GET', {});
 };
 
 export const createCategory = async (
   req: apitype.CreateCategoryRequest
 ): Promise<apitype.CreateCategoryResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/categories`, postOpts(req)).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to create category');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/categories`, 'POST', req);
 };
 
 export const updateCategory = async (
   req: apitype.UpdateCategoryRequest
 ): Promise<apitype.UpdateCategoryResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/categories/${req.id}`, putOpts(req)).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to update category');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/categories/${req.id}`, 'PUT', req);
 };
 
 // Payment Methods
 export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods`, getOpts()).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to fetch payment methods');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/payment_methods`, 'GET', {});
 };
 
 export const createPaymentMethod = async (
   req: apitype.CreatePaymentMethodRequest
 ): Promise<apitype.PutPaymentMethodResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods`, postOpts(req)).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to put payment method');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/payment_methods`, 'POST', req);
 };
 
 export const updatePaymentMethod = async (
   req: apitype.UpdateCategoryRequest
 ): Promise<apitype.UpdateCategoryResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/payment_methods/${req.id}`, putOpts(req)).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to update payment method');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/payment_methods/${req.id}`, 'PUT', req);
 };
 
 // Invoice Records
 export const fetchInvoiceRecords = async (
   query: string
 ): Promise<apitype.InvoiceRecordsResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records?${query}`, getOpts()).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to fetch invoice records');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/invoice_records?${query}`, 'GET', {});
 };
 
 export const createInvoiceRecord = async (
   req: apitype.CreateInvoiceRecordRequest
 ): Promise<apitype.CommonResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records`, postOpts(req)).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to create invoice_records');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/invoice_records`, 'POST', req);
 };
 
 export const updateInvoiceRecord = async (
   req: apitype.UpdateInvoiceRecordRequest
 ): Promise<apitype.CommonResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records/${req.id}`, putOpts(req)).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to update invoice_records');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/invoice_records/${req.id}`, 'PUT', req);
 };
 
 export const deleteInvoiceRecord = async (
   req: apitype.CommonIdRequest
 ): Promise<apitype.CommonResponse> => {
-  return fetch(`${consts.ApiBaseUrl}/v1/invoice_records/${req.id}`, deleteOpts()).then((res) => {
-    if (!res.ok) {
-      throw new Error('Failed to delete invoice record');
-    }
-    return res?.json();
-  });
+  return apiBase(`v1/invoice_records/${req.id}`, 'DELETE', {});
 };

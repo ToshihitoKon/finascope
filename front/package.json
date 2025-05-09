@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@tanstack/table-core": "^8.21.3",
-    "firebase": "^11.6.1"
+    "firebase": "^11.6.1",
+    "svelte-persisted-store": "^0.12.0"
   }
 }

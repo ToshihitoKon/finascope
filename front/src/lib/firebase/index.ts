@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { toast } from 'svelte-sonner';
-import { writable, get } from 'svelte/store';
+import { get } from 'svelte/store';
+import { persisted } from 'svelte-persisted-store';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBTzYRjcGVQ39dS-Y6lwliLZ8I7f0HbKjQ',
@@ -14,11 +15,15 @@ const firebaseConfig = {
 
 let app;
 let firebaseAuth;
+const USER_JWT_KEY = 'fs-firebase-jwt';
 
-export const userJWT = writable<string>('');
+// Initialize
+export const userJWT = persisted(USER_JWT_KEY, '');
+
 export const revokeLogin = () => {
   userJWT.set('');
 };
+
 export const getLoginInfo = (): { isLoggedIn: boolean; jwt: string } => {
   const jwt = get(userJWT);
   if (jwt) {

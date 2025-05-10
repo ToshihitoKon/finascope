@@ -15,7 +15,9 @@
     label: '',
     withdrawal_day_of_month: ''
   });
-  let isValid = $derived<boolean>(Boolean(formData.label && formData.withdrawal_day_of_month));
+  let isValid = $derived<boolean>(
+    Boolean(formData.label && Number(formData.withdrawal_day_of_month) >= 0)
+  );
 
   const payloadFormatter = (): apitype.CreatePaymentMethodRequest => {
     return {

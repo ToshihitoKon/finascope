@@ -55,6 +55,11 @@
   {#if isOpen}
     <div class="animate-fade-in border-t border-border bg-card md:hidden">
       <div class="container mx-auto flex flex-col space-y-4 p-4">
+        {#if !hideLoginButton}
+          <Button onclick={loginHandler} variant="outline" class="h-8">Login</Button>
+        {:else}
+          <Button onclick={logoutHandler} variant="outline" class="h-8">Logout</Button>
+        {/if}
         <a href="{base}/" class="hover:text-primary" onclick={() => (isOpen = false)}> Home </a>
         <a href="{base}/records" class="hover:text-primary" onclick={() => (isOpen = false)}>
           Records

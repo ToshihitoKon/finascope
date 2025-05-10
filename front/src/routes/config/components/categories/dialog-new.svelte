@@ -14,6 +14,7 @@
   let formData = $state({
     label: ''
   });
+  let isValid = $derived<boolean>(Boolean(formData.label));
 
   const payloadFormatter = (): apitype.CreateCategoryRequest => {
     return {
@@ -40,6 +41,7 @@
   </div>
   <div class="flex flex-col gap-1">
     <Button
+      disabled={!isValid}
       onclick={async () => {
         await createRecord();
         close();

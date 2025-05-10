@@ -25,6 +25,7 @@
     label: label,
     withdrawal_day_of_month: withdrawal_day_of_month
   });
+  let isValid = $derived<boolean>(Boolean(formData.label && formData.withdrawal_day_of_month));
 
   const payloadFormatter = (): apitype.UpdatePaymentMethodRequest => {
     return {
@@ -82,6 +83,7 @@
             </div>
             <div class="flex flex-col gap-1">
               <Button
+                disabled={!isValid}
                 onclick={async () => {
                   await updateRecord();
                   dialogClose();

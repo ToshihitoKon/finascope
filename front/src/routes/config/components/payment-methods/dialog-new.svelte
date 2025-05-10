@@ -15,6 +15,7 @@
     label: '',
     withdrawal_day_of_month: ''
   });
+  let isValid = $derived<boolean>(Boolean(formData.label && formData.withdrawal_day_of_month));
 
   const payloadFormatter = (): apitype.CreatePaymentMethodRequest => {
     return {
@@ -22,7 +23,6 @@
       withdrawal_day_of_month: Number(formData.withdrawal_day_of_month)
     };
   };
-  const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
 
   const createRecord = async () => {
     try {
@@ -52,6 +52,7 @@
   </div>
   <div class="flex flex-col gap-1">
     <Button
+      disabled={!isValid}
       onclick={async () => {
         await createRecord();
         close();
@@ -59,15 +60,5 @@
     >
       送信
     </Button>
-  </div>
-
-  <div class="flex flex-col gap-1">
-    <Label for="preview">preview</Label>
-    <textarea
-      id="preview"
-      class="mt-2 h-32 w-full rounded-md border border-gray-300 p-2"
-      placeholder="rendered"
-      >{payload()}
-    </textarea>
   </div>
 </div>

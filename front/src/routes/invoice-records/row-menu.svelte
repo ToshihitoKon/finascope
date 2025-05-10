@@ -29,6 +29,9 @@
     amount: record.amount,
     withdrawal_date: parseDate(record.withdrawal_date)
   });
+  let isValid = $derived<boolean>(
+    Boolean(formData.state && formData.amount && formData.withdrawal_date)
+  );
 
   const createPayloadFormatter = (): apitype.CreateInvoiceRecordRequest => {
     return {
@@ -125,6 +128,7 @@
             </div>
             <div class="flex flex-col gap-1">
               <Button
+                disabled={!isValid}
                 onclick={async () => {
                   await updateRecord();
                   dialogClose();

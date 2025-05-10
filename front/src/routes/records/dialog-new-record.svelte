@@ -39,6 +39,16 @@
     description: '',
     date: today('UTC')
   });
+  let isValid = $derived<boolean>(
+    Boolean(
+      formData.title &&
+        formData.recordTypeId &&
+        formData.state &&
+        formData.amount &&
+        formData.category &&
+        formData.paymentMethod
+    )
+  );
 
   const payloadFormatter = (): apitype.CreateRecordRequest => {
     return {
@@ -135,6 +145,7 @@
   </div>
   <div class="flex flex-col gap-1">
     <Button
+      disabled={!isValid}
       onclick={async () => {
         await createRecord();
         close();

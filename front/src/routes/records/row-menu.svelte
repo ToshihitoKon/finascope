@@ -68,6 +68,16 @@
     description: record.description,
     date: parseDate(record.date)
   });
+  let isValid = $derived<boolean>(
+    Boolean(
+      formData.title &&
+        formData.recordType &&
+        formData.state &&
+        formData.amount &&
+        formData.category &&
+        formData.paymentMethod
+    )
+  );
 
   const payloadFormatter = (): apitype.UpdateRecordRequest => {
     return {
@@ -137,7 +147,6 @@
       label: i.label
     })
   );
-  const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
 </script>
 
 <Popover.Root>
@@ -186,20 +195,12 @@
             </div>
             <div class="flex flex-col gap-1">
               <Button
+                disabled={!isValid}
                 onclick={async () => {
                   await updateRecord();
                   dialogClose();
                 }}>更新</Button
               >
-            </div>
-            <div class="flex flex-col gap-1">
-              <Label for="preview">preview</Label>
-              <textarea
-                id="preview"
-                class="mt-2 h-32 w-full rounded-md border border-gray-300 p-2"
-                placeholder="rendered"
-                >{payload()}
-              </textarea>
             </div>
           </div>
         </Dialog.Content>

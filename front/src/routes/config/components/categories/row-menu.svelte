@@ -13,6 +13,7 @@
   let formData = $state({
     label: label
   });
+  let isValid = $derived<boolean>(Boolean(formData.label));
 
   const payloadFormatter = (): apitype.UpdateCategoryRequest => {
     return {
@@ -60,6 +61,7 @@
             </div>
             <div class="flex flex-col gap-1">
               <Button
+                disabled={!isValid}
                 onclick={async () => {
                   await updateRecord();
                   dialogClose();

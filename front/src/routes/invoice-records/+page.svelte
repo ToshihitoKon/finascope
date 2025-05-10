@@ -93,6 +93,9 @@
             withdrawal_date: row.original.withdrawal_date,
             payment_method_id: row.original.payment_method_id,
             state_id: String(row.original.state_id)
+          },
+          update: () => {
+            fetchRecordsByDate();
           }
         });
       }

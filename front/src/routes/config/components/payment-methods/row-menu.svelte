@@ -12,8 +12,15 @@
   let {
     id,
     label,
-    withdrawal_day_of_month
-  }: { id: string; label: string; withdrawal_day_of_month: string } = $props();
+    withdrawal_day_of_month,
+    update
+  }: {
+    id: string;
+    label: string;
+    withdrawal_day_of_month: string;
+    update: () => void;
+  } = $props();
+
   let formData = $state({
     label: label,
     withdrawal_day_of_month: withdrawal_day_of_month
@@ -41,9 +48,14 @@
   import { buttonVariants } from '$lib/components/ui/button/index.js';
   import * as Popover from '$lib/components/ui/popover/index.js';
   import Ellipsis from '@lucide/svelte/icons/ellipsis';
+  let dialogOpen = $state(false);
+  const dialogClose = () => {
+    dialogOpen = false;
+    update();
+  };
 </script>
 
-<Popover.Root>
+<Popover.Root bind:open={dialogOpen}>
   <Popover.Trigger><Ellipsis class="mx-2" /></Popover.Trigger>
   <Popover.Content class="w-fit">
     <div class="flex flex-col gap-1">
@@ -70,8 +82,9 @@
             </div>
             <div class="flex flex-col gap-1">
               <Button
-                onclick={() => {
-                  updateRecord();
+                onclick={async () => {
+                  await updateRecord();
+                  dialogClose();
                 }}>更新</Button
               >
             </div>

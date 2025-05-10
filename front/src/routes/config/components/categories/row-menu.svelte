@@ -9,7 +9,7 @@
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
-  let { id, label }: { id: string; label: string } = $props();
+  let { id, label, update }: { id: string; label: string; update: () => void } = $props();
   let formData = $state({
     label: label
   });
@@ -35,9 +35,14 @@
   import { buttonVariants } from '$lib/components/ui/button/index.js';
   import * as Popover from '$lib/components/ui/popover/index.js';
   import Ellipsis from '@lucide/svelte/icons/ellipsis';
+  let dialogOpen = $state(false);
+  const dialogClose = () => {
+    dialogOpen = false;
+    update();
+  };
 </script>
 
-<Popover.Root>
+<Popover.Root bind:open={dialogOpen}>
   <Popover.Trigger><Ellipsis class="mx-2" /></Popover.Trigger>
   <Popover.Content class="w-fit">
     <div class="flex flex-col gap-1">
@@ -55,8 +60,9 @@
             </div>
             <div class="flex flex-col gap-1">
               <Button
-                onclick={() => {
-                  updateRecord();
+                onclick={async () => {
+                  await updateRecord();
+                  dialogClose();
                 }}>更新</Button
               >
             </div>

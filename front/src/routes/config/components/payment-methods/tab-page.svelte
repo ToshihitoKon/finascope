@@ -30,7 +30,10 @@
         return renderComponent(RowMenu, {
           id: row.original.id,
           label: row.original.label,
-          withdrawal_day_of_month: row.original.withdrawal_day_of_month
+          withdrawal_day_of_month: row.original.withdrawal_day_of_month,
+          update: () => {
+            fetchPaymentMethods();
+          }
         });
       }
     }
@@ -46,16 +49,21 @@
   import * as Dialog from '$lib/components/ui/dialog/index.js';
   import DialogNewPaymentMethod from './dialog-new.svelte';
   import { buttonVariants } from '$lib/components/ui/button/index.js';
+  let dialogOpen = $state(false);
+  const dialogClose = () => {
+    dialogOpen = false;
+    fetchPaymentMethods();
+  };
 </script>
 
 {#snippet header()}
   <!-- New Record -->
-  <Dialog.Root>
+  <Dialog.Root bind:open={dialogOpen}>
     <Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
       New Payment Method
     </Dialog.Trigger>
     <Dialog.Content class="max-h-[80%] w-fit max-w-[90%] overflow-y-auto">
-      <DialogNewPaymentMethod />
+      <DialogNewPaymentMethod close={dialogClose} />
     </Dialog.Content>
   </Dialog.Root>
 {/snippet}

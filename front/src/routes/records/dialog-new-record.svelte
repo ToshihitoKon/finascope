@@ -27,6 +27,8 @@
   let categories = $state<ComboboxOption[]>([]);
   let paymentMethods = $state<ComboboxOption[]>([]);
 
+  let { close }: { close: () => void } = $props();
+
   let formData = $state({
     title: '',
     recordTypeId: String(apiconst.RecordTypes[0].id),
@@ -133,8 +135,9 @@
   </div>
   <div class="flex flex-col gap-1">
     <Button
-      onclick={() => {
-        createRecord();
+      onclick={async () => {
+        await createRecord();
+        close();
       }}>送信</Button
     >
   </div>

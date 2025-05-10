@@ -26,7 +26,10 @@
       cell: ({ row }) => {
         return renderComponent(RowMenuCategory, {
           id: row.original.id,
-          label: row.original.label
+          label: row.original.label,
+          update: () => {
+            fetchCategories();
+          }
         });
       }
     }
@@ -43,14 +46,19 @@
   import * as Dialog from '$lib/components/ui/dialog/index.js';
   import DialogNewCategory from './dialog-new.svelte';
   import { buttonVariants } from '$lib/components/ui/button/index.js';
+  let dialogOpen = $state(false);
+  const dialogClose = () => {
+    dialogOpen = false;
+    fetchCategories();
+  };
 </script>
 
 {#snippet header()}
   <!-- New Record -->
-  <Dialog.Root>
+  <Dialog.Root bind:open={dialogOpen}>
     <Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>New Category</Dialog.Trigger>
     <Dialog.Content class="max-h-[80%] w-fit max-w-[90%] overflow-y-auto">
-      <DialogNewCategory />
+      <DialogNewCategory close={dialogClose} />
     </Dialog.Content>
   </Dialog.Root>
 {/snippet}

@@ -151,6 +151,9 @@
             state_id: row.original.state_id.toString(),
             category_id: row.original.category_id.toString(),
             payment_method_id: row.original.payment_method_id.toString()
+          },
+          update: () => {
+            fetchRecordsByDateRange();
           }
         });
       }
@@ -160,8 +163,12 @@
   // for Dialog
   import * as Dialog from '$lib/components/ui/dialog/index.js';
   import DialogNewRecord from './dialog-new-record.svelte';
+  let dialogOpen = $state(false);
+  const dialogClose = () => {
+    dialogOpen = false;
+    fetchRecordsByDateRange();
+  };
 
-  // base
   $effect(() => {
     if (value.start && value.end) {
       fetchRecordsByDateRange();
@@ -200,10 +207,10 @@
 
 <div class="container max-w-screen-lg">
   <!-- New Record -->
-  <Dialog.Root>
+  <Dialog.Root bind:open={dialogOpen}>
     <Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>New Record</Dialog.Trigger>
     <Dialog.Content class="max-h-[80%] w-fit max-w-[90%] overflow-y-auto">
-      <DialogNewRecord />
+      <DialogNewRecord close={dialogClose} />
     </Dialog.Content>
   </Dialog.Root>
   <DataTable data={ResponseToColumn(records)} columns={RecordColumnDef} {header} />

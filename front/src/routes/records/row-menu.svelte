@@ -12,7 +12,8 @@
   import { parseDate } from '@internationalized/date';
 
   let {
-    record
+    record,
+    update
   }: {
     record: {
       id: string;
@@ -29,6 +30,7 @@
       category_id: string;
       payment_method_id: string;
     };
+    update: () => void;
   } = $props();
 
   let categories = $state<ComboboxOption[]>([]);
@@ -107,6 +109,13 @@
   import { buttonVariants } from '$lib/components/ui/button/index.js';
   import * as Popover from '$lib/components/ui/popover/index.js';
   import Ellipsis from '@lucide/svelte/icons/ellipsis';
+  let editDialogOpen = $state(false);
+  let deleteDialogOpen = $state(false);
+  const dialogClose = () => {
+    editDialogOpen = false;
+    deleteDialogOpen = false;
+    update();
+  };
 
   // components/*
   import SegmentControl from '$lib/components/segment-control.svelte';
@@ -135,7 +144,7 @@
   <Popover.Trigger><Ellipsis class="mx-2" /></Popover.Trigger>
   <Popover.Content class="w-fit">
     <div class="flex flex-col gap-1">
-      <Dialog.Root>
+      <Dialog.Root bind:open={editDialogOpen}>
         <Dialog.Trigger
           class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
         >
@@ -177,8 +186,9 @@
             </div>
             <div class="flex flex-col gap-1">
               <Button
-                onclick={() => {
-                  updateRecord();
+                onclick={async () => {
+                  await updateRecord();
+                  dialogClose();
                 }}>更新</Button
               >
             </div>
@@ -194,7 +204,7 @@
           </div>
         </Dialog.Content>
       </Dialog.Root>
-      <Dialog.Root>
+      <Dialog.Root bind:open={deleteDialogOpen}>
         <Dialog.Trigger
           class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
         >
@@ -205,8 +215,9 @@
             <span>Delete {record.title} ?</span>
             <Button
               variant="destructive"
-              onclick={() => {
-                deleteRecord();
+              onclick={async () => {
+                await deleteRecord();
+                dialogClose();
               }}>Delete</Button
             >
           </div>

@@ -9,6 +9,8 @@
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
+  let { close }: { close: () => void } = $props();
+
   let formData = $state({
     label: '',
     withdrawal_day_of_month: ''
@@ -50,8 +52,9 @@
   </div>
   <div class="flex flex-col gap-1">
     <Button
-      onclick={() => {
-        createRecord();
+      onclick={async () => {
+        await createRecord();
+        close();
       }}
     >
       送信

@@ -9,6 +9,8 @@
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
 
+  let { close }: { close: () => void } = $props();
+
   let formData = $state({
     label: ''
   });
@@ -18,7 +20,6 @@
       label: formData.label
     };
   };
-  const payload = $derived(() => JSON.stringify(payloadFormatter(), null, 2));
 
   const createRecord = async () => {
     try {
@@ -39,19 +40,10 @@
   </div>
   <div class="flex flex-col gap-1">
     <Button
-      onclick={() => {
-        createRecord();
+      onclick={async () => {
+        await createRecord();
+        close();
       }}>送信</Button
     >
-  </div>
-
-  <div class="flex flex-col gap-1">
-    <Label for="preview">preview</Label>
-    <textarea
-      id="preview"
-      class="mt-2 h-32 w-full rounded-md border border-gray-300 p-2"
-      placeholder="rendered"
-      >{payload()}
-    </textarea>
   </div>
 </div>

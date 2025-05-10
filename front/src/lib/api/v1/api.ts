@@ -1,6 +1,6 @@
 import type * as apitype from './types';
 import * as consts from './const';
-import { getLoginInfo, revokeLogin } from '$lib/firebase';
+import { loggedInUserInformation, revokeLogin } from '$lib/firebase/index.svelte.ts';
 import { toast } from 'svelte-sonner';
 
 const apiBase = async (url: string, method: string, payload: object) => {
@@ -15,9 +15,9 @@ const apiBase = async (url: string, method: string, payload: object) => {
   }
 
   try {
-    const loginInfo = getLoginInfo();
-    if (loginInfo.jwt) {
-      opts.headers['Authorization'] = `Bearer ${loginInfo.jwt}`;
+    const jwt = loggedInUserInformation.jwt;
+    if (jwt) {
+      opts.headers['Authorization'] = `Bearer ${jwt}`;
     }
 
     const res = await fetch(`${consts.ApiBaseUrl}/${url}`, opts);

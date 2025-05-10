@@ -18,18 +18,18 @@ let firebaseAuth;
 const USER_JWT_KEY = 'fs-firebase-jwt';
 
 // Initialize
-export const userJWT = persisted(USER_JWT_KEY, '');
+const userJWT = persisted(USER_JWT_KEY, '');
+export const loggedInUserInformation = $state({
+  jwt: userJWT,
+  isLoggedIn: get(userJWT) !== ''
+});
 
 export const revokeLogin = () => {
   userJWT.set('');
-};
+  loggedInUserInformation.jwt = '';
+  loggedInUserInformation.isLoggedIn = false;
 
-export const getLoginInfo = (): { isLoggedIn: boolean; jwt: string } => {
-  const jwt = get(userJWT);
-  if (jwt) {
-    return { isLoggedIn: true, jwt };
-  }
-  return { isLoggedIn: false, jwt: '' };
+  toast.success('Logout Successful');
 };
 
 const getApp = () => {
@@ -66,6 +66,8 @@ export const signInWithGoogle = async () => {
 
     const jwt = await getUserJWT();
     userJWT.set(jwt);
+    loggedInUserInformation.jwt = jwt;
+    loggedInUserInformation.isLoggedIn = true;
 
     toast.success(`Login Successful. Welcome ${name}!`);
   } catch (error) {

@@ -20,7 +20,7 @@ const USER_JWT_KEY = 'fs-firebase-jwt';
 // Initialize
 const userJWT = persisted(USER_JWT_KEY, '');
 export const loggedInUserInformation = $state({
-  jwt: userJWT,
+  jwt: get(userJWT),
   isLoggedIn: get(userJWT) !== ''
 });
 

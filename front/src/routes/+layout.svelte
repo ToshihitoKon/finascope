@@ -9,10 +9,17 @@
   let isOpen = $state(false);
 
   import { Button } from '$lib/components/ui/button/index.js';
-  import { signInWithGoogle, loggedInUserInformation } from '$lib/firebase/index.svelte.ts';
+  import {
+    signInWithGoogle,
+    revokeLogin,
+    loggedInUserInformation
+  } from '$lib/firebase/index.svelte.ts';
 
   const loginHandler = async () => {
     await signInWithGoogle();
+  };
+  const logoutHandler = () => {
+    revokeLogin();
   };
 
   let hideLoginButton = $state(false);
@@ -31,6 +38,8 @@
       <a href="{base}/config" class="hover:text-primary">Config</a>
       {#if !hideLoginButton}
         <Button onclick={loginHandler} variant="outline" class="h-8">Login</Button>
+      {:else}
+        <Button onclick={logoutHandler} variant="outline" class="h-8">Logout</Button>
       {/if}
     </div>
     <button class="md:hidden" onclick={() => (isOpen = !isOpen)}>

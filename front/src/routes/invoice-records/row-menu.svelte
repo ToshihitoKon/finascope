@@ -72,9 +72,16 @@
   import { buttonVariants } from '$lib/components/ui/button/index.js';
   import * as Popover from '$lib/components/ui/popover/index.js';
   import Ellipsis from '@lucide/svelte/icons/ellipsis';
-  let dialogOpen = $state(false);
-  const dialogClose = () => {
-    dialogOpen = false;
+
+  let editDialogOpen = $state(false);
+  const editDialogClose = () => {
+    editDialogOpen = false;
+    update();
+  };
+
+  let deleteDialogOpen = $state(false);
+  const deleteDialogClose = () => {
+    deleteDialogOpen = false;
     update();
   };
 
@@ -106,7 +113,7 @@
   <Popover.Trigger><Ellipsis class="mx-2" /></Popover.Trigger>
   <Popover.Content class="w-fit">
     <div class="flex flex-col gap-1">
-      <Dialog.Root open={dialogOpen}>
+      <Dialog.Root open={editDialogOpen}>
         <Dialog.Trigger
           class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
         >
@@ -131,14 +138,14 @@
                 disabled={!isValid}
                 onclick={async () => {
                   await updateRecord();
-                  dialogClose();
+                  editDialogClose();
                 }}>更新</Button
               >
             </div>
           </div>
         </Dialog.Content>
       </Dialog.Root>
-      <Dialog.Root>
+      <Dialog.Root open={deleteDialogOpen}>
         <Dialog.Trigger
           class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
         >
@@ -152,7 +159,7 @@
               variant="destructive"
               onclick={async () => {
                 await deleteRecord();
-                dialogClose();
+                deleteDialogClose();
               }}>Delete</Button
             >
           </div>

@@ -2,7 +2,7 @@ module API
   module Entities
     class InvoiceRecords
       class InvoiceRecord < Grape::Entity
-        expose :id, documentation: { type: Integer, desc: "InvoiceRecord ID" }
+        expose :id, documentation: { type: String, desc: "InvoiceRecord ID" }
         expose :amount, documentation: { type: Integer, desc: "InvoiceRecord amount" }
         expose :payment_method, documentation: { type: String, desc: "Payment method used" }
         expose :payment_method_id, documentation: { type: String, desc: "Payment method ID" }

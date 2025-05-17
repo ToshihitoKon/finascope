@@ -4,7 +4,7 @@ module API
       class Record < Grape::Entity
         format_with(:iso_timestamp, &:iso8601)
 
-        expose :id, documentation: { type: Integer, desc: "Record ID" }
+        expose :id, documentation: { type: String, desc: "Record ID" }
         expose :record_type, as: :type, documentation: { type: String, desc: "Type of record" }
         expose :title, documentation: { type: String, desc: "Title of record" }
         expose :amount, documentation: { type: Integer, desc: "Amount of record" }

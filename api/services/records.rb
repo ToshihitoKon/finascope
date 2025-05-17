@@ -13,14 +13,27 @@ module Service
       opts = { hashed_user_id: @hashed_uid, sort:, page:, begin_date:, end_date: }.compact
       records = DB::Repository::FinanceRecord.get_page(**opts)
       records.map do |record|
+        # NOTE: encrypted_* が nil の場合は、eager_load で取得できなかった場合なので TODO として扱う
+        payment_method = if record[:encrypted_payment_method].nil?
+                           "TODO"
+                         else
+                           @uhash.decrypt(record[:encrypted_payment_method])
+                         end
+
+        category = if record[:encrypted_category].nil?
+                     "TODO"
+                   else
+                     @uhash.decrypt(record[:encrypted_category])
+                   end
+
         {
           **record,
           title: @uhash.decrypt(record[:encrypted_title]),
           description: @uhash.decrypt(record[:encrypted_description]),
-          category: @uhash.decrypt(record[:encrypted_category]),
-          payment_method: @uhash.decrypt(record[:encrypted_payment_method]),
           record_type: Constants.record_type(record[:record_type_id])[:label],
-          state: Constants.record_state(record[:state_id])[:label]
+          state: Constants.record_state(record[:state_id])[:label],
+          category:,
+          payment_method:
         }
       end
     end

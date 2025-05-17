@@ -38,4 +38,9 @@ module Constants
   }.freeze
 
   EXAMPLE_USER_UID = "example_user_uid"
+
+  TODO_ID = {
+    category: "TODO_CATEGORY_ID",
+    payment_method: "TODO_PAYMENT_METHOD_ID"
+  }.freeze
 end

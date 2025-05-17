@@ -95,6 +95,7 @@
         label: i.label
       })
     );
+    categories.unshift({ value: apiconst.TodoIds.Category, label: 'TODO' });
 
     const paymentMethodsResponse = await api.fetchPaymentMethods();
     paymentMethods = paymentMethodsResponse.payment_methods.map(
@@ -103,6 +104,7 @@
         label: i.label
       })
     );
+    paymentMethods.unshift({ value: apiconst.TodoIds.PaymentMethod, label: 'TODO' });
   };
 
   onMount(async () => {
@@ -129,11 +131,15 @@
   </div>
   <div class="flex flex-col gap-1">
     <Label>カテゴリ</Label>
-    <Combobox options={categories} bind:selected={formData.category} />
+    <Combobox options={categories} bind:selected={formData.category} defaultValue={'TODO'} />
   </div>
   <div class="flex flex-col gap-1">
     <Label>支払い方法</Label>
-    <Combobox options={paymentMethods} bind:selected={formData.paymentMethod} />
+    <Combobox
+      options={paymentMethods}
+      bind:selected={formData.paymentMethod}
+      defaultValue={'TODO'}
+    />
   </div>
   <div class="flex flex-col gap-1">
     <Label>日付</Label>

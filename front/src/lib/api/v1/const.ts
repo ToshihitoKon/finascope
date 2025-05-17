@@ -8,6 +8,11 @@ export const States = [
   { id: 3, label: 'やめた' }
 ];
 
+export const TodoIds = {
+  Category: 'TODO_CATEGORY_ID',
+  PaymentMethod: 'TODO_PAYMENT_METHOD_ID'
+};
+
 export const getStateLabel = (id: number): string => {
   const state = States.find((s) => s.id === id);
   return state ? state.label : 'Unknown';

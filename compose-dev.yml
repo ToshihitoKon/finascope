@@ -26,11 +26,18 @@ services:
       ]
     volumes:
       - ./api:/app
-      - ./db:/var/finascope/db
+      # - ./db:/var/finascope/db # Removed for MySQL
       - bundle_cache:/var/bundle_cache
     environment:
-      - FS_SQLITE_FILE=/var/finascope/db/finascope.sqlite3
+      # - FS_SQLITE_FILE=/var/finascope/db/finascope.sqlite3 # Removed for MySQL
       - BUNDLE_PATH=/var/bundle_cache
+      - MYSQL_HOST: db
+      - MYSQL_PORT: 3306
+      - MYSQL_USER: finascope_user
+      - MYSQL_PASSWORD: finascope_password
+      - MYSQL_DATABASE: finascope_db
+    depends_on: # Added for clarity, db service is in compose.yml
+      - db
   front-dev:
     container_name: front
     environment:

@@ -13,12 +13,33 @@ services:
       ]
     volumes:
       - ./api:/app
-      - ./db:/var/finascope/db
       - bundle_cache:/var/bundle_cache
     environment:
-      - FS_SQLITE_FILE=/var/finascope/db/finascope.sqlite3
       - BUNDLE_PATH=/var/bundle_cache
+      - MYSQL_HOST: db
+      - MYSQL_PORT: 3306
+      - MYSQL_USER: finascope_user
+      - MYSQL_PASSWORD: finascope_password
+      - MYSQL_DATABASE: finascope_db
     ports:
       - "9292:9292"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: example_root_password
+      MYSQL_DATABASE: finascope_db
+      MYSQL_USER: finascope_user
+      MYSQL_PASSWORD: finascope_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
 volumes:
   bundle_cache:
+  mysql_data:

@@ -1,8 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import { toast } from 'svelte-sonner';
-import { get } from 'svelte/store';
-import { persisted } from 'svelte-persisted-store';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBTzYRjcGVQ39dS-Y6lwliLZ8I7f0HbKjQ',
@@ -15,21 +13,22 @@ const firebaseConfig = {
 
 let app;
 let firebaseAuth;
-const USER_JWT_KEY = 'fs-firebase-jwt';
 
 // Initialize
-const userJWT = persisted(USER_JWT_KEY, '');
 export const loggedInUserInformation = $state({
-  jwt: get(userJWT),
-  isLoggedIn: get(userJWT) !== ''
+  jwt: '',
+  isLoggedIn: false
 });
 
-export const revokeLogin = () => {
-  userJWT.set('');
-  loggedInUserInformation.jwt = '';
-  loggedInUserInformation.isLoggedIn = false;
-
-  toast.success('Logout Successful');
+export const revokeLogin = async () => {
+  try {
+    await signOut(getFirebaseAuth());
+    // onAuthStateChanged will handle updating loggedInUserInformation
+    toast.success('Logout Successful');
+  } catch (error) {
+    console.error('Error signing out: ', error);
+    toast.error('Error signing out');
+  }
 };
 
 const getApp = () => {
@@ -42,20 +41,17 @@ const getFirebaseAuth = () => {
   if (!firebaseAuth) {
     firebaseAuth = getAuth(getApp());
     firebaseAuth.languageCode = 'it';
+    onAuthStateChanged(firebaseAuth, async (user) => {
+      if (user) {
+        loggedInUserInformation.jwt = await user.getIdToken();
+        loggedInUserInformation.isLoggedIn = true;
+      } else {
+        loggedInUserInformation.jwt = '';
+        loggedInUserInformation.isLoggedIn = false;
+      }
+    });
   }
   return firebaseAuth;
-};
-
-const getUserJWT = async (): string => {
-  try {
-    const user = await getFirebaseAuth().currentUser;
-    if (!user) {
-      return '';
-    }
-    return user.getIdToken();
-  } catch (error) {
-    throw new Error('Error getting user JWT: ' + error);
-  }
 };
 
 export const signInWithGoogle = async () => {
@@ -64,10 +60,9 @@ export const signInWithGoogle = async () => {
     userCred = await signInWithPopup(getFirebaseAuth(), new GoogleAuthProvider());
     const name = userCred.user.displayName;
 
-    const jwt = await getUserJWT();
-    userJWT.set(jwt);
-    loggedInUserInformation.jwt = jwt;
-    loggedInUserInformation.isLoggedIn = true;
+    // const jwt = await getUserJWT(); // This will be handled by onAuthStateChanged
+    // loggedInUserInformation.jwt = jwt; // This will be handled by onAuthStateChanged
+    // loggedInUserInformation.isLoggedIn = true; // This will be handled by onAuthStateChanged
 
     toast.success(`Login Successful. Welcome ${name}!`);
   } catch (error) {

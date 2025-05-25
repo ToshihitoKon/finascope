@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, createRawSnippet } from 'svelte';
   import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
   import { loginEventBus } from '$lib/firebase/index.svelte.ts';
 
@@ -78,7 +78,7 @@
   import DataTable from '$lib/shadcn/data-table/data-table.svelte';
   import DataTableHeaderButton from '$lib/shadcn/data-table/header-button.svelte';
   import { type ColumnDef } from '@tanstack/table-core';
-  import { renderComponent } from '$lib/components/ui/data-table/index.js';
+  import { renderSnippet, renderComponent } from '$lib/components/ui/data-table/index.js';
 
   type RecordColumnStruct = {
     id: string;
@@ -97,6 +97,15 @@
   };
 
   import RowMenu from './row-menu.svelte';
+  const getSnippet = (cls: string) => {
+    return createRawSnippet<[string]>((getValue) => {
+      const value = getValue();
+      return {
+        render: () => `<div class=${cls}>${value}</div>`
+      };
+    });
+  };
+
   const RecordColumnDef: ColumnDef<RecordColumnStruct>[] = [
     {
       accessorKey: 'type',
@@ -105,9 +114,18 @@
           header: 'Type',
           onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
         });
+      },
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-16'), row.getValue('type'));
       }
     },
-    { accessorKey: 'title', header: 'Title' },
+    {
+      accessorKey: 'title',
+      header: 'Title',
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-32'), row.getValue('title'));
+      }
+    },
     {
       accessorKey: 'amount',
       header: ({ column }) => {
@@ -115,12 +133,39 @@
           header: 'Amount',
           onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
         });
+      },
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-10'), row.getValue('amount'));
       }
     },
-    { accessorKey: 'state', header: 'State' },
-    { accessorKey: 'description', header: 'Description' },
-    { accessorKey: 'category', header: 'Category' },
-    { accessorKey: 'payment_method', header: 'Payment Method' },
+    {
+      accessorKey: 'state',
+      header: 'State',
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-20'), row.getValue('state'));
+      }
+    },
+    {
+      accessorKey: 'description',
+      header: 'Description',
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-60'), row.getValue('description'));
+      }
+    },
+    {
+      accessorKey: 'category',
+      header: 'Category',
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-20'), row.getValue('category'));
+      }
+    },
+    {
+      accessorKey: 'payment_method',
+      header: 'Payment Method',
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-24'), row.getValue('payment_method'));
+      }
+    },
     {
       accessorKey: 'date',
       header: ({ column }) => {
@@ -130,7 +175,8 @@
         });
       },
       cell: ({ row }) => {
-        return new Date(row.original.date).toLocaleDateString();
+        const value = new Date(row.original.date).toLocaleDateString();
+        return renderSnippet(getSnippet('min-w-16'), value);
       }
     },
     {

@@ -6,13 +6,23 @@ require "json"
 # https://firebase.google.com/docs/auth/admin/verify-id-tokens?hl=ja#verify_id_tokens_using_a_third-party_jwt_library
 class Firebase
   class << self
-    def jwks
-      return @jwks if @jwks
+    @expires_at = Time.now + 3600 # 1 hour
 
+    def jwks_expired?
+      @expires_at < Time.now
+    end
+
+    def jwks
+      return @jwks if @jwks && !jwks_expired?
+
+      puts "downloading Firebase jwk..."
       url = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"
       res = Net::HTTP.get_response(URI.parse(url))
       puts res.inspect
       raise Exceptions::InternalServerError.exception("failed to download Firebase jwk") if res.code != "200"
+
+      @expires_at = Time.now + 3600 # 1 hour
+      puts "expires at: #{@expires_at}"
 
       @jwks = JSON.parse(res.body)
     end

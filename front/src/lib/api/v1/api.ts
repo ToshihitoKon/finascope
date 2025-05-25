@@ -1,6 +1,6 @@
 import type * as apitype from './types';
 import * as consts from './const';
-import { loggedInUserInformation, revokeLogin } from '$lib/firebase/index.svelte.ts';
+import { logout, getFirebaseToken } from '$lib/firebase/index.svelte.ts';
 import { toast } from 'svelte-sonner';
 
 const apiBase = async (url: string, method: string, payload: object) => {
@@ -15,7 +15,7 @@ const apiBase = async (url: string, method: string, payload: object) => {
   }
 
   try {
-    const jwt = loggedInUserInformation.jwt;
+    const jwt = await getFirebaseToken();
     if (jwt) {
       opts.headers['Authorization'] = `Bearer ${jwt}`;
     }
@@ -23,7 +23,7 @@ const apiBase = async (url: string, method: string, payload: object) => {
     const res = await fetch(`${consts.ApiBaseUrl}/${url}`, opts);
     if (res.status === 401) {
       toast.error('Session expired, please login again');
-      revokeLogin();
+      await logout();
       return;
     }
     if (!res.ok) {

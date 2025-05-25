@@ -9,22 +9,18 @@
   let isOpen = $state(false);
 
   import { Button } from '$lib/components/ui/button/index.js';
-  import {
-    signInWithGoogle,
-    revokeLogin,
-    loggedInUserInformation
-  } from '$lib/firebase/index.svelte.ts';
+  import { signInWithGoogle, logout, user } from '$lib/firebase/index.svelte.ts';
 
   const loginHandler = async () => {
     await signInWithGoogle();
   };
-  const logoutHandler = () => {
-    revokeLogin();
+  const logoutHandler = async () => {
+    await logout();
   };
 
-  let hideLoginButton = $state(false);
+  let hideLoginButton = $state(true);
   $effect(() => {
-    hideLoginButton = loggedInUserInformation.isLoggedIn;
+    hideLoginButton = user.isLoggedIn;
   });
 </script>
 

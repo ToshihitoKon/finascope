@@ -39,8 +39,17 @@
     categories = await api.fetchCategories();
   };
 
-  onMount(async () => {
-    await fetchCategories();
+  import { loginEventBus } from '$lib/firebase/index.svelte.ts';
+  onMount(() => {
+    fetchCategories();
+    const unsubscribe = loginEventBus.subscribe(() => {
+      fetchCategories();
+    });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   });
 
   import * as Dialog from '$lib/components/ui/dialog/index.js';

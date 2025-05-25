@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+  import { loginEventBus } from '$lib/firebase/index.svelte.ts';
 
   // api/*
   // import * as mock from '$lib/api/v1/mock';
@@ -175,8 +176,16 @@
     }
   });
 
-  onMount(async () => {
-    records = await api.fetchRecords('');
+  onMount(() => {
+    fetchRecordsByDateRange();
+    const unsubscribe = loginEventBus.subscribe(() => {
+      fetchRecordsByDateRange();
+    });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   });
 </script>
 

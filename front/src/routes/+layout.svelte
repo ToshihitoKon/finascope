@@ -8,8 +8,9 @@
   let { children } = $props();
   let isOpen = $state(false);
 
+  import { onMount } from 'svelte';
   import { Button } from '$lib/components/ui/button/index.js';
-  import { signInWithGoogle, logout, user } from '$lib/firebase/index.svelte.ts';
+  import { signInWithGoogle, logout, loginEventBus, auth } from '$lib/firebase/index.svelte.ts';
 
   const loginHandler = async () => {
     await signInWithGoogle();
@@ -19,8 +20,15 @@
   };
 
   let hideLoginButton = $state(true);
-  $effect(() => {
-    hideLoginButton = user.isLoggedIn;
+  onMount(() => {
+    const unsubscribe = loginEventBus.subscribe(() => {
+      hideLoginButton = auth.currentUser !== null;
+    });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   });
 </script>
 

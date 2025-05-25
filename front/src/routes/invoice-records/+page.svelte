@@ -105,8 +105,17 @@
   const fetchRecordsByDate = async () => {
     records = await api.fetchInvoiceRecords(`year=${year}&month=${month}`);
   };
-  onMount(async () => {
-    await fetchRecordsByDate();
+  import { loginEventBus } from '$lib/firebase/index.svelte.ts';
+  onMount(() => {
+    fetchRecordsByDate();
+    const unsubscribe = loginEventBus.subscribe(() => {
+      fetchRecordsByDate();
+    });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   });
 
   let year = $state(new Date().getFullYear().toString());

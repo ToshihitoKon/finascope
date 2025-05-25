@@ -43,9 +43,18 @@
     paymentMethods = await api.fetchPaymentMethods();
   };
 
-  onMount(async () => {
-    await fetchPaymentMethods();
+  import { loginEventBus } from '$lib/firebase/index.svelte.ts';
+  onMount(() => {
+    const unsubscribe = loginEventBus.subscribe(() => {
+      fetchPaymentMethods();
+    });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   });
+
   import * as Dialog from '$lib/components/ui/dialog/index.js';
   import DialogNewPaymentMethod from './dialog-new.svelte';
   import { buttonVariants } from '$lib/components/ui/button/index.js';

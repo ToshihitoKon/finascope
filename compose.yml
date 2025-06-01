@@ -29,7 +29,7 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: example
-    user: 1000:1000
+    user: 1010:1011
     volumes:
       - ./db/mysql:/var/lib/mysql
       - ./mysql/init.d:/docker-entrypoint-initdb.d

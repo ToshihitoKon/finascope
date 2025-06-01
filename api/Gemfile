@@ -24,3 +24,5 @@ gem "kaminari", "~> 1.2"
 gem "grape-entity", "~> 1.0"
 
 gem "jwt", "~> 2.10"
+
+gem "mysql2", "~> 0.5.6"

@@ -5,9 +5,10 @@ require "bundler/inline"
 gemfile do
   source "https://rubygems.org"
   gem "activerecord"
-  gem "sqlite3"
+  gem "mysql2"
 end
 require "active_record"
+require "mysql2"
 
 require_relative "../db/connection"
 require_relative "../db/models"

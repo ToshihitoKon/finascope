@@ -26,11 +26,14 @@ services:
       ]
     volumes:
       - ./api:/app
-      - ./db:/var/finascope/db
       - bundle_cache:/var/bundle_cache
     environment:
-      - FS_SQLITE_FILE=/var/finascope/db/finascope.sqlite3
       - BUNDLE_PATH=/var/bundle_cache
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=finascope_app
+      - DB_PASSWORD=finascope_app_password
+      - DB_NAME=finascope
   front-dev:
     container_name: front
     environment:
@@ -48,5 +51,15 @@ services:
     volumes:
       - ./front:/app
       - /app/node_modules
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    user: 1000:1000
+    volumes:
+      - ./db/mysql:/var/lib/mysql
+      - ./mysql/init.d:/docker-entrypoint-initdb.d
+
 volumes:
   bundle_cache:

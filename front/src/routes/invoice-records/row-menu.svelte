@@ -116,6 +116,7 @@
       <Dialog.Root open={editDialogOpen}>
         <Dialog.Trigger
           class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
+          onclick={() => (editDialogOpen = true)}
         >
           <span> Edit </span>
         </Dialog.Trigger>
@@ -148,6 +149,7 @@
       <Dialog.Root open={deleteDialogOpen}>
         <Dialog.Trigger
           class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
+          onclick={() => (deleteDialogOpen = true)}
         >
           <span>Delete</span>
         </Dialog.Trigger>

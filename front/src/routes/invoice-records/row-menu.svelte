@@ -113,10 +113,9 @@
   <Popover.Trigger><Ellipsis class="mx-2" /></Popover.Trigger>
   <Popover.Content class="w-fit">
     <div class="flex flex-col gap-1">
-      <Dialog.Root open={editDialogOpen}>
+      <Dialog.Root bind:open={editDialogOpen}>
         <Dialog.Trigger
           class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
-          onclick={() => (editDialogOpen = true)}
         >
           <span> Edit </span>
         </Dialog.Trigger>
@@ -146,10 +145,9 @@
           </div>
         </Dialog.Content>
       </Dialog.Root>
-      <Dialog.Root open={deleteDialogOpen}>
+      <Dialog.Root bind:open={deleteDialogOpen}>
         <Dialog.Trigger
           class="{buttonVariants({ variant: 'ghost' })} w-full justify-stretch px-2 py-2"
-          onclick={() => (deleteDialogOpen = true)}
         >
           <span>Delete</span>
         </Dialog.Trigger>

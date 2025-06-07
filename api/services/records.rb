@@ -16,7 +16,7 @@ module Service
     end
 
     # 他のサービスからも利用可能な公開メソッド
-    def format_record(record, category_name: nil)
+    def format_record(record)
       # NOTE: encrypted_* が nil の場合は、eager_load で取得できなかった場合なので TODO として扱う
       payment_method = if record[:encrypted_payment_method].nil?
                          "TODO"
@@ -24,9 +24,7 @@ module Service
                          @uhash.decrypt(record[:encrypted_payment_method])
                        end
 
-      category = if category_name
-                   category_name  # 外部から提供されたカテゴリ名を使用
-                 elsif record[:encrypted_category].nil?
+      category = if record[:encrypted_category].nil?
                    "TODO"
                  else
                    @uhash.decrypt(record[:encrypted_category])

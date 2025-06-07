@@ -31,7 +31,7 @@ module Service
 
         # 共通のformat_recordメソッドを使用してレコード詳細をデコードして整形
         records = detail_records.map do |record|
-          @finance_records_service.format_record(record, category_name: category)
+          @finance_records_service.format_record(record)
         end
 
         {

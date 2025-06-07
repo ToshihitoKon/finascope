@@ -84,7 +84,7 @@ module DB
         begin_date: nil,
         end_date: nil
       )
-        query = model.eager_load(:payment_method)
+        query = model.eager_load(:payment_method, :category)
                      .where(deleted_at: nil, hashed_user_id:, category_id:)
         
         if begin_date && end_date
@@ -98,7 +98,8 @@ module DB
         query.map do |record|
           model.to_dto(record).to_h.merge(
             {
-              encrypted_payment_method: record.payment_method&.encrypted_label
+              encrypted_payment_method: record.payment_method&.encrypted_label,
+              encrypted_category: record.category&.encrypted_label
             }
           )
         end

@@ -50,7 +50,7 @@ module DB
         begin_date: nil,
         end_date: nil
       )
-        query = model.eager_load(:category)
+        query = model.joins(:category)
                      .where(deleted_at: nil, hashed_user_id:)
         
         if begin_date && end_date
@@ -61,11 +61,11 @@ module DB
           query = query.where("date <= ?", end_date)
         end
 
-        query.group(:category_id)
+        query.group("finance_records.category_id")
              .select(
-               :category_id,
+               "finance_records.category_id",
                "categories.encrypted_label as encrypted_category",
-               "SUM(amount) as total_amount",
+               "SUM(finance_records.amount) as total_amount",
                "COUNT(*) as record_count"
              )
              .map { |record|

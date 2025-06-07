@@ -1,11 +1,13 @@
 require "constants"
 require "db/repositories"
+require_relative "records"
 
 module Service
   class View
     def initialize(uid:)
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
+      @finance_records_service = Service::FinanceRecords.new(uid:)
     end
 
     def category_aggregation(begin_date: nil, end_date: nil)
@@ -27,24 +29,9 @@ module Service
           end_date: opts[:end_date]
         )
 
-        # レコード詳細をデコードして整形
+        # 共通のformat_recordメソッドを使用してレコード詳細をデコードして整形
         records = detail_records.map do |record|
-          {
-            id: record[:id],
-            amount: record[:amount],
-            description: record[:encrypted_description] ? @uhash.decrypt(record[:encrypted_description]) : "",
-            date: record[:date],
-            payment_method: record[:encrypted_payment_method] ? @uhash.decrypt(record[:encrypted_payment_method]) : nil,
-            # Records::Recordエンティティ用の追加フィールド
-            title: record[:encrypted_title] ? @uhash.decrypt(record[:encrypted_title]) : "",
-            record_type: Constants.record_type(record[:record_type_id])[:label],
-            state: Constants.record_state(record[:state_id])[:label],
-            category: category,
-            record_type_id: record[:record_type_id],
-            state_id: record[:state_id],
-            category_id: record[:category_id],
-            payment_method_id: record[:payment_method_id]
-          }
+          @finance_records_service.format_record(record, category_name: category)
         end
 
         {

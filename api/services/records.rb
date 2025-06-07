@@ -12,30 +12,35 @@ module Service
     def get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
       opts = { hashed_user_id: @hashed_uid, sort:, page:, begin_date:, end_date: }.compact
       records = DB::Repository::FinanceRecord.get_page(**opts)
-      records.map do |record|
-        # NOTE: encrypted_* が nil の場合は、eager_load で取得できなかった場合なので TODO として扱う
-        payment_method = if record[:encrypted_payment_method].nil?
-                           "TODO"
-                         else
-                           @uhash.decrypt(record[:encrypted_payment_method])
-                         end
+      records.map { |record| format_record(record) }
+    end
 
-        category = if record[:encrypted_category].nil?
-                     "TODO"
-                   else
-                     @uhash.decrypt(record[:encrypted_category])
-                   end
+    # 他のサービスからも利用可能な公開メソッド
+    def format_record(record, category_name: nil)
+      # NOTE: encrypted_* が nil の場合は、eager_load で取得できなかった場合なので TODO として扱う
+      payment_method = if record[:encrypted_payment_method].nil?
+                         "TODO"
+                       else
+                         @uhash.decrypt(record[:encrypted_payment_method])
+                       end
 
-        {
-          **record,
-          title: @uhash.decrypt(record[:encrypted_title]),
-          description: @uhash.decrypt(record[:encrypted_description]),
-          record_type: Constants.record_type(record[:record_type_id])[:label],
-          state: Constants.record_state(record[:state_id])[:label],
-          category:,
-          payment_method:
-        }
-      end
+      category = if category_name
+                   category_name  # 外部から提供されたカテゴリ名を使用
+                 elsif record[:encrypted_category].nil?
+                   "TODO"
+                 else
+                   @uhash.decrypt(record[:encrypted_category])
+                 end
+
+      {
+        **record,
+        title: record[:encrypted_title] ? @uhash.decrypt(record[:encrypted_title]) : "",
+        description: record[:encrypted_description] ? @uhash.decrypt(record[:encrypted_description]) : "",
+        record_type: Constants.record_type(record[:record_type_id])[:label],
+        state: Constants.record_state(record[:state_id])[:label],
+        category:,
+        payment_method:
+      }
     end
 
     def create(params)

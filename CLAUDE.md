@@ -175,9 +175,18 @@ curl -X POST "http://localhost:8080/finascope/api/v1/records" \
 
 4. **Test Category Aggregation:**
 ```bash
+# 期間未指定（今月のデータを取得）
 curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation" \
   -H "Content-Type: application/json"
-# Returns: Aggregated data with category totals and individual records
+
+# 期間指定（両方の日付が必要）
+curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation?begin_date=2025-01-01&end_date=2025-01-31" \
+  -H "Content-Type: application/json"
+
+# バリデーションエラー例（片方の日付のみ指定）
+curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation?begin_date=2025-01-01" \
+  -H "Content-Type: application/json"
+# Returns: {"error":"Both begin_date and end_date must be specified together"}
 ```
 
 **Required Record Fields:**

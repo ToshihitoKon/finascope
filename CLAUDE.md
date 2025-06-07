@@ -115,6 +115,81 @@ Currently, no automated test suite is configured. When adding tests:
 - For API: Consider RSpec or similar Ruby testing framework
 - For Frontend: Consider Vitest with SvelteKit testing utilities
 
+### Manual API Testing
+
+**Anonymous User Testing:**
+When testing API endpoints without authentication, the system automatically uses an anonymous user. This allows for easy manual testing:
+
+```bash
+# Test endpoints without Authorization header
+curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation" -H "Content-Type: application/json"
+```
+
+**Creating Sample Data for Testing:**
+
+1. **Create a Category:**
+```bash
+curl -X POST "http://localhost:8080/finascope/api/v1/categories" \
+  -H "Content-Type: application/json" \
+  -d '{"label": "食費"}'
+# Returns: {"status":"success","id":"CATEGORY_ID"}
+```
+
+2. **Create a Payment Method:**
+```bash
+curl -X POST "http://localhost:8080/finascope/api/v1/payment_methods" \
+  -H "Content-Type: application/json" \
+  -d '{"label": "現金", "withdrawal_day_of_month": 1}'
+# Returns: {"status":"success","id":"PAYMENT_METHOD_ID"}
+```
+
+3. **Create Records:**
+```bash
+# Replace CATEGORY_ID and PAYMENT_METHOD_ID with actual IDs from steps 1-2
+curl -X POST "http://localhost:8080/finascope/api/v1/records" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "ランチ",
+    "type_id": 1,
+    "state_id": 1,
+    "description": "コンビニで昼食",
+    "amount": 1000,
+    "category_id": "CATEGORY_ID",
+    "date": "2025-01-01",
+    "payment_method_id": "PAYMENT_METHOD_ID"
+  }'
+
+curl -X POST "http://localhost:8080/finascope/api/v1/records" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "夕食",
+    "type_id": 1,
+    "state_id": 1,
+    "description": "スーパーで買い物",
+    "amount": 2500,
+    "category_id": "CATEGORY_ID",
+    "date": "2025-01-02",
+    "payment_method_id": "PAYMENT_METHOD_ID"
+  }'
+```
+
+4. **Test Category Aggregation:**
+```bash
+curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation" \
+  -H "Content-Type: application/json"
+# Returns: Aggregated data with category totals and individual records
+```
+
+**Required Record Fields:**
+- `title`: Record title (string)
+- `type_id`: Record type ID (integer, typically 1)
+- `state_id`: Record state ID (integer, typically 1)
+- `description`: Record description (string)
+- `amount`: Amount in cents/smallest currency unit (integer)
+- `category_id`: Category ID from categories endpoint (string)
+- `date`: Date in YYYY-MM-DD format (string)
+- `payment_method_id`: Payment method ID from payment_methods endpoint (string)
+
 ## Database Operations
 
 **Database Setup:**

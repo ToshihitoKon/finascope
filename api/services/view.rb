@@ -10,20 +10,40 @@ module Service
 
     def category_aggregation(begin_date: nil, end_date: nil)
       opts = { hashed_user_id: @hashed_uid, begin_date:, end_date: }.compact
-      records = DB::Repository::FinanceRecord.get_aggregated_by_category(**opts)
+      aggregated_records = DB::Repository::FinanceRecord.get_aggregated_by_category(**opts)
       
-      records.map do |record|
-        category = if record[:encrypted_category].nil?
+      aggregated_records.map do |aggregated_record|
+        category = if aggregated_record[:encrypted_category].nil?
                      "未分類"
                    else
-                     @uhash.decrypt(record[:encrypted_category])
+                     @uhash.decrypt(aggregated_record[:encrypted_category])
                    end
 
+        # 各カテゴリのレコード詳細を取得
+        detail_records = DB::Repository::FinanceRecord.get_records_by_category(
+          hashed_user_id: @hashed_uid,
+          category_id: aggregated_record[:category_id],
+          begin_date: opts[:begin_date],
+          end_date: opts[:end_date]
+        )
+
+        # レコード詳細をデコードして整形
+        records = detail_records.map do |record|
+          {
+            id: record[:id],
+            amount: record[:amount],
+            note: record[:encrypted_description] ? @uhash.decrypt(record[:encrypted_description]) : "",
+            date: record[:date],
+            payment_method: record[:encrypted_payment_method] ? @uhash.decrypt(record[:encrypted_payment_method]) : nil
+          }
+        end
+
         {
-          category_id: record[:category_id],
+          category_id: aggregated_record[:category_id],
           category:,
-          total_amount: record[:total_amount],
-          record_count: record[:record_count]
+          total_amount: aggregated_record[:total_amount],
+          record_count: aggregated_record[:record_count],
+          records: records
         }
       end
     end

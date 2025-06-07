@@ -77,6 +77,32 @@ module DB
                }
              }
       end
+
+      def self.get_records_by_category(
+        hashed_user_id:,
+        category_id:,
+        begin_date: nil,
+        end_date: nil
+      )
+        query = model.eager_load(:payment_method)
+                     .where(deleted_at: nil, hashed_user_id:, category_id:)
+        
+        if begin_date && end_date
+          query = query.where(date: begin_date..end_date)
+        elsif begin_date
+          query = query.where("date >= ?", begin_date)
+        elsif end_date
+          query = query.where("date <= ?", end_date)
+        end
+
+        query.map do |record|
+          model.to_dto(record).to_h.merge(
+            {
+              encrypted_payment_method: record.payment_method&.encrypted_label
+            }
+          )
+        end
+      end
     end
 
     class Category

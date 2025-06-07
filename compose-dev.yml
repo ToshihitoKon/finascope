@@ -15,8 +15,6 @@ services:
       - front-dev
     networks:
       - finascope-net
-    networks:
-      - finascope-net
   api:
     container_name: api
     build:

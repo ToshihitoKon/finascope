@@ -14,13 +14,16 @@ Finascope is a personal finance management application with a microservices arch
 
 ### Local Development (Recommended)
 ```bash
-# Start full development environment
+# First time: Start shared MySQL database
+docker compose -f compose-dev-mysql.yml up -d
+
+# Start full development environment (any worktree)
 docker compose -f compose-dev.yml up
 
 # Access points:
 # - Frontend: http://localhost:8080 (via nginx)
 # - API: http://localhost:9292 (direct)
-# - MySQL: localhost:3306
+# - MySQL: localhost:3306 (shared across all worktrees)
 ```
 
 ### Individual Services

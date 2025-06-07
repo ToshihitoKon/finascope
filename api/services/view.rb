@@ -32,9 +32,18 @@ module Service
           {
             id: record[:id],
             amount: record[:amount],
-            note: record[:encrypted_description] ? @uhash.decrypt(record[:encrypted_description]) : "",
+            description: record[:encrypted_description] ? @uhash.decrypt(record[:encrypted_description]) : "",
             date: record[:date],
-            payment_method: record[:encrypted_payment_method] ? @uhash.decrypt(record[:encrypted_payment_method]) : nil
+            payment_method: record[:encrypted_payment_method] ? @uhash.decrypt(record[:encrypted_payment_method]) : nil,
+            # Records::Recordエンティティ用の追加フィールド
+            title: record[:encrypted_title] ? @uhash.decrypt(record[:encrypted_title]) : "",
+            record_type: Constants.record_type(record[:record_type_id])[:label],
+            state: Constants.record_state(record[:state_id])[:label],
+            category: category,
+            record_type_id: record[:record_type_id],
+            state_id: record[:state_id],
+            category_id: record[:category_id],
+            payment_method_id: record[:payment_method_id]
           }
         end
 

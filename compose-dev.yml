@@ -13,6 +13,8 @@ services:
     depends_on:
       - api
       - front-dev
+    networks:
+      - finascope-net
   api:
     container_name: api
     build:

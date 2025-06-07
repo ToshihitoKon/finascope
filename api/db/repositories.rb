@@ -44,6 +44,39 @@ module DB
 
         raise Exceptions::InternalServerError.exception("failed to record delete #{id}")
       end
+
+      def self.get_aggregated_by_category(
+        hashed_user_id:,
+        begin_date: nil,
+        end_date: nil
+      )
+        query = model.joins(:category)
+                     .where(deleted_at: nil, hashed_user_id:)
+        
+        if begin_date && end_date
+          query = query.where(date: begin_date..end_date)
+        elsif begin_date
+          query = query.where("date >= ?", begin_date)
+        elsif end_date
+          query = query.where("date <= ?", end_date)
+        end
+
+        query.group("finance_records.category_id")
+             .select(
+               "finance_records.category_id",
+               "categories.encrypted_label as encrypted_category",
+               "SUM(finance_records.amount) as total_amount",
+               "COUNT(*) as record_count"
+             )
+             .map { |record|
+               {
+                 category_id: record.category_id,
+                 encrypted_category: record.encrypted_category,
+                 total_amount: record.total_amount.to_i,
+                 record_count: record.record_count
+               }
+             }
+      end
     end
 
     class Category

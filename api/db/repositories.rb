@@ -85,7 +85,7 @@ module DB
         end_date: nil
       )
         query = model.eager_load(:payment_method, :category)
-                     .where(deleted_at: nil, hashed_user_id:, category_id: category_id)
+                     .where(deleted_at: nil, hashed_user_id:, category_id:)
         
         if begin_date && end_date
           query = query.where(date: begin_date..end_date)

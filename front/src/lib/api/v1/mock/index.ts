@@ -14,7 +14,11 @@ export const fetchRecords = async (params: string): Promise<apitype.RecordsRespo
         category: '給与',
         payment_method: '銀行振込',
         date: '2024-03-20',
-        description: '3月分の給与'
+        description: '3月分の給与',
+        record_type_id: 1,
+        state_id: 1,
+        category_id: 'X2yLmV9P',
+        payment_method_id: 'M3wEcL1X'
       },
       {
         id: 'hY3Nc7Q1',
@@ -25,7 +29,11 @@ export const fetchRecords = async (params: string): Promise<apitype.RecordsRespo
         category: '教育',
         payment_method: 'クレジットカード',
         date: '2024-03-24',
-        description: '技術書籍「Ruby超入門」'
+        description: '技術書籍「Ruby超入門」',
+        record_type_id: 2,
+        state_id: 2,
+        category_id: 'EDU123',
+        payment_method_id: 'CC456'
       },
       {
         id: 'A7f9D1bC',
@@ -36,7 +44,11 @@ export const fetchRecords = async (params: string): Promise<apitype.RecordsRespo
         category: '食費',
         payment_method: '現金',
         date: '2024-03-25',
-        description: '社員食堂にて'
+        description: '社員食堂にて',
+        record_type_id: 2,
+        state_id: 2,
+        category_id: 'F3aBcT8Z',
+        payment_method_id: 'P7rTvK2Q'
       }
     ]
   };
@@ -107,11 +119,13 @@ export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsRespo
     payment_methods: [
       {
         id: 'P7rTvK2Q',
-        label: '現金'
+        label: '現金',
+        withdrawal_day_of_month: 0
       },
       {
         id: 'M3wEcL1X',
-        label: '銀行振込'
+        label: '銀行振込',
+        withdrawal_day_of_month: 25
       }
     ]
   };
@@ -140,7 +154,9 @@ export const updatePaymentMethod = async (
 // Invoice Records
 export const fetchInvoiceRecords = async (): Promise<apitype.InvoiceRecordsResponse> => {
   console.log('mock: fetchInvoiceRecords.');
-  return {};
+  return {
+    records: []
+  };
 };
 
 export const createInvoiceRecord = async (

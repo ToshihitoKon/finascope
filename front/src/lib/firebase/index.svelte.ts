@@ -5,7 +5,8 @@ import {
   signInWithPopup,
   signOut,
   setPersistence,
-  onAuthStateChanged
+  onAuthStateChanged,
+  browserLocalPersistence
 } from 'firebase/auth';
 import { toast } from 'svelte-sonner';
 import { Mutex } from 'async-mutex';
@@ -25,14 +26,14 @@ const authMutex = new Mutex();
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 auth.languageCode = 'it';
-setPersistence(auth, 'LOCAL');
+setPersistence(auth, browserLocalPersistence);
 
 export const loginEventBus = writable<string>('');
 let unsubscrib = null;
 if (!unsubscrib) {
   unsubscrib = onAuthStateChanged(auth, (user) => {
     if (user) {
-      loginEventBus.set(user.displayName);
+      loginEventBus.set(user.displayName || '');
     } else {
       loginEventBus.set('');
     }
@@ -45,7 +46,8 @@ export const signInWithGoogle = async () => {
       const userCred = await signInWithPopup(auth, new GoogleAuthProvider());
       toast.success(`Login Successful. Welcome ${userCred.user.displayName}!`);
     } catch (error) {
-      toast.error('Error signing in with Google: ' + error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error('Error signing in with Google: ' + errorMessage);
       console.error(error);
     }
   });
@@ -60,7 +62,7 @@ export const logout = async () => {
 
 // getFirebaseAuth
 // if return empty string, user is not logged in
-export const getFirebaseToken = async (): string => {
+export const getFirebaseToken = async (): Promise<string> => {
   return await authMutex.runExclusive(async () => {
     if (!auth.currentUser) {
       return '';

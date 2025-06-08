@@ -52,6 +52,7 @@ export interface CreateRecordRequest {
 
 export interface CreateRecordResponse {
   status: string;
+  id: string;
 }
 
 export interface UpdateRecordRequest {
@@ -83,11 +84,6 @@ export interface CategoriesResponse {
 
 export interface CreateCategoryRequest {
   label: string;
-}
-
-export interface CreateCategoryResponse {
-  status: string;
-  id: string;
 }
 
 export interface CreateCategoryResponse {

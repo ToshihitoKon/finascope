@@ -167,3 +167,16 @@ export interface UpdateInvoiceRecordRequest {
   state_id: number;
   withdrawal_date: string; // NOTE: ISO 8601 format
 }
+
+// View - Category Aggregation
+export interface CategoryAggregation {
+  category_id: string;
+  category: string;
+  total_amount: number;
+  record_count: number;
+  records: Record[];
+}
+
+export interface CategoryAggregationResponse {
+  aggregations: CategoryAggregation[];
+}

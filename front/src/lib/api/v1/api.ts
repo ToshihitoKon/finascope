@@ -82,7 +82,7 @@ export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsRespo
 
 export const createPaymentMethod = async (
   req: apitype.CreatePaymentMethodRequest
-): Promise<apitype.PutPaymentMethodResponse> => {
+): Promise<apitype.CreatePaymentMethodResponse> => {
   return apiBase(`v1/payment_methods`, 'POST', req);
 };
 
@@ -115,4 +115,16 @@ export const deleteInvoiceRecord = async (
   req: apitype.CommonIdRequest
 ): Promise<apitype.CommonResponse> => {
   return apiBase(`v1/invoice_records/${req.id}`, 'DELETE', {});
+};
+
+// View - Category Aggregation
+export const fetchCategoryAggregation = async (
+  beginDate?: string,
+  endDate?: string
+): Promise<apitype.CategoryAggregationResponse> => {
+  const params = new URLSearchParams();
+  if (beginDate) params.set('begin_date', beginDate);
+  if (endDate) params.set('end_date', endDate);
+  const query = params.toString();
+  return apiBase(`v1/view/categories/aggregation${query ? `?${query}` : ''}`, 'GET', {});
 };

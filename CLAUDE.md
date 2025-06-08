@@ -109,6 +109,41 @@ const jwt = await getFirebaseToken();
 opts.headers['Authorization'] = `Bearer ${jwt}`;
 ```
 
+### TODO Item Handling
+The application uses special TODO IDs for records with unset categories or payment methods:
+
+**TODO ID Constants:**
+- Frontend: `front/src/lib/api/v1/const.ts` - `TodoIds.Category` and `TodoIds.PaymentMethod`
+- Backend: `api/constants.rb` - `TODO_ID[:category]` and `TODO_ID[:payment_method]`
+- Values: `'TODO_CATEGORY_ID'` and `'TODO_PAYMENT_METHOD_ID'`
+
+**Implementation Details:**
+- Records can be created with `category_id: 'TODO_CATEGORY_ID'` for unset categories
+- TODO items are displayed as "TODO" in both lists and aggregations
+- Frontend record creation dialog includes TODO as default option
+- Backend repositories use `left_joins(:category)` to include TODO items in aggregations
+- TODO records are fully functional - can be created, edited, and aggregated
+
+**Creating TODO Records:**
+```bash
+# Create a TODO record (category and payment method unset)
+curl -X POST "http://localhost:8080/finascope/api/v1/records" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "未分類の支出",
+    "type_id": 1,
+    "state_id": 1, 
+    "description": "カテゴリ未設定のレコード",
+    "amount": 1500,
+    "category_id": "TODO_CATEGORY_ID",
+    "date": "2025-01-01",
+    "payment_method_id": "TODO_PAYMENT_METHOD_ID"
+  }'
+```
+
+**TODO Items in Category Aggregation:**
+TODO items appear as a separate "TODO" category in `/view/categories/aggregation` and can be clicked to see detailed records.
+
 ## Testing & Quality
 
 Currently, no automated test suite is configured. When adding tests:

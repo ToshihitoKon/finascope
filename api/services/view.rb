@@ -15,16 +15,19 @@ module Service
       aggregated_records = DB::Repository::FinanceRecord.get_aggregated_by_category(**opts)
       
       aggregated_records.map do |aggregated_record|
-        category = if aggregated_record[:encrypted_category].nil?
-                     "未分類"
+        category = if aggregated_record[:category_id] == Constants::TODO_ID[:category] || aggregated_record[:encrypted_category].nil?
+                     "TODO"
                    else
                      @uhash.decrypt(aggregated_record[:encrypted_category])
                    end
 
+        # category_idがnilの場合はTODO項目として扱う
+        actual_category_id = aggregated_record[:category_id] || Constants::TODO_ID[:category]
+
         # 各カテゴリのレコード詳細を取得
         detail_records = DB::Repository::FinanceRecord.get_records_by_category(
           hashed_user_id: @hashed_uid,
-          category_id: aggregated_record[:category_id],
+          category_id: actual_category_id,
           begin_date: opts[:begin_date],
           end_date: opts[:end_date]
         )
@@ -35,7 +38,7 @@ module Service
         end
 
         {
-          category_id: aggregated_record[:category_id],
+          category_id: actual_category_id,
           category:,
           total_amount: aggregated_record[:total_amount],
           record_count: aggregated_record[:record_count],

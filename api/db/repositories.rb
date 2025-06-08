@@ -50,7 +50,7 @@ module DB
         begin_date: nil,
         end_date: nil
       )
-        query = model.joins(:category)
+        query = model.left_joins(:category)
                      .where(deleted_at: nil, hashed_user_id:)
         
         if begin_date && end_date

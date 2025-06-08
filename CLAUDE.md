@@ -10,6 +10,144 @@ Finascope is a personal finance management application with a microservices arch
 - **Database**: MySQL 8.0 with encrypted user data
 - **Infrastructure**: Docker containers with Nginx reverse proxy
 
+## Directory Structure
+
+```
+finascope/
+├── api/                              # Backend API (Ruby/Grape)
+│   ├── app/api/
+│   │   ├── root.rb                   # Main API root with helpers
+│   │   └── v1/                       # API version 1
+│   │       ├── categories.rb         # Categories CRUD endpoints
+│   │       ├── invoice_records.rb    # Invoice records endpoints
+│   │       ├── payment_methods.rb    # Payment methods CRUD endpoints
+│   │       ├── records.rb            # Finance records CRUD endpoints
+│   │       ├── root.rb               # V1 API root
+│   │       ├── view.rb               # Aggregation/view endpoints
+│   │       └── entities/             # Grape response entities
+│   │           ├── categories.rb     # Category response format
+│   │           ├── common.rb         # Common response structures
+│   │           ├── invoice_records.rb
+│   │           ├── payment_methods.rb
+│   │           ├── records.rb        # Record response format
+│   │           └── view.rb           # View/aggregation response format
+│   ├── constants.rb                  # Application constants (TODO_ID, etc.)
+│   ├── db/
+│   │   ├── connection.rb             # Database connection setup
+│   │   ├── models.rb                 # ActiveRecord models
+│   │   └── repositories.rb           # Data access layer
+│   ├── envs.rb                       # Environment configuration
+│   ├── lib/                          # Utility libraries
+│   │   ├── exceptions.rb             # Custom exception classes
+│   │   ├── firebase.rb               # Firebase JWT verification
+│   │   ├── id.rb                     # ID generation utilities
+│   │   └── user_hash.rb              # User data encryption/decryption
+│   ├── scripts/                      # Utility scripts
+│   │   ├── create_database.rb        # Database initialization
+│   │   └── finascope-console.rb      # Interactive console
+│   └── services/                     # Business logic layer
+│       ├── categories.rb             # Category business logic
+│       ├── invoice_records.rb        # Invoice processing logic
+│       ├── payment_methods.rb        # Payment method logic
+│       ├── records.rb                # Finance record logic
+│       └── view.rb                   # Aggregation/view logic
+├── front/                            # Frontend (SvelteKit)
+│   ├── src/
+│   │   ├── app.html                  # Main HTML template
+│   │   ├── app.css                   # Global styles
+│   │   ├── lib/
+│   │   │   ├── api/v1/               # API client layer
+│   │   │   │   ├── api.ts            # Main API client functions
+│   │   │   │   ├── const.ts          # Frontend constants (TodoIds, etc.)
+│   │   │   │   ├── index.ts          # API exports
+│   │   │   │   ├── types.d.ts        # TypeScript API types
+│   │   │   │   └── mock/             # Mock data for development
+│   │   │   ├── components/
+│   │   │   │   ├── segment-control.svelte  # Custom UI components
+│   │   │   │   └── ui/               # shadcn/ui components
+│   │   │   │       ├── button/       # Button component
+│   │   │   │       ├── calendar/     # Calendar components
+│   │   │   │       ├── card/         # Card components
+│   │   │   │       ├── data-table/   # Data table components
+│   │   │   │       ├── dialog/       # Modal dialog components
+│   │   │   │       ├── input/        # Input components
+│   │   │   │       └── [other-ui]/   # Other UI components
+│   │   │   ├── firebase/
+│   │   │   │   └── index.svelte.ts   # Firebase auth integration
+│   │   │   ├── shadcn/               # shadcn/ui wrapper components
+│   │   │   │   ├── combobox.svelte   # Dropdown/select component
+│   │   │   │   ├── data-table/       # Enhanced data table
+│   │   │   │   ├── datepicker.svelte # Date picker component
+│   │   │   │   └── select.svelte     # Select component
+│   │   │   └── utils.ts              # Utility functions
+│   │   └── routes/                   # SvelteKit pages/routes
+│   │       ├── +layout.svelte        # Root layout
+│   │       ├── +page.svelte          # Home page
+│   │       ├── config/               # Configuration pages
+│   │       │   ├── +page.svelte      # Config main page
+│   │       │   └── components/       # Config-specific components
+│   │       │       ├── categories/   # Category management
+│   │       │       └── payment-methods/  # Payment method management
+│   │       ├── debug/                # Debug/development pages
+│   │       ├── invoice-records/      # Invoice record pages
+│   │       │   ├── +page.svelte      # Invoice records list
+│   │       │   ├── row-menu.svelte   # Record action menu
+│   │       │   └── year-month-form.svelte  # Date filter form
+│   │       ├── records/              # Finance record pages
+│   │       │   ├── +page.svelte      # Records list page
+│   │       │   ├── dialog-new-record.svelte  # New record dialog
+│   │       │   └── row-menu.svelte   # Record action menu
+│   │       └── view/                 # Data visualization pages
+│   │           ├── +page.svelte      # Views overview page
+│   │           └── categories/       # Category aggregation views
+│   │               ├── +page.svelte  # Category aggregation page
+│   │               ├── category-summary-table.svelte  # Summary table
+│   │               └── records-detail-table.svelte    # Detail records table
+│   ├── static/                       # Static assets
+│   ├── package.json                  # Frontend dependencies
+│   ├── svelte.config.js             # SvelteKit configuration
+│   ├── tailwind.config.ts           # TailwindCSS configuration
+│   ├── tsconfig.json                # TypeScript configuration
+│   └── vite.config.ts               # Vite build configuration
+├── mysql/
+│   └── init.d/
+│       └── 00_user_database.sql     # Database initialization SQL
+├── nginx/                           # Nginx reverse proxy
+│   ├── Dockerfile
+│   └── files/
+│       ├── conf.d/
+│       └── nginx.conf
+├── compose.yml                      # Production Docker Compose
+├── compose-dev.yml                  # Development Docker Compose
+├── compose-dev-mysql.yml            # Shared MySQL for development
+└── CLAUDE.md                        # This documentation file
+```
+
+### Key Directory Purposes
+
+**Backend (`api/`):**
+- `app/api/v1/`: REST API endpoints organized by resource
+- `entities/`: Response data serialization (JSON structure definitions)  
+- `services/`: Business logic layer (core application logic)
+- `db/repositories.rb`: Data access layer (database queries)
+- `lib/`: Utility libraries (encryption, Firebase, etc.)
+- `constants.rb`: Application-wide constants
+
+**Frontend (`front/src/`):**
+- `lib/api/v1/`: API client and type definitions
+- `lib/components/ui/`: Reusable UI components (shadcn/ui)
+- `lib/shadcn/`: Wrapper components for complex UI patterns
+- `routes/`: SvelteKit pages following file-based routing
+- `routes/[resource]/`: Pages for each major resource (records, categories, etc.)
+
+**Key Files for Common Tasks:**
+- Adding new API endpoint: `api/app/api/v1/[resource].rb`
+- Adding new page: `front/src/routes/[page]/+page.svelte`
+- Database queries: `api/db/repositories.rb`
+- Business logic: `api/services/[resource].rb`
+- API types: `front/src/lib/api/v1/types.d.ts`
+- Constants: `api/constants.rb` and `front/src/lib/api/v1/const.ts`
+
 ## Development Commands
 
 ### Local Development (Recommended)
@@ -108,6 +246,41 @@ API calls automatically include Firebase JWT tokens:
 const jwt = await getFirebaseToken();
 opts.headers['Authorization'] = `Bearer ${jwt}`;
 ```
+
+### TODO Item Handling
+The application uses special TODO IDs for records with unset categories or payment methods:
+
+**TODO ID Constants:**
+- Frontend: `front/src/lib/api/v1/const.ts` - `TodoIds.Category` and `TodoIds.PaymentMethod`
+- Backend: `api/constants.rb` - `TODO_ID[:category]` and `TODO_ID[:payment_method]`
+- Values: `'TODO_CATEGORY_ID'` and `'TODO_PAYMENT_METHOD_ID'`
+
+**Implementation Details:**
+- Records can be created with `category_id: 'TODO_CATEGORY_ID'` for unset categories
+- TODO items are displayed as "TODO" in both lists and aggregations
+- Frontend record creation dialog includes TODO as default option
+- Backend repositories use `left_joins(:category)` to include TODO items in aggregations
+- TODO records are fully functional - can be created, edited, and aggregated
+
+**Creating TODO Records:**
+```bash
+# Create a TODO record (category and payment method unset)
+curl -X POST "http://localhost:8080/finascope/api/v1/records" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "未分類の支出",
+    "type_id": 1,
+    "state_id": 1, 
+    "description": "カテゴリ未設定のレコード",
+    "amount": 1500,
+    "category_id": "TODO_CATEGORY_ID",
+    "date": "2025-01-01",
+    "payment_method_id": "TODO_PAYMENT_METHOD_ID"
+  }'
+```
+
+**TODO Items in Category Aggregation:**
+TODO items appear as a separate "TODO" category in `/view/categories/aggregation` and can be clicked to see detailed records.
 
 ## Testing & Quality
 

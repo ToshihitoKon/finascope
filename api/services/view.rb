@@ -21,7 +21,7 @@ module Service
                      @uhash.decrypt(aggregated_record[:encrypted_category])
                    end
 
-        # TODO項目の場合は統一したcategory_idを使用
+        # category_idがnilの場合はTODO項目として扱う
         actual_category_id = aggregated_record[:category_id] || Constants::TODO_ID[:category]
 
         # 各カテゴリのレコード詳細を取得

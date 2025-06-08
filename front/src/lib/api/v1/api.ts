@@ -4,7 +4,7 @@ import { logout, getFirebaseToken } from '$lib/firebase/index.svelte.ts';
 import { toast } from 'svelte-sonner';
 
 const apiBase = async (url: string, method: string, payload: object) => {
-  const opts = {
+  const opts: RequestInit = {
     method: method,
     headers: {
       'Content-Type': 'application/json'
@@ -17,7 +17,7 @@ const apiBase = async (url: string, method: string, payload: object) => {
   try {
     const jwt = await getFirebaseToken();
     if (jwt) {
-      opts.headers['Authorization'] = `Bearer ${jwt}`;
+      (opts.headers as Record<string, string>)['Authorization'] = `Bearer ${jwt}`;
     }
 
     const res = await fetch(`${consts.ApiBaseUrl}/${url}`, opts);
@@ -82,7 +82,7 @@ export const fetchPaymentMethods = async (): Promise<apitype.PaymentMethodsRespo
 
 export const createPaymentMethod = async (
   req: apitype.CreatePaymentMethodRequest
-): Promise<apitype.PutPaymentMethodResponse> => {
+): Promise<apitype.CreatePaymentMethodResponse> => {
   return apiBase(`v1/payment_methods`, 'POST', req);
 };
 

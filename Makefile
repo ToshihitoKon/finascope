@@ -16,7 +16,7 @@ help:
 
 # 開発環境管理
 dev:
-	docker compose -f compose-dev.yml up
+	docker compose -f compose-dev.yml up -d
 
 dev-mysql:
 	docker compose -f compose-dev-mysql.yml up -d

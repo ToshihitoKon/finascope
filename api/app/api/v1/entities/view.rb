@@ -1,4 +1,5 @@
 require "grape-entity"
+require_relative "records"
 
 module API
   module Entities
@@ -8,6 +9,7 @@ module API
         expose :category
         expose :total_amount
         expose :record_count
+        expose :records, using: API::Entities::Records::Record
       end
     end
   end

@@ -150,7 +150,34 @@ finascope/
 
 ## Development Commands
 
-### Local Development (Recommended)
+### Quick Start with Makefile (Recommended)
+```bash
+# Show all available commands
+make help
+
+# Start development environment (background)
+make dev
+
+# Update database schema (after model changes)
+make schema-update
+
+# View logs
+make logs
+
+# Access API console
+make console
+
+# Connect to API container shell
+make api-shell
+
+# Connect to MySQL shell
+make db-shell
+
+# Stop and clean up
+make clean
+```
+
+### Local Development (Manual Commands)
 ```bash
 # First time: Start shared MySQL database
 docker compose -f compose-dev-mysql.yml up -d

@@ -17,3 +17,4 @@ networks:
 
 volumes:
   finascope_mysql_data:
+

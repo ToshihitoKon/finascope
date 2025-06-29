@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'grape'
 require 'lib/id'
 require 'db/models'

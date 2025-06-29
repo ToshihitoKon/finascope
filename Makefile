@@ -31,15 +31,15 @@ clean:
 # データベース操作
 schema-update:
 	@echo "🔄 データベーススキーマを更新中..."
-	docker compose exec api bash -c "cd /app && bundle exec ruby scripts/create_database.rb"
+	docker compose -f compose-dev.yml exec api bash -c "cd /app && bundle exec ruby scripts/create_database.rb"
 	@echo "✅ スキーマ更新完了"
 
 console:
-	docker compose exec api bash -c "cd /app && bundle exec ruby scripts/finascope-console.rb"
+	docker compose -f compose-dev.yml exec api bash -c "cd /app && bundle exec ruby scripts/finascope-console.rb"
 
 # シェルアクセス
 api-shell:
-	docker compose exec api bash
+	docker compose -f compose-dev.yml exec api bash
 
 db-shell:
-	docker compose exec mysql mysql -u finascope -pfinascope finascope_dev
+	docker compose -f compose-dev.yml exec mysql mysql -u finascope -pfinascope finascope_dev

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'kaminari'
 require 'lib/user_hash'
 
@@ -17,7 +19,7 @@ module DB
         month = month.to_i
         closing_day_of_month = closing_day_of_month.to_i if closing_day_of_month
         withdrawal_day_of_month = withdrawal_day_of_month.to_i if withdrawal_day_of_month
-        
+
         target_date = Date.new(year, month, 1)
 
         # 締め日なし（0）の場合は通常の月計算
@@ -89,7 +91,7 @@ module DB
       end
 
       def self.delete(id:)
-        return if model.soft_delete(where_clause: { id: }) > 0
+        return if model.soft_delete(where_clause: { id: }).positive?
 
         raise Exceptions::InternalServerError.exception("failed to record delete #{id}")
       end
@@ -287,7 +289,7 @@ module DB
       end
 
       def self.delete(id:)
-        return if model.soft_delete(where_clause: { id: }) > 0
+        return if model.soft_delete(where_clause: { id: }).positive?
 
         raise Exceptions::InternalServerError.exception("failed to delete invoice record #{id}")
       end

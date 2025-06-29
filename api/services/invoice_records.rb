@@ -1,7 +1,9 @@
-require "constants"
-require "db/repositories"
-require "lib/id"
-require_relative "records"
+# frozen_string_literal: true
+
+require 'constants'
+require 'db/repositories'
+require 'lib/id'
+require_relative 'records'
 
 module Service
   class InvoiceRecords
@@ -20,7 +22,7 @@ module Service
         payment_method_id: params[:payment_method_id],
         withdrawal_date: params[:withdrawal_date]
       )
-      raise Exceptions::InvalidArgument.exception("invalid dto") unless dto.valid?
+      raise Exceptions::InvalidArgument.exception('invalid dto') unless dto.valid?
 
       DB::Repository::InvoiceRecord.create(dto)
     end
@@ -31,7 +33,7 @@ module Service
         state_id: params[:state_id],
         withdrawal_date: params[:withdrawal_date]
       ).to_h.compact
-      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+      raise Exceptions::InvalidArgument.exception('no params to update') if params_dto.empty?
 
       DB::Repository::InvoiceRecord.update(id:, params: params_dto)
     end
@@ -85,28 +87,28 @@ module Service
         payment_method_id:,
         category_id:
       )
-      
+
       # カテゴリ名を取得
       category = if category_id == Constants::TODO_ID[:category]
-                   "TODO"
+                   'TODO'
                  else
                    category_record = records.first
                    if category_record && category_record[:encrypted_category]
                      @uhash.decrypt(category_record[:encrypted_category])
                    else
-                     "Unknown"
+                     'Unknown'
                    end
                  end
-      
+
       # レコード詳細を整形（共通のformat_recordメソッドを使用）
       finance_records_service = Service::FinanceRecords.new(uid: @uid)
       formatted_records = records.map do |record|
         finance_records_service.format_record(record)
       end
-      
+
       # 合計金額を計算
       total_amount = records.sum { |record| record[:amount] || 0 }
-      
+
       {
         category_id:,
         category:,

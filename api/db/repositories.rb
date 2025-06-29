@@ -12,6 +12,12 @@ module DB
       # Invoice Records用の締め期間計算
       # payment_methodの締め日と引き落とし日を考慮して集計期間を算出
       def self.calculate_closing_period(year, month, closing_day_of_month, withdrawal_day_of_month)
+        # パラメータの型変換
+        year = year.to_i
+        month = month.to_i
+        closing_day_of_month = closing_day_of_month.to_i if closing_day_of_month
+        withdrawal_day_of_month = withdrawal_day_of_month.to_i if withdrawal_day_of_month
+        
         target_date = Date.new(year, month, 1)
 
         # 締め日なし（0）の場合は通常の月計算

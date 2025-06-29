@@ -25,18 +25,12 @@ module DB
         # 締め日なし（0）の場合は通常の月計算
         return [target_date.beginning_of_month, target_date.end_of_month] if closing_day_of_month == 0
 
-        # 月末締め（-1）の場合
+        # 月末締め（-1）の場合 → 月末締め翌月払い
         if closing_day_of_month == -1
-          if withdrawal_day_of_month == -1 || withdrawal_day_of_month >= 28
-            # 月末締め月末払い or 月末近く → 前月1日〜前月末日
-            prev_month = target_date.prev_month
-            return [prev_month.beginning_of_month, prev_month.end_of_month]
-          else
-            # 月末締め翌月払い → 前々月1日〜前月末日
-            prev_prev_month = target_date.prev_month.prev_month
-            prev_month = target_date.prev_month
-            return [prev_prev_month.beginning_of_month, prev_month.end_of_month]
-          end
+          # 前々月1日〜前月末日
+          prev_prev_month = target_date.prev_month.prev_month
+          prev_month = target_date.prev_month
+          return [prev_prev_month.beginning_of_month, prev_month.end_of_month]
         end
 
         # 通常の締め日（1-31）の場合

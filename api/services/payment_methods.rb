@@ -1,7 +1,9 @@
-require "constants"
-require "db/repositories"
-require "lib/id"
-require "lib/exceptions"
+# frozen_string_literal: true
+
+require 'constants'
+require 'db/repositories'
+require 'lib/id'
+require 'lib/exceptions'
 
 module Service
   class PaymentMethods
@@ -38,7 +40,7 @@ module Service
         encrypted_label: params[:label]&.present? ? @uhash.encrypt(params[:label]) : nil,
         withdrawal_day_of_month: params[:withdrawal_day_of_month]&.present? ? params[:withdrawal_day_of_month] : nil
       ).to_h.compact
-      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+      raise Exceptions::InvalidArgument.exception('no params to update') if params_dto.empty?
 
       DB::Repository::PaymentMethod.update(id:, params: params_dto)
     end

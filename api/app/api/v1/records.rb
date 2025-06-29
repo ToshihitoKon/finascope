@@ -1,13 +1,15 @@
-require "grape"
-require "grape-entity"
-require "date"
+# frozen_string_literal: true
 
-require "lib/id"
-require "db/models"
-require "services/records"
+require 'grape'
+require 'grape-entity'
+require 'date'
 
-require_relative "entities/records"
-require_relative "entities/common"
+require 'lib/id'
+require 'db/models'
+require 'services/records'
+
+require_relative 'entities/records'
+require_relative 'entities/common'
 
 module API
   module V1
@@ -28,14 +30,14 @@ module API
 
         post do
           params do
-            requires :title, type: String, desc: "Record title"
-            requires :type_id, type: Integer, desc: "Record type ID"
-            requires :state_id, type: Integer, desc: "Record state ID"
-            requires :description, type: String, desc: "Record description"
-            requires :amount, type: Integer, desc: "Record amount"
-            requires :category_id, type: String, desc: "Record category ID"
-            requires :date, type: String, desc: "Record date in ISO8601 format"
-            require :payment_method_id, type: String, desc: "Payment method ID"
+            requires :title, type: String, desc: 'Record title'
+            requires :type_id, type: Integer, desc: 'Record type ID'
+            requires :state_id, type: Integer, desc: 'Record state ID'
+            requires :description, type: String, desc: 'Record description'
+            requires :amount, type: Integer, desc: 'Record amount'
+            requires :category_id, type: String, desc: 'Record category ID'
+            requires :date, type: String, desc: 'Record date in ISO8601 format'
+            require :payment_method_id, type: String, desc: 'Payment method ID'
           end
 
           uid = request_userdata[:uid]
@@ -52,27 +54,27 @@ module API
           )
 
           if record
-            status = "success"
+            status = 'success'
           else
             status 422
-            status = "failed"
+            status = 'failed'
           end
 
           resp = { status:, id: record&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        put ":id" do
+        put ':id' do
           params do
-            requires :id, type: String, desc: "PaymentMethod ID"
-            requires :title, type: String, desc: "Record title"
-            requires :type_id, type: Integer, desc: "Record type ID"
-            requires :state_id, type: Integer, desc: "Record state ID"
-            requires :description, type: String, desc: "Record description"
-            requires :amount, type: Integer, desc: "Record amount"
-            requires :category_id, type: String, desc: "Record category ID"
-            requires :date, type: String, desc: "Record date in ISO8601 format"
-            require :payment_method_id, type: String, desc: "Payment method ID"
+            requires :id, type: String, desc: 'PaymentMethod ID'
+            requires :title, type: String, desc: 'Record title'
+            requires :type_id, type: Integer, desc: 'Record type ID'
+            requires :state_id, type: Integer, desc: 'Record state ID'
+            requires :description, type: String, desc: 'Record description'
+            requires :amount, type: Integer, desc: 'Record amount'
+            requires :category_id, type: String, desc: 'Record category ID'
+            requires :date, type: String, desc: 'Record date in ISO8601 format'
+            require :payment_method_id, type: String, desc: 'Payment method ID'
           end
 
           uid = request_userdata[:uid]
@@ -92,18 +94,18 @@ module API
           )
 
           if record.present?
-            status = "success"
+            status = 'success'
           else
-            status = "failed"
+            status = 'failed'
             status 422
           end
           resp = { status:, id: record&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        delete ":id" do
+        delete ':id' do
           params do
-            requires :id, type: String, desc: "PaymentMethod ID"
+            requires :id, type: String, desc: 'PaymentMethod ID'
           end
 
           uid = request_userdata[:uid]
@@ -112,7 +114,7 @@ module API
             id: params[:id]
           )
 
-          status = "success"
+          status = 'success'
           resp = { status:, id: params[:id] }
           present resp, with: API::Entities::CommonResponse
         end

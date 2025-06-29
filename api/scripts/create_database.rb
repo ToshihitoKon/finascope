@@ -1,17 +1,19 @@
-$LOAD_PATH.unshift(File.expand_path("./lib", __dir__))
+# frozen_string_literal: true
 
-require "bundler/inline"
+$LOAD_PATH.unshift(File.expand_path('./lib', __dir__))
+
+require 'bundler/inline'
 
 gemfile do
-  source "https://rubygems.org"
-  gem "activerecord"
-  gem "mysql2"
+  source 'https://rubygems.org'
+  gem 'activerecord'
+  gem 'mysql2'
 end
-require "active_record"
-require "mysql2"
+require 'active_record'
+require 'mysql2'
 
-require_relative "../db/connection"
-require_relative "../db/models"
+require_relative '../db/connection'
+require_relative '../db/models'
 
 DB::Connection.establish
 
@@ -32,7 +34,7 @@ def check_schema(model_class)
       return false
     end
 
-    puts "Correct schema"
+    puts 'Correct schema'
   rescue StandardError => e
     puts "Error: #{e}"
     return false
@@ -79,4 +81,4 @@ ActiveRecord::Schema.define do
     puts
   end
 end
-puts "End"
+puts 'End'

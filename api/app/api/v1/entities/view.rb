@@ -1,5 +1,7 @@
-require "grape-entity"
-require_relative "records"
+# frozen_string_literal: true
+
+require 'grape-entity'
+require_relative 'records'
 
 module API
   module Entities

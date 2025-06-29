@@ -1,7 +1,9 @@
-require "active_record"
+# frozen_string_literal: true
 
-require_relative "./basewrapper"
-require_relative "./utils"
+require 'active_record'
+
+require_relative './basewrapper'
+require_relative './utils'
 
 # NOTE: Relationship definitions document
 # https://api.rubyonrails.org/v8.0/classes/ActiveRecord/Associations/ClassMethods

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DB
   class TableColumns
     attr_reader :columns

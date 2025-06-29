@@ -23,13 +23,15 @@ module API
           params do
             requires :label, type: String, desc: "PaymentMethod label"
             requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
+            optional :closing_day_of_month, type: Integer, desc: "Closing day of month", default: 0
           end
 
           uid = request_userdata[:uid]
           payment_methods_service = Service::PaymentMethods.new(uid:)
           payment_method = payment_methods_service.create(
             label: params[:label],
-            withdrawal_day_of_month: params[:withdrawal_day_of_month]
+            withdrawal_day_of_month: params[:withdrawal_day_of_month],
+            closing_day_of_month: params[:closing_day_of_month]
           )
 
           if payment_method
@@ -47,6 +49,7 @@ module API
             requires :id, type: String, desc: "PaymentMethod ID"
             requires :label, type: String, desc: "PaymentMethod label"
             requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
+            optional :closing_day_of_month, type: Integer, desc: "Closing day of month"
           end
 
           uid = request_userdata[:uid]
@@ -55,8 +58,9 @@ module API
             id: params[:id],
             params: {
               label: params[:label],
-              withdrawal_day_of_month: params[:withdrawal_day_of_month]
-            }
+              withdrawal_day_of_month: params[:withdrawal_day_of_month],
+              closing_day_of_month: params[:closing_day_of_month]
+            }.compact
           )
 
           if payment_method.present?

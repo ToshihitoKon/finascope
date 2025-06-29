@@ -1,10 +1,12 @@
 require "constants"
 require "db/repositories"
 require "lib/id"
+require_relative "records"
 
 module Service
   class InvoiceRecords
     def initialize(uid:)
+      @uid = uid
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
     end
@@ -94,6 +96,45 @@ module Service
         Date.new(year, month).end_of_month # わからんけどとりあえず最終日を返しておく
       end
       withdrawal_date
+    end
+
+    # 指定カテゴリの締め期間内レコード集計
+    def category_aggregation(year:, month:, payment_method_id:, category_id:)
+      records = DB::Repository::FinanceRecord.get_category_records_for_invoice(
+        hashed_user_id: @hashed_uid,
+        year:,
+        month:,
+        payment_method_id:,
+        category_id:
+      )
+      
+      # カテゴリ名を取得
+      category = if category_id == Constants::TODO_ID[:category]
+                   "TODO"
+                 else
+                   category_record = records.first
+                   if category_record && category_record[:encrypted_category]
+                     @uhash.decrypt(category_record[:encrypted_category])
+                   else
+                     "Unknown"
+                   end
+                 end
+      
+      # レコード詳細を整形（共通のformat_recordメソッドを使用）
+      finance_records_service = Service::FinanceRecords.new(uid: @uid)
+      formatted_records = records.map do |record|
+        finance_records_service.format_record(record)
+      end
+      
+      # 合計金額を計算
+      total_amount = records.sum { |record| record[:amount] || 0 }
+      
+      {
+        category_id:,
+        category:,
+        total_amount:,
+        records: formatted_records
+      }
     end
   end
 end

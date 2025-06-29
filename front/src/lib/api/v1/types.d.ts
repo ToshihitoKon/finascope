@@ -108,6 +108,9 @@ export interface PaymentMethod {
   // withdrawal_day_of_month
   // 0: none, -1: last day of month
   withdrawal_day_of_month: number;
+  // closing_day_of_month
+  // 0: none (use calendar month), 1-31: specific day, -1: last day of month
+  closing_day_of_month: number;
 }
 
 export interface PaymentMethodsResponse {
@@ -117,6 +120,7 @@ export interface PaymentMethodsResponse {
 export interface CreatePaymentMethodRequest {
   label: string;
   withdrawal_day_of_month: number;
+  closing_day_of_month: number;
 }
 
 export interface CreatePaymentMethodResponse {
@@ -128,6 +132,7 @@ export interface UpdatePaymentMethodRequest {
   id: string;
   label: string;
   withdrawal_day_of_month: number;
+  closing_day_of_month: number;
 }
 
 export interface UpdatePaymentMethodResponse {

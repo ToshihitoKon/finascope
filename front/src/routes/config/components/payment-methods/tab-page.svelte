@@ -14,6 +14,7 @@
     id: string;
     label: string;
     withdrawal_day_of_month: string;
+    closing_day_of_month: string;
   };
 
   import RowMenu from './row-menu.svelte';
@@ -22,6 +23,7 @@
   const PaymentMethodColumnDef: ColumnDef<PaymentMethodColumnStruct>[] = [
     { accessorKey: 'label', header: '名前' },
     { accessorKey: 'withdrawal_day_of_month', header: '引き落とし日' },
+    { accessorKey: 'closing_day_of_month', header: '締め日' },
     { accessorKey: 'id', header: 'ID' },
     {
       id: 'actions',
@@ -31,6 +33,7 @@
           id: row.original.id,
           label: row.original.label,
           withdrawal_day_of_month: row.original.withdrawal_day_of_month,
+          closing_day_of_month: row.original.closing_day_of_month,
           update: () => {
             fetchPaymentMethods();
           }

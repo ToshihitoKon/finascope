@@ -187,6 +187,8 @@ export interface InvoiceRecordsCategoryAggregation {
   category_id: string;
   category: string;
   total_amount: number;
+  begin_date: string;
+  end_date: string;
   records: Record[];
 }
 

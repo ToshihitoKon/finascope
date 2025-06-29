@@ -224,6 +224,9 @@
           <h3 class="text-lg font-semibold mb-2">
             {categoryAggregationData.aggregation.category} - Total: ¥{categoryAggregationData.aggregation.total_amount.toLocaleString()}
           </h3>
+          <div class="text-sm text-gray-600 mb-3">
+            集計期間: {new Date(categoryAggregationData.aggregation.begin_date).toLocaleDateString()} ～ {new Date(categoryAggregationData.aggregation.end_date).toLocaleDateString()}
+          </div>
           <div class="space-y-2">
             {#each categoryAggregationData.aggregation.records as record}
               <div class="border rounded p-2">

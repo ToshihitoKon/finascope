@@ -128,3 +128,16 @@ export const fetchCategoryAggregation = async (
   const query = params.toString();
   return apiBase(`v1/view/categories/aggregation${query ? `?${query}` : ''}`, 'GET', {});
 };
+
+// Invoice Records Category Aggregation
+export const fetchInvoiceRecordsCategoryAggregation = async (
+  req: apitype.InvoiceRecordsCategoryAggregationRequest
+): Promise<apitype.InvoiceRecordsCategoryAggregationResponse> => {
+  const params = new URLSearchParams({
+    year: req.year.toString(),
+    month: req.month.toString(),
+    payment_method_id: req.payment_method_id,
+    category_id: req.category_id
+  });
+  return apiBase(`v1/invoice_records/category_aggregation?${params.toString()}`, 'GET', {});
+};

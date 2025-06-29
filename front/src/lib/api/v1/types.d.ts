@@ -181,3 +181,22 @@ export interface CategoryAggregation {
 export interface CategoryAggregationResponse {
   aggregations: CategoryAggregation[];
 }
+
+// Invoice Records Category Aggregation
+export interface InvoiceRecordsCategoryAggregation {
+  category_id: string;
+  category: string;
+  total_amount: number;
+  records: Record[];
+}
+
+export interface InvoiceRecordsCategoryAggregationResponse {
+  aggregation: InvoiceRecordsCategoryAggregation;
+}
+
+export interface InvoiceRecordsCategoryAggregationRequest {
+  year: number;
+  month: number;
+  payment_method_id: string;
+  category_id: string;
+}

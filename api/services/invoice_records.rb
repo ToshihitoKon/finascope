@@ -80,6 +80,22 @@ module Service
 
     # 指定カテゴリの締め期間内レコード集計
     def category_aggregation(year:, month:, payment_method_id:, category_id:)
+      # 支払い方法の情報を取得して締め期間を計算
+      payment_method = DB::Repository::PaymentMethod.find_by_id(hashed_user_id: @hashed_uid, id: payment_method_id)
+      
+      if payment_method
+        begin_date, end_date = DB::Repository::FinanceRecord.calculate_closing_period(
+          year, month, 
+          payment_method[:closing_day_of_month],
+          payment_method[:withdrawal_day_of_month]
+        )
+      else
+        # 支払い方法が見つからない場合はデフォルトの月期間
+        target_date = Date.new(year.to_i, month.to_i, 1)
+        begin_date = target_date.beginning_of_month
+        end_date = target_date.end_of_month
+      end
+
       records = DB::Repository::FinanceRecord.get_category_records_for_invoice(
         hashed_user_id: @hashed_uid,
         year:,
@@ -113,6 +129,8 @@ module Service
         category_id:,
         category:,
         total_amount:,
+        begin_date: begin_date.to_s,
+        end_date: end_date.to_s,
         records: formatted_records
       }
     end

@@ -76,28 +76,6 @@ module Service
       end
     end
 
-    private
-
-    def calc_withdrawal_date(year, month, day_of_month)
-      begin
-        withdrawal_date = case day_of_month == -1
-                          when 0 then nil
-                          when -1 then Date.new(year, month).end_of_month
-                          else
-                            Date.new(year, month, day_of_month)
-                          end
-
-        if withdrawal_date&.saturday?
-          withdrawal_date += 2
-        elsif withdrawal_date&.sunday?
-          withdrawal_date += 1
-        end
-      rescue Date::Error # Invalid day of month (ex. 2023-02-30)
-        Date.new(year, month).end_of_month # わからんけどとりあえず最終日を返しておく
-      end
-      withdrawal_date
-    end
-
     # 指定カテゴリの締め期間内レコード集計
     def category_aggregation(year:, month:, payment_method_id:, category_id:)
       records = DB::Repository::FinanceRecord.get_category_records_for_invoice(
@@ -135,6 +113,28 @@ module Service
         total_amount:,
         records: formatted_records
       }
+    end
+
+    private
+
+    def calc_withdrawal_date(year, month, day_of_month)
+      begin
+        withdrawal_date = case day_of_month == -1
+                          when 0 then nil
+                          when -1 then Date.new(year, month).end_of_month
+                          else
+                            Date.new(year, month, day_of_month)
+                          end
+
+        if withdrawal_date&.saturday?
+          withdrawal_date += 2
+        elsif withdrawal_date&.sunday?
+          withdrawal_date += 1
+        end
+      rescue Date::Error # Invalid day of month (ex. 2023-02-30)
+        Date.new(year, month).end_of_month # わからんけどとりあえず最終日を返しておく
+      end
+      withdrawal_date
     end
   end
 end

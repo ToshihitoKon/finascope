@@ -1,6 +1,8 @@
-require "constants"
-require "db/repositories"
-require_relative "records"
+# frozen_string_literal: true
+
+require 'constants'
+require 'db/repositories'
+require_relative 'records'
 
 module Service
   class View
@@ -13,10 +15,10 @@ module Service
     def category_aggregation(begin_date: nil, end_date: nil)
       opts = { hashed_user_id: @hashed_uid, begin_date:, end_date: }.compact
       aggregated_records = DB::Repository::FinanceRecord.get_aggregated_by_category(**opts)
-      
+
       aggregated_records.map do |aggregated_record|
         category = if aggregated_record[:category_id] == Constants::TODO_ID[:category] || aggregated_record[:encrypted_category].nil?
-                     "TODO"
+                     'TODO'
                    else
                      @uhash.decrypt(aggregated_record[:encrypted_category])
                    end

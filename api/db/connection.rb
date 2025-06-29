@@ -1,11 +1,13 @@
-require "active_record"
-require_relative "../envs"
+# frozen_string_literal: true
+
+require 'active_record'
+require_relative '../envs'
 
 module DB
   class Connection
     def self.establish
       ActiveRecord::Base.establish_connection(
-        adapter: "mysql2",
+        adapter: 'mysql2',
         host: Envs::DB_HOST,
         database: Envs::DB_NAME,
         username: Envs::DB_USER,

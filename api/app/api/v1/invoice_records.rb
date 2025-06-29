@@ -1,10 +1,12 @@
-require "grape"
-require "lib/id"
-require "db/models"
-require "services/invoice_records"
+# frozen_string_literal: true
 
-require_relative "entities/invoice_records"
-require_relative "entities/common"
+require 'grape'
+require 'lib/id'
+require 'db/models'
+require 'services/invoice_records'
+
+require_relative 'entities/invoice_records'
+require_relative 'entities/common'
 
 module API
   module V1
@@ -25,13 +27,13 @@ module API
           res = records.map do |record|
             withdrawal_date = record.dig(:invoice, :withdrawal_date) || record[:calced_withdrawal_date]
             {
-              id: record.dig(:invoice, :id) || "",
+              id: record.dig(:invoice, :id) || '',
               amount: record.dig(:invoice, :amount) || 0,
               withdrawal_date:,
-              state: record.dig(:invoice, :state) || "",
+              state: record.dig(:invoice, :state) || '',
               state_id: record.dig(:invoice, :state_id) || 0,
               payment_method: record.dig(:payment_method, :payment_method),
-              payment_method_id: record.dig(:payment_method, :id) || ""
+              payment_method_id: record.dig(:payment_method, :id) || ''
             }
           end
           present res, with: API::Entities::InvoiceRecords::InvoiceRecord, root: :records
@@ -39,10 +41,10 @@ module API
 
         post do
           params do
-            require :amount, type: Integer, desc: "Invoice record amount"
-            require :state_id, type: Integer, desc: "Invoice record state ID"
-            require :withdrawal_date, type: String, desc: "Withdrawal date in ISO8601 format"
-            require :payment_method_id, type: String, desc: "Payment method ID"
+            require :amount, type: Integer, desc: 'Invoice record amount'
+            require :state_id, type: Integer, desc: 'Invoice record state ID'
+            require :withdrawal_date, type: String, desc: 'Withdrawal date in ISO8601 format'
+            require :payment_method_id, type: String, desc: 'Payment method ID'
           end
           puts params.inspect
 
@@ -56,21 +58,21 @@ module API
           )
 
           if record
-            status = "success"
+            status = 'success'
           else
-            status = "failed"
+            status = 'failed'
             status 422
           end
           resp = { status:, id: record&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        put ":id" do
+        put ':id' do
           params do
-            require :id, type: Integer, desc: "Invoice record ID"
-            require :amount, type: Integer, desc: "Invoice record amount"
-            require :state_id, type: Integer, desc: "Invoice record state ID"
-            require :withdrawal_date, type: String, desc: "Withdrawal date in ISO8601 format"
+            require :id, type: Integer, desc: 'Invoice record ID'
+            require :amount, type: Integer, desc: 'Invoice record amount'
+            require :state_id, type: Integer, desc: 'Invoice record state ID'
+            require :withdrawal_date, type: String, desc: 'Withdrawal date in ISO8601 format'
           end
 
           uid = request_userdata[:uid]
@@ -86,18 +88,18 @@ module API
           )
 
           if record.present?
-            status = "success"
+            status = 'success'
           else
-            status = "failed"
+            status = 'failed'
             status 422
           end
           resp = { status:, id: record&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        delete ":id" do
+        delete ':id' do
           params do
-            requires :id, type: String, desc: "Invoice record ID"
+            requires :id, type: String, desc: 'Invoice record ID'
           end
 
           uid = request_userdata[:uid]
@@ -105,7 +107,7 @@ module API
             id: params[:id]
           )
 
-          status = "success"
+          status = 'success'
           resp = { status:, id: params[:id] }
           present resp, with: API::Entities::CommonResponse
         end

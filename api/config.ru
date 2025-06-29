@@ -1,7 +1,9 @@
-$LOAD_PATH.unshift(File.expand_path("./", __dir__))
+# frozen_string_literal: true
 
-require "app/api/root"
-require "db/connection"
+$LOAD_PATH.unshift(File.expand_path('./', __dir__))
+
+require 'app/api/root'
+require 'db/connection'
 
 DB::Connection.establish
 

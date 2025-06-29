@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require "openssl"
-require "base64"
+require 'openssl'
+require 'base64'
 
 class UserHash
   def initialize(uid)
-    raise ArgumentError, "uid is nil" if uid.nil?
+    raise ArgumentError, 'uid is nil' if uid.nil?
 
     @base_uid = uid
     @key = Digest::SHA256.digest(user_hash + Constants::HASH[:fixed_salt])

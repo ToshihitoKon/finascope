@@ -1,6 +1,8 @@
-require "constants"
-require "db/repositories"
-require "lib/id"
+# frozen_string_literal: true
+
+require 'constants'
+require 'db/repositories'
+require 'lib/id'
 
 module Service
   class InvoiceRecords
@@ -18,7 +20,7 @@ module Service
         payment_method_id: params[:payment_method_id],
         withdrawal_date: params[:withdrawal_date]
       )
-      raise Exceptions::InvalidArgument.exception("invalid dto") unless dto.valid?
+      raise Exceptions::InvalidArgument.exception('invalid dto') unless dto.valid?
 
       DB::Repository::InvoiceRecord.create(dto)
     end
@@ -29,7 +31,7 @@ module Service
         state_id: params[:state_id],
         withdrawal_date: params[:withdrawal_date]
       ).to_h.compact
-      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+      raise Exceptions::InvalidArgument.exception('no params to update') if params_dto.empty?
 
       DB::Repository::InvoiceRecord.update(id:, params: params_dto)
     end

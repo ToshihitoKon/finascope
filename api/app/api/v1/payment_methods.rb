@@ -1,10 +1,12 @@
-require "grape"
-require "lib/id"
-require "db/models"
-require "services/payment_methods"
+# frozen_string_literal: true
 
-require_relative "entities/payment_methods"
-require_relative "entities/common"
+require 'grape'
+require 'lib/id'
+require 'db/models'
+require 'services/payment_methods'
+
+require_relative 'entities/payment_methods'
+require_relative 'entities/common'
 
 module API
   module V1
@@ -21,8 +23,8 @@ module API
 
         post do
           params do
-            requires :label, type: String, desc: "PaymentMethod label"
-            requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
+            requires :label, type: String, desc: 'PaymentMethod label'
+            requires :withdrawal_day_of_month, type: Integer, desc: 'Withdrawal day of month'
           end
 
           uid = request_userdata[:uid]
@@ -33,20 +35,20 @@ module API
           )
 
           if payment_method
-            status = "success"
+            status = 'success'
           else
-            status = "failed"
+            status = 'failed'
             status 422
           end
           resp = { status:, id: payment_method&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        put ":id" do
+        put ':id' do
           params do
-            requires :id, type: String, desc: "PaymentMethod ID"
-            requires :label, type: String, desc: "PaymentMethod label"
-            requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
+            requires :id, type: String, desc: 'PaymentMethod ID'
+            requires :label, type: String, desc: 'PaymentMethod label'
+            requires :withdrawal_day_of_month, type: Integer, desc: 'Withdrawal day of month'
           end
 
           uid = request_userdata[:uid]
@@ -60,9 +62,9 @@ module API
           )
 
           if payment_method.present?
-            status = "success"
+            status = 'success'
           else
-            status = "failed"
+            status = 'failed'
             status 422
           end
           resp = { status:, id: payment_method&.id }

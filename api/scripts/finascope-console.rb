@@ -1,14 +1,15 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-require "irb"
-require "irb/completion"
+require 'irb'
+require 'irb/completion'
 
-$LOAD_PATH.unshift(File.expand_path("../", __dir__))
+$LOAD_PATH.unshift(File.expand_path('../', __dir__))
 
-require "app/api/root"
-require "db/connection"
+require 'app/api/root'
+require 'db/connection'
 # require "db/utils"
-require "lib/user_hash"
+require 'lib/user_hash'
 # require "db/basewrapper"
 # require "db/models"
 # require "db/repositories"
@@ -18,6 +19,6 @@ DB::Connection.establish
 
 SampleUserHash = UserHash.new(Constants::EXAMPLE_USER_UID)
 
-puts "=== Start Finascope Console ==="
+puts '=== Start Finascope Console ==='
 
 IRB.start

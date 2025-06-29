@@ -1,5 +1,5 @@
-require "kaminari"
-require "lib/user_hash"
+require 'kaminari'
+require 'lib/user_hash'
 
 module DB
   module Repository
@@ -8,6 +8,49 @@ module DB
         @model ||= DB::Model::FinanceRecord
       end
       private_class_method :model
+
+      # Invoice Records用の締め期間計算
+      # payment_methodの締め日と引き落とし日を考慮して集計期間を算出
+      def self.calculate_closing_period(year, month, closing_day_of_month, withdrawal_day_of_month)
+        target_date = Date.new(year, month, 1)
+
+        # 締め日なし（0）の場合は通常の月計算
+        return [target_date.beginning_of_month, target_date.end_of_month] if closing_day_of_month == 0
+
+        # 月末締め（-1）の場合
+        if closing_day_of_month == -1
+          if withdrawal_day_of_month == -1 || withdrawal_day_of_month >= 28
+            # 月末締め月末払い or 月末近く → 前月1日〜前月末日
+            prev_month = target_date.prev_month
+            return [prev_month.beginning_of_month, prev_month.end_of_month]
+          else
+            # 月末締め翌月払い → 前々月1日〜前月末日
+            prev_prev_month = target_date.prev_month.prev_month
+            prev_month = target_date.prev_month
+            return [prev_prev_month.beginning_of_month, prev_month.end_of_month]
+          end
+        end
+
+        # 通常の締め日（1-31）の場合
+        if closing_day_of_month >= withdrawal_day_of_month
+          # 基本パターン：締め日 ≥ 引き落とし日
+          # 前月(closing_day+1)〜当月closing_day
+          begin_date = Date.new(year, month - 1, closing_day_of_month + 1)
+          end_date = Date.new(year, month, closing_day_of_month)
+        else
+          # 逆転パターン：締め日 < 引き落とし日
+          # 前々月(closing_day+1)〜前月closing_day
+          begin_date = Date.new(year, month - 2, closing_day_of_month + 1)
+          end_date = Date.new(year, month - 1, closing_day_of_month)
+        end
+
+        [begin_date, end_date]
+      rescue Date::Error
+        # 日付エラーの場合は月末日で調整
+        target_date = Date.new(year, month, 1)
+        [target_date.beginning_of_month, target_date.end_of_month]
+      end
+      private_class_method :calculate_closing_period
 
       def self.get_page(
         hashed_user_id:,
@@ -52,30 +95,30 @@ module DB
       )
         query = model.left_joins(:category)
                      .where(deleted_at: nil, hashed_user_id:)
-        
+
         if begin_date && end_date
           query = query.where(date: begin_date..end_date)
         elsif begin_date
-          query = query.where("date >= ?", begin_date)
+          query = query.where('date >= ?', begin_date)
         elsif end_date
-          query = query.where("date <= ?", end_date)
+          query = query.where('date <= ?', end_date)
         end
 
-        query.group("finance_records.category_id")
+        query.group('finance_records.category_id')
              .select(
-               "finance_records.category_id",
-               "categories.encrypted_label as encrypted_category",
-               "SUM(finance_records.amount) as total_amount",
-               "COUNT(*) as record_count"
+               'finance_records.category_id',
+               'categories.encrypted_label as encrypted_category',
+               'SUM(finance_records.amount) as total_amount',
+               'COUNT(*) as record_count'
              )
-             .map { |record|
+             .map do |record|
                {
                  category_id: record.category_id,
                  encrypted_category: record.encrypted_category,
                  total_amount: record.total_amount.to_i,
                  record_count: record.record_count
                }
-             }
+             end
       end
 
       def self.get_records_by_category(
@@ -86,14 +129,54 @@ module DB
       )
         query = model.eager_load(:payment_method, :category)
                      .where(deleted_at: nil, hashed_user_id:, category_id:)
-        
+
         if begin_date && end_date
           query = query.where(date: begin_date..end_date)
         elsif begin_date
-          query = query.where("date >= ?", begin_date)
+          query = query.where('date >= ?', begin_date)
         elsif end_date
-          query = query.where("date <= ?", end_date)
+          query = query.where('date <= ?', end_date)
         end
+
+        query.map do |record|
+          model.to_dto(record).to_h.merge(
+            {
+              encrypted_payment_method: record.payment_method&.encrypted_label,
+              encrypted_category: record.category&.encrypted_label
+            }
+          )
+        end
+      end
+
+      # Invoice Records用：指定カテゴリの締め期間内レコードを取得
+      def self.get_category_records_for_invoice(
+        hashed_user_id:,
+        year:,
+        month:,
+        payment_method_id:,
+        category_id:
+      )
+        # Payment Methodの情報を取得
+        payment_method = DB::Repository::PaymentMethod.get(id: payment_method_id)
+        return [] unless payment_method
+
+        # 締め期間を計算
+        begin_date, end_date = calculate_closing_period(
+          year,
+          month,
+          payment_method.closing_day_of_month,
+          payment_method.withdrawal_day_of_month
+        )
+
+        # 指定期間・カテゴリ・支払い方法のレコードを取得
+        query = model.eager_load(:payment_method, :category)
+                     .where(
+                       deleted_at: nil,
+                       hashed_user_id:,
+                       category_id:,
+                       payment_method_id:,
+                       date: begin_date..end_date
+                     )
 
         query.map do |record|
           model.to_dto(record).to_h.merge(

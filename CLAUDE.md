@@ -413,6 +413,108 @@ cd api
 bundle exec ruby scripts/finascope-console.rb
 ```
 
+## Testing & Quality Assurance
+
+### API Endpoint Testing
+
+**Basic Health Check:**
+```bash
+curl -s http://localhost:8080/finascope/api/v1/healthcheck
+# Expected: {"status":"healthy"}
+```
+
+**Complete API Testing Workflow:**
+```bash
+# 1. Test categories endpoint
+curl -s http://localhost:8080/finascope/api/v1/categories
+curl -s -X POST http://localhost:8080/finascope/api/v1/categories \
+  -H "Content-Type: application/json" \
+  -d '{"label": "食費"}'
+
+# 2. Test payment methods endpoint
+curl -s http://localhost:8080/finascope/api/v1/payment_methods
+curl -s -X POST http://localhost:8080/finascope/api/v1/payment_methods \
+  -H "Content-Type: application/json" \
+  -d '{"label": "現金", "withdrawal_day_of_month": 1}'
+
+# 3. Test records endpoint
+curl -s http://localhost:8080/finascope/api/v1/records
+curl -s -X POST http://localhost:8080/finascope/api/v1/records \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "ランチ",
+    "type_id": 1,
+    "state_id": 1,
+    "description": "テスト用レコード",
+    "amount": 1000,
+    "category_id": "CATEGORY_ID",
+    "date": "2025-01-01",
+    "payment_method_id": "PAYMENT_METHOD_ID"
+  }'
+
+# 4. Test aggregation endpoint
+curl -s "http://localhost:8080/finascope/api/v1/view/categories/aggregation"
+```
+
+**All Endpoints Status Check:**
+- ✅ `/healthcheck` - Health status
+- ✅ `/categories` - Category CRUD operations
+- ✅ `/payment_methods` - Payment method CRUD operations
+- ✅ `/records` - Finance record CRUD operations
+- ✅ `/view/categories/aggregation` - Data aggregation and reporting
+
+### Code Quality & Formatting
+
+**Rubocop (Ruby Code Formatter):**
+```bash
+cd api
+
+# Check current formatting issues
+rubocop
+
+# Auto-fix basic formatting issues
+rubocop --autocorrect
+
+# Auto-fix all safe corrections (including unsafe ones)
+rubocop -A
+
+# Check specific files
+rubocop app/api/v1/records.rb
+```
+
+**Rubocop Configuration:**
+- Integrated into the Ruby API codebase
+- Enforces consistent code style across all Ruby files
+- Fixes common issues: string quotes, frozen string literals, whitespace, etc.
+- Run before committing changes to maintain code quality
+
+**Common Rubocop Fixes Applied:**
+- Add `# frozen_string_literal: true` to all Ruby files
+- Normalize string quotes (double → single quotes)
+- Remove trailing whitespace
+- Add empty lines after magic comments
+- Fix basic syntax and style violations
+
+**Creating Format Fix Branches:**
+```bash
+# Create branch from main
+git checkout main
+git checkout -b style/rubocop-format-fixes
+
+# Apply auto-corrections
+cd api && rubocop -A
+
+# Commit changes
+git add -A
+git commit -m "style: apply Rubocop auto-corrections for basic formatting"
+
+# Test all endpoints after formatting
+curl -s http://localhost:8080/finascope/api/v1/healthcheck
+# Continue with full API testing...
+```
+
+**Note:** Always verify API functionality after applying Rubocop changes. In rare cases, a server restart may be needed to reload modified files properly.
+
 ## Deployment Notes
 
 - Frontend builds static assets: `pnpm build`

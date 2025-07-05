@@ -42,6 +42,7 @@ services:
     container_name: front
     environment:
       - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS=front
+      - SVELTE_KIT_OUT_DIR=/tmp/.svelte-kit
     build:
       context: ./front
       dockerfile: Dockerfile

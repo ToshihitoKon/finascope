@@ -137,111 +137,13 @@
 
   let year = $state(new Date().getFullYear().toString());
   let month = $state((new Date().getMonth() + 1).toString());
-
-  // Category aggregation dialog
-  let categoryAggregationDialogOpen = $state(false);
-  let selectedPaymentMethodId = $state('');
-  let selectedCategoryId = $state('');
-  let categoryAggregationData = $state<apitype.InvoiceRecordsCategoryAggregationResponse | null>(null);
-
-  const fetchCategoryAggregation = async () => {
-    if (!selectedPaymentMethodId || !selectedCategoryId) return;
-    
-    try {
-      categoryAggregationData = await api.fetchInvoiceRecordsCategoryAggregation({
-        year: parseInt(year),
-        month: parseInt(month),
-        payment_method_id: selectedPaymentMethodId,
-        category_id: selectedCategoryId
-      });
-    } catch (error) {
-      console.error('Error fetching category aggregation:', error);
-    }
-  };
 </script>
 
 {#snippet header()}
   <YearMonthForm bind:year bind:month />
   <Button variant="outline" class="ml-2" onclick={() => fetchRecordsByDate()}>Apply</Button>
-  <Button variant="outline" class="ml-2" onclick={() => categoryAggregationDialogOpen = true}>Category Aggregation</Button>
 {/snippet}
 
 <div class="container max-w-screen-lg">
   <DataTable data={ResponseToColumn(records)} columns={RecordColumnDef} {header} />
 </div>
-
-<!-- Category Aggregation Dialog -->
-<Dialog.Root bind:open={categoryAggregationDialogOpen}>
-  <Dialog.Content class="max-h-[80%] max-w-[90%] overflow-y-auto">
-    <Dialog.Header>
-      <Dialog.Title>Category Aggregation</Dialog.Title>
-    </Dialog.Header>
-    <div class="grid gap-4 py-4">
-      <div class="grid gap-2">
-        <Label for="payment-method">Payment Method</Label>
-        <Select.Root>
-          <Select.Trigger class="w-full">
-            <Select.Value placeholder="Select payment method" />
-          </Select.Trigger>
-          <Select.Content>
-            {#each paymentMethods.payment_methods as method}
-              <Select.Item
-                value={method.id}
-                onSelect={() => selectedPaymentMethodId = method.id}
-              >
-                {method.label}
-              </Select.Item>
-            {/each}
-          </Select.Content>
-        </Select.Root>
-      </div>
-      
-      <div class="grid gap-2">
-        <Label for="category">Category</Label>
-        <Select.Root>
-          <Select.Trigger class="w-full">
-            <Select.Value placeholder="Select category" />
-          </Select.Trigger>
-          <Select.Content>
-            {#each categories.categories as category}
-              <Select.Item
-                value={category.id}
-                onSelect={() => selectedCategoryId = category.id}
-              >
-                {category.label}
-              </Select.Item>
-            {/each}
-          </Select.Content>
-        </Select.Root>
-      </div>
-      
-      <Button onclick={fetchCategoryAggregation} disabled={!selectedPaymentMethodId || !selectedCategoryId}>
-        Aggregate
-      </Button>
-      
-      {#if categoryAggregationData}
-        <div class="mt-4">
-          <h3 class="text-lg font-semibold mb-2">
-            {categoryAggregationData.aggregation.category} - Total: ¥{categoryAggregationData.aggregation.total_amount.toLocaleString()}
-          </h3>
-          <div class="text-sm text-gray-600 mb-3">
-            集計期間: {new Date(categoryAggregationData.aggregation.begin_date).toLocaleDateString()} ～ {new Date(categoryAggregationData.aggregation.end_date).toLocaleDateString()}
-          </div>
-          <div class="space-y-2">
-            {#each categoryAggregationData.aggregation.records as record}
-              <div class="border rounded p-2">
-                <div class="font-medium">{record.title}</div>
-                <div class="text-sm text-gray-600">
-                  ¥{record.amount.toLocaleString()} - {record.date} - {record.payment_method}
-                </div>
-                {#if record.description}
-                  <div class="text-sm text-gray-500">{record.description}</div>
-                {/if}
-              </div>
-            {/each}
-          </div>
-        </div>
-      {/if}
-    </div>
-  </Dialog.Content>
-</Dialog.Root>

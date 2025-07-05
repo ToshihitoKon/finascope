@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'records'
+
 module API
   module Entities
     class InvoiceRecords
@@ -11,6 +13,15 @@ module API
         expose :withdrawal_date, documentation: { type: String, desc: 'Withdrawal date. ISO8601' }
         expose :state, documentation: { type: String, desc: 'State of the invoice record' }
         expose :state_id, documentation: { type: Integer, desc: 'State ID of the invoice record' }
+      end
+
+      class CategoryAggregation < Grape::Entity
+        expose :category_id, documentation: { type: String, desc: 'Category ID' }
+        expose :category, documentation: { type: String, desc: 'Category name' }
+        expose :total_amount, documentation: { type: Integer, desc: 'Total amount for this category' }
+        expose :begin_date, documentation: { type: String, desc: 'Aggregation period start date (ISO8601)' }
+        expose :end_date, documentation: { type: String, desc: 'Aggregation period end date (ISO8601)' }
+        expose :records, using: API::Entities::Records::Record, documentation: { type: Array, desc: 'Finance records in this category' }
       end
     end
   end

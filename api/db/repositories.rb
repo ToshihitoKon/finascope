@@ -11,6 +11,49 @@ module DB
       end
       private_class_method :model
 
+      # Invoice Records用の締め期間計算
+      # payment_methodの締め日と引き落とし日を考慮して集計期間を算出
+      def self.calculate_closing_period(year, month, closing_day_of_month, withdrawal_day_of_month)
+        # パラメータの型変換
+        year = year.to_i
+        month = month.to_i
+        closing_day_of_month = closing_day_of_month.to_i if closing_day_of_month
+        withdrawal_day_of_month = withdrawal_day_of_month.to_i if withdrawal_day_of_month
+
+        target_date = Date.new(year, month, 1)
+
+        # 締め日なし（0）の場合は通常の月計算
+        return [target_date.beginning_of_month, target_date.end_of_month] if closing_day_of_month == 0
+
+        # 月末締め（-1）の場合 → 月末締め翌月払い
+        if closing_day_of_month == -1
+          # 前々月1日〜前月末日
+          prev_prev_month = target_date.prev_month.prev_month
+          prev_month = target_date.prev_month
+          return [prev_prev_month.beginning_of_month, prev_month.end_of_month]
+        end
+
+        # 通常の締め日（1-31）の場合
+        if closing_day_of_month < withdrawal_day_of_month
+          # 締め日が引き落とし日より早い場合（例：締め日15、引き落とし10）
+          # 前々月(closing_day+1)〜前月closing_day
+          begin_date = Date.new(year, month - 2, closing_day_of_month + 1)
+          end_date = Date.new(year, month - 1, closing_day_of_month)
+        else
+          # 締め日が引き落とし日以降の場合（例：締め日25、引き落とし10）
+          # 前月(closing_day+1)〜当月closing_day
+          begin_date = Date.new(year, month - 1, closing_day_of_month + 1)
+          end_date = Date.new(year, month, closing_day_of_month)
+        end
+
+        [begin_date, end_date]
+      rescue Date::Error
+        # 日付エラーの場合は月末日で調整
+        target_date = Date.new(year, month, 1)
+        [target_date.beginning_of_month, target_date.end_of_month]
+      end
+      private_class_method :calculate_closing_period
+
       def self.get_page(
         hashed_user_id:,
         begin_date: Date.today.beginning_of_month,
@@ -96,6 +139,46 @@ module DB
         elsif end_date
           query = query.where('date <= ?', end_date)
         end
+
+        query.map do |record|
+          model.to_dto(record).to_h.merge(
+            {
+              encrypted_payment_method: record.payment_method&.encrypted_label,
+              encrypted_category: record.category&.encrypted_label
+            }
+          )
+        end
+      end
+
+      # Invoice Records用：指定カテゴリの締め期間内レコードを取得
+      def self.get_category_records_for_invoice(
+        hashed_user_id:,
+        year:,
+        month:,
+        payment_method_id:,
+        category_id:
+      )
+        # Payment Methodの情報を取得
+        payment_method = DB::Repository::PaymentMethod.get(id: payment_method_id)
+        return [] unless payment_method
+
+        # 締め期間を計算
+        begin_date, end_date = calculate_closing_period(
+          year,
+          month,
+          payment_method.closing_day_of_month,
+          payment_method.withdrawal_day_of_month
+        )
+
+        # 指定期間・カテゴリ・支払い方法のレコードを取得
+        query = model.eager_load(:payment_method, :category)
+                     .where(
+                       deleted_at: nil,
+                       hashed_user_id:,
+                       category_id:,
+                       payment_method_id:,
+                       date: begin_date..end_date
+                     )
 
         query.map do |record|
           model.to_dto(record).to_h.merge(

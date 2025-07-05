@@ -68,6 +68,10 @@ module DB
         # 0: none, -1: last day of month
         t_def.integer :withdrawal_day_of_month, null: false
 
+        # closing_day_of_month
+        # 0: none (use calendar month), 1-31: specific day, -1: last day of month
+        t_def.integer :closing_day_of_month, null: false, default: 0
+
         t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
       end

@@ -28,7 +28,8 @@ module Service
         id: ID.generate,
         hashed_user_id: @hashed_uid,
         encrypted_label: @uhash.encrypt(params[:label]),
-        withdrawal_day_of_month: params[:withdrawal_day_of_month]
+        withdrawal_day_of_month: params[:withdrawal_day_of_month],
+        closing_day_of_month: params[:closing_day_of_month] || 0
       )
       raise Exceptions::InvalidArgument unless dto.valid?
 
@@ -38,7 +39,8 @@ module Service
     def update(id:, params:)
       params_dto = DB::Model::PaymentMethod.dto.new(
         encrypted_label: params[:label]&.present? ? @uhash.encrypt(params[:label]) : nil,
-        withdrawal_day_of_month: params[:withdrawal_day_of_month]&.present? ? params[:withdrawal_day_of_month] : nil
+        withdrawal_day_of_month: params[:withdrawal_day_of_month]&.present? ? params[:withdrawal_day_of_month] : nil,
+        closing_day_of_month: params[:closing_day_of_month]&.present? ? params[:closing_day_of_month] : nil
       ).to_h.compact
       raise Exceptions::InvalidArgument.exception('no params to update') if params_dto.empty?
 

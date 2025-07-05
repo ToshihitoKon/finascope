@@ -1,9 +1,11 @@
-# TODO: API Error Handling
+# TODO List
 
-## Problem
+## TODO: API Error Handling
+
+### Problem
 Currently, `InvalidArgument` exceptions are not properly handled in the API layer. When these exceptions are raised in service classes, they result in 500 Internal Server Error responses instead of appropriate HTTP status codes.
 
-## Current State
+### Current State
 - `InvalidArgument` exceptions are raised in various service classes:
   - `services/invoice_records.rb` - DTO validation, empty update params, payment method not found
   - `services/payment_methods.rb` - DTO validation, empty update params
@@ -12,13 +14,13 @@ Currently, `InvalidArgument` exceptions are not properly handled in the API laye
 - No `rescue_from` blocks or exception handling in API layer
 - Results in 500 errors instead of proper 400 Bad Request responses
 
-## Solution Approach
+### Solution Approach
 1. **Add Grape rescue_from blocks** in API root (`api/app/api/root.rb`)
 2. **Map InvalidArgument to 400 Bad Request** status code
 3. **Implement consistent error response format**
 4. **Consider adding other exception mappings** for comprehensive error handling
 
-## Implementation Example
+### Implementation Example
 ```ruby
 # In api/app/api/root.rb
 rescue_from Exceptions::InvalidArgument do |e|
@@ -26,5 +28,5 @@ rescue_from Exceptions::InvalidArgument do |e|
 end
 ```
 
-## Priority
+### Priority
 Medium - Affects API usability and debugging experience

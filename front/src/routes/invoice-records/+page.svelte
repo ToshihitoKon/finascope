@@ -16,11 +16,9 @@
   import { renderComponent } from '$lib/components/ui/data-table/index.js';
   import YearMonthForm from './year-month-form.svelte';
   import { Button } from '$lib/components/ui/button/index.js';
-  import * as Dialog from '$lib/components/ui/dialog/index.js';
-  import * as Select from '$lib/components/ui/select/index.js';
-  import { Label } from '$lib/components/ui/label/index.js';
 
   import RowMenu from './row-menu.svelte';
+  import CategoryAggregation from './category-aggregation.svelte';
 
   type RecordColumnStruct = {
     id: string;
@@ -85,6 +83,18 @@
         } else {
           return row.original.state;
         }
+      }
+    },
+    {
+      id: 'category_aggregation',
+      enableHiding: false,
+      cell: ({ row }) => {
+        return renderComponent(CategoryAggregation, {
+          year: year,
+          month: month,
+          paymentMethodId: row.original.payment_method_id,
+          categoryId: row.original.id
+        });
       }
     },
     {

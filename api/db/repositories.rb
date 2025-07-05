@@ -13,6 +13,7 @@ module DB
 
       # Invoice Records用の締め期間計算
       # payment_methodの締め日と引き落とし日を考慮して集計期間を算出
+      # TODO: thinking calculate_closing_period は本当に Repository の責務か？
       def self.calculate_closing_period(year, month, closing_day_of_month, withdrawal_day_of_month)
         # パラメータの型変換
         year = year.to_i
@@ -52,7 +53,6 @@ module DB
         target_date = Date.new(year, month, 1)
         [target_date.beginning_of_month, target_date.end_of_month]
       end
-      private_class_method :calculate_closing_period
 
       def self.get_page(
         hashed_user_id:,

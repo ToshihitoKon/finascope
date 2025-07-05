@@ -81,7 +81,7 @@ module Service
     # 指定カテゴリの締め期間内レコード集計
     def category_aggregation(year:, month:, payment_method_id:, category_id:)
       # 支払い方法の情報を取得して締め期間を計算
-      payment_method = DB::Repository::PaymentMethod.id(id: payment_method_id)
+      payment_method = DB::Repository::PaymentMethod.get(id: payment_method_id)
 
       raise Exceptions::InvalidArgument.exception('payment method not found') unless payment_method
 

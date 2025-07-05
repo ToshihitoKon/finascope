@@ -34,16 +34,16 @@ module DB
         end
 
         # 通常の締め日（1-31）の場合
-        if closing_day_of_month >= withdrawal_day_of_month
-          # 基本パターン：締め日 ≥ 引き落とし日
-          # 前月(closing_day+1)〜当月closing_day
-          begin_date = Date.new(year, month - 1, closing_day_of_month + 1)
-          end_date = Date.new(year, month, closing_day_of_month)
-        else
-          # 逆転パターン：締め日 < 引き落とし日
+        if closing_day_of_month < withdrawal_day_of_month
+          # 締め日が引き落とし日より早い場合（例：締め日15、引き落とし10）
           # 前々月(closing_day+1)〜前月closing_day
           begin_date = Date.new(year, month - 2, closing_day_of_month + 1)
           end_date = Date.new(year, month - 1, closing_day_of_month)
+        else
+          # 締め日が引き落とし日以降の場合（例：締め日25、引き落とし10）
+          # 前月(closing_day+1)〜当月closing_day
+          begin_date = Date.new(year, month - 1, closing_day_of_month + 1)
+          end_date = Date.new(year, month, closing_day_of_month)
         end
 
         [begin_date, end_date]

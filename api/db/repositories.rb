@@ -22,29 +22,29 @@ module DB
         withdrawal_day_of_month = withdrawal_day_of_month.to_i if withdrawal_day_of_month
 
         target_date = Date.new(year, month, 1)
+        prev_prev_month = target_date.prev_month.prev_month
+        prev_month = target_date.prev_month
 
         # 締め日なし（0）の場合は通常の月計算
-        return [target_date.beginning_of_month, target_date.end_of_month] if closing_day_of_month == 0
+        return [prev_month.beginning_of_month, prev_month.end_of_month] if closing_day_of_month == 0
 
         # 月末締め（-1）の場合 → 月末締め翌月払い
         if closing_day_of_month == -1
           # 前々月1日〜前月末日
-          prev_prev_month = target_date.prev_month.prev_month
-          prev_month = target_date.prev_month
           return [prev_prev_month.beginning_of_month, prev_month.end_of_month]
         end
 
         # 通常の締め日（1-31）の場合
         if closing_day_of_month < withdrawal_day_of_month
-          # 締め日が引き落とし日より早い場合（例：締め日15、引き落とし10）
-          # 前々月(closing_day+1)〜前月closing_day
-          begin_date = Date.new(year, month - 2, closing_day_of_month + 1)
-          end_date = Date.new(year, month - 1, closing_day_of_month)
-        else
-          # 締め日が引き落とし日以降の場合（例：締め日25、引き落とし10）
+          # 締め日が引き落とし日以前の場合(当月確定)
           # 前月(closing_day+1)〜当月closing_day
           begin_date = Date.new(year, month - 1, closing_day_of_month + 1)
           end_date = Date.new(year, month, closing_day_of_month)
+        else
+          # 締め日が引き落とし日以降の場合(当月未確定)
+          # 前々月(closing_day+1)〜前月closing_day
+          begin_date = Date.new(year, month - 2, closing_day_of_month + 1)
+          end_date = Date.new(year, month - 1, closing_day_of_month)
         end
 
         [begin_date, end_date]

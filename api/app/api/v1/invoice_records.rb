@@ -145,7 +145,7 @@ module API
             payment_method_id: params[:payment_method_id]
           )
 
-          present aggregation, with: API::Entities::InvoiceRecords::WithdrawalRecordsAggregation
+          present aggregation, with: API::Entities::InvoiceRecords::WithdrawalRecordsAggregation, root: :aggregation
         end
       end
     end

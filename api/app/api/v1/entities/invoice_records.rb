@@ -32,6 +32,10 @@ module API
         expose :end_date, documentation: { type: String, desc: 'Aggregation period end date (ISO8601)' }
         expose :records, using: API::Entities::Records::Record, documentation: { type: Array, desc: 'Finance records for this payment method' }
       end
+
+      class WithdrawalRecordsAggregationResponse < Grape::Entity
+        expose :aggregation, using: WithdrawalRecordsAggregation, documentation: { type: Object, desc: 'Withdrawal records aggregation data' }
+      end
     end
   end
 end

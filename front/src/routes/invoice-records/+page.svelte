@@ -18,7 +18,7 @@
   import { Button } from '$lib/components/ui/button/index.js';
 
   import RowMenu from './row-menu.svelte';
-  import CategoryAggregation from './category-aggregation.svelte';
+  import WithdrawalRecordAggregation from './withdrawal-record-aggregation.svelte';
 
   type RecordColumnStruct = {
     id: string;
@@ -86,14 +86,13 @@
       }
     },
     {
-      id: 'category_aggregation',
+      id: 'withdrawal_record_aggregation',
       enableHiding: false,
       cell: ({ row }) => {
-        return renderComponent(CategoryAggregation, {
+        return renderComponent(WithdrawalRecordAggregation, {
           year: year,
           month: month,
-          paymentMethodId: row.original.payment_method_id,
-          categoryId: row.original.id
+          paymentMethodId: row.original.payment_method_id
         });
       }
     },

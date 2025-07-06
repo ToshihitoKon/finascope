@@ -130,6 +130,23 @@ module API
 
           present aggregation, with: API::Entities::InvoiceRecords::CategoryAggregation
         end
+
+        params do
+          requires :year, type: Integer, desc: 'Target year'
+          requires :month, type: Integer, desc: 'Target month'
+          requires :payment_method_id, type: String, desc: 'Payment method ID'
+        end
+        get :withdrawal_records_aggregation do
+          uid = request_userdata[:uid]
+          invoice_records_service = Service::InvoiceRecords.new(uid:)
+          aggregation = invoice_records_service.withdrawal_records_aggregation(
+            year: params[:year],
+            month: params[:month],
+            payment_method_id: params[:payment_method_id]
+          )
+
+          present aggregation, with: API::Entities::InvoiceRecords::WithdrawalRecordsAggregation
+        end
       end
     end
   end

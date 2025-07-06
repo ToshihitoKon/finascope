@@ -189,6 +189,34 @@ module DB
           )
         end
       end
+
+      # Invoice Records用：指定支払い方法の締め期間内すべてのレコードを取得
+      def self.get_withdrawal_records_for_invoice(
+        hashed_user_id:,
+        year:,
+        month:,
+        payment_method_id:,
+        begin_date:,
+        end_date:
+      )
+        # 指定期間・支払い方法のすべてのレコードを取得
+        query = model.eager_load(:payment_method, :category)
+                     .where(
+                       deleted_at: nil,
+                       hashed_user_id:,
+                       payment_method_id:,
+                       date: begin_date..end_date
+                     )
+
+        query.map do |record|
+          model.to_dto(record).to_h.merge(
+            {
+              encrypted_payment_method: record.payment_method&.encrypted_label,
+              encrypted_category: record.category&.encrypted_label
+            }
+          )
+        end
+      end
     end
 
     class Category

@@ -6,6 +6,8 @@
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
   let records = $state<apitype.InvoiceRecordsResponse>({ records: [] });
+  let paymentMethods = $state<apitype.PaymentMethodsResponse>({ payment_methods: [] });
+  let categories = $state<apitype.CategoriesResponse>({ categories: [] });
 
   // for DataTable
   import DataTable from '$lib/shadcn/data-table/data-table.svelte';
@@ -16,6 +18,7 @@
   import { Button } from '$lib/components/ui/button/index.js';
 
   import RowMenu from './row-menu.svelte';
+  import WithdrawalRecordAggregation from './withdrawal-record-aggregation.svelte';
 
   type RecordColumnStruct = {
     id: string;
@@ -83,6 +86,17 @@
       }
     },
     {
+      id: 'withdrawal_record_aggregation',
+      enableHiding: false,
+      cell: ({ row }) => {
+        return renderComponent(WithdrawalRecordAggregation, {
+          year: year,
+          month: month,
+          paymentMethodId: row.original.payment_method_id
+        });
+      }
+    },
+    {
       id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
@@ -105,11 +119,23 @@
   const fetchRecordsByDate = async () => {
     records = await api.fetchInvoiceRecords(`year=${year}&month=${month}`);
   };
+
+  const fetchPaymentMethods = async () => {
+    paymentMethods = await api.fetchPaymentMethods();
+  };
+
+  const fetchCategories = async () => {
+    categories = await api.fetchCategories();
+  };
   import { loginEventBus } from '$lib/firebase/index.svelte.ts';
   onMount(() => {
     fetchRecordsByDate();
+    fetchPaymentMethods();
+    fetchCategories();
     const unsubscribe = loginEventBus.subscribe(() => {
       fetchRecordsByDate();
+      fetchPaymentMethods();
+      fetchCategories();
     });
     return () => {
       if (unsubscribe) {

@@ -78,38 +78,32 @@ module Service
       end
     end
 
-    # 指定カテゴリの締め期間内レコード集計
-    def category_aggregation(year:, month:, payment_method_id:, category_id:)
-      # 支払い方法の情報を取得して締め期間を計算
-      payment_method = DB::Repository::PaymentMethod.id(id: payment_method_id)
+    # 指定支払い方法の締め期間内すべてのレコード集計
+    def withdrawal_records_aggregation(year:, month:, payment_method_id:)
+      # 支払い方法の情報を取得
+      payment_method = DB::Repository::PaymentMethod.get(id: payment_method_id)
 
       raise Exceptions::InvalidArgument.exception('payment method not found') unless payment_method
 
+      # 締め期間を計算
       begin_date, end_date = DB::Repository::FinanceRecord.calculate_closing_period(
         year, month,
         payment_method[:closing_day_of_month],
         payment_method[:withdrawal_day_of_month]
       )
 
-      records = DB::Repository::FinanceRecord.get_category_records_for_invoice(
+      # 指定期間・支払い方法のすべてのレコードを取得
+      records = DB::Repository::FinanceRecord.get_withdrawal_records_for_invoice(
         hashed_user_id: @hashed_uid,
         year:,
         month:,
         payment_method_id:,
-        category_id:
+        begin_date:,
+        end_date:
       )
 
-      # カテゴリ名を取得
-      category = if category_id == Constants::TODO_ID[:category]
-                   'TODO'
-                 else
-                   category_record = records.first
-                   if category_record && category_record[:encrypted_category]
-                     @uhash.decrypt(category_record[:encrypted_category])
-                   else
-                     'Unknown'
-                   end
-                 end
+      # 支払い方法名を取得
+      payment_method_name = @uhash.decrypt(payment_method[:encrypted_label])
 
       # レコード詳細を整形（共通のformat_recordメソッドを使用）
       finance_records_service = Service::FinanceRecords.new(uid: @uid)
@@ -121,8 +115,8 @@ module Service
       total_amount = records.sum { |record| record[:amount] || 0 }
 
       {
-        category_id:,
-        category:,
+        payment_method_id:,
+        payment_method: payment_method_name,
         total_amount:,
         begin_date: begin_date.to_s,
         end_date: end_date.to_s,

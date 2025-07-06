@@ -128,3 +128,15 @@ export const fetchCategoryAggregation = async (
   const query = params.toString();
   return apiBase(`v1/view/categories/aggregation${query ? `?${query}` : ''}`, 'GET', {});
 };
+
+// Invoice Records Withdrawal Aggregation
+export const fetchInvoiceRecordsWithdrawalAggregation = async (
+  req: apitype.InvoiceRecordsWithdrawalAggregationRequest
+): Promise<apitype.InvoiceRecordsWithdrawalAggregationResponse> => {
+  const params = new URLSearchParams({
+    year: req.year.toString(),
+    month: req.month.toString(),
+    payment_method_id: req.payment_method_id
+  });
+  return apiBase(`v1/invoice_records/withdrawal_records_aggregation?${params.toString()}`, 'GET', {});
+};

@@ -13,27 +13,31 @@
     id,
     label,
     withdrawal_day_of_month,
+    closing_day_of_month,
     update
   }: {
     id: string;
     label: string;
     withdrawal_day_of_month: string;
+    closing_day_of_month: string;
     update: () => void;
   } = $props();
 
   let formData = $state({
     label: label,
-    withdrawal_day_of_month: withdrawal_day_of_month
+    withdrawal_day_of_month: withdrawal_day_of_month,
+    closing_day_of_month: closing_day_of_month
   });
   let isValid = $derived<boolean>(
-    Boolean(formData.label && Number(formData.withdrawal_day_of_month) >= 0)
+    Boolean(formData.label && Number(formData.withdrawal_day_of_month) >= 0 && Number(formData.closing_day_of_month) >= -1)
   );
 
   const payloadFormatter = (): apitype.UpdatePaymentMethodRequest => {
     return {
       id: id,
       label: formData.label,
-      withdrawal_day_of_month: Number(formData.withdrawal_day_of_month)
+      withdrawal_day_of_month: Number(formData.withdrawal_day_of_month),
+      closing_day_of_month: Number(formData.closing_day_of_month)
     };
   };
 
@@ -81,6 +85,16 @@
                 id="withdrawable-day"
                 bind:value={formData.withdrawal_day_of_month}
                 class="w-full"
+              />
+            </div>
+            <div class="flex flex-col gap-1">
+              <Label for="closing-day">締め日</Label>
+              <Input
+                type="number"
+                id="closing-day"
+                bind:value={formData.closing_day_of_month}
+                class="w-full"
+                placeholder="0:なし, 1-31:特定日, -1:月末"
               />
             </div>
             <div class="flex flex-col gap-1">

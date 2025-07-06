@@ -22,7 +22,7 @@ dev-mysql:
 	docker compose -f compose-dev-mysql.yml up -d
 
 logs:
-	docker compose logs -f
+	docker compose -f compose-dev.yml logs -f
 
 clean:
 	docker compose -f compose-dev.yml down

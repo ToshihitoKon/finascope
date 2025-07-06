@@ -25,7 +25,8 @@ const config = {
     },
     paths: {
       base: '/finascope'
-    }
+    },
+    outDir: process.env.SVELTE_KIT_OUT_DIR || '.svelte-kit'
   }
 };
 

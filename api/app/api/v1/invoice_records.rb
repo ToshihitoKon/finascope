@@ -116,25 +116,6 @@ module API
           requires :year, type: Integer, desc: 'Target year'
           requires :month, type: Integer, desc: 'Target month'
           requires :payment_method_id, type: String, desc: 'Payment method ID'
-          requires :category_id, type: String, desc: 'Category ID'
-        end
-        get :category_aggregation do
-          uid = request_userdata[:uid]
-          invoice_records_service = Service::InvoiceRecords.new(uid:)
-          aggregation = invoice_records_service.category_aggregation(
-            year: params[:year],
-            month: params[:month],
-            payment_method_id: params[:payment_method_id],
-            category_id: params[:category_id]
-          )
-
-          present aggregation, with: API::Entities::InvoiceRecords::CategoryAggregation
-        end
-
-        params do
-          requires :year, type: Integer, desc: 'Target year'
-          requires :month, type: Integer, desc: 'Target month'
-          requires :payment_method_id, type: String, desc: 'Payment method ID'
         end
         get :withdrawal_records_aggregation do
           uid = request_userdata[:uid]

@@ -3,6 +3,11 @@
   import { Button } from '$lib/components/ui/button/index.js';
   import * as api from '$lib/api/v1/api';
   import type * as apitype from '$lib/api/v1/types.d.ts';
+  import { createRawSnippet } from 'svelte';
+  import DataTable from '$lib/shadcn/data-table/data-table.svelte';
+  import DataTableHeaderButton from '$lib/shadcn/data-table/header-button.svelte';
+  import { type ColumnDef } from '@tanstack/table-core';
+  import { renderSnippet, renderComponent } from '$lib/components/ui/data-table/index.js';
 
   let {
     year,
@@ -40,6 +45,88 @@
       currency: 'JPY'
     }).format(amount);
   };
+
+  type RecordColumnStruct = {
+    id: string;
+    title: string;
+    amount: number;
+    category: string;
+    date: string;
+    state: string;
+  };
+
+  const recordsToColumnStruct = (
+    records: apitype.InvoiceRecordsWithdrawalAggregation['records']
+  ): RecordColumnStruct[] => {
+    return records.map((record) => ({
+      id: record.id,
+      title: record.title,
+      amount: record.amount,
+      category: record.category,
+      date: record.date,
+      state: record.state
+    }));
+  };
+
+  const getSnippet = (cls: string) => {
+    return createRawSnippet<[string | number]>((getValue) => {
+      const value = getValue();
+      return {
+        render: () => `<div class="${cls}">${value}</div>`
+      };
+    });
+  };
+
+  const RecordColumnDef: ColumnDef<RecordColumnStruct>[] = [
+    {
+      accessorKey: 'date',
+      header: ({ column }) => {
+        return renderComponent(DataTableHeaderButton, {
+          header: '日付',
+          onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        });
+      },
+      cell: ({ row }) => {
+        const value = new Date(row.original.date).toLocaleDateString('ja-JP');
+        return renderSnippet(getSnippet('min-w-20 text-sm'), value);
+      }
+    },
+    {
+      accessorKey: 'title',
+      header: 'タイトル',
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-32 font-medium'), row.getValue('title'));
+      }
+    },
+    {
+      accessorKey: 'amount',
+      header: ({ column }) => {
+        return renderComponent(DataTableHeaderButton, {
+          header: '金額',
+          onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        });
+      },
+      cell: ({ row }) => {
+        const amount = row.getValue('amount') as number;
+        const formatted = formatAmount(amount);
+        return renderSnippet(getSnippet('min-w-20 text-right font-medium'), formatted);
+      }
+    },
+    {
+      accessorKey: 'category',
+      header: 'カテゴリ',
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-24 text-sm'), row.getValue('category'));
+      }
+    },
+    {
+      accessorKey: 'state',
+      header: '状態',
+      cell: ({ row }) => {
+        return renderSnippet(getSnippet('min-w-16 text-sm'), row.getValue('state'));
+      }
+    }
+  ];
 
   const handleDialogOpen = () => {
     fetchAggregationData();
@@ -82,26 +169,10 @@
 
         <div>
           <h4 class="mb-3 text-lg font-medium">レコード一覧</h4>
-          <div class="space-y-2">
-            {#each aggregationData.records as record}
-              <div class="flex items-center justify-between rounded-lg border bg-white p-3">
-                <div class="flex-1">
-                  <div class="font-medium">{record.title}</div>
-                  <div class="text-sm text-gray-600">
-                    {new Date(record.date).toLocaleDateString('ja-JP')} |
-                    {record.category} |
-                    {record.payment_method}
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="font-medium">{formatAmount(record.amount)}</div>
-                  <div class="text-sm text-gray-600">{record.state}</div>
-                </div>
-              </div>
-            {:else}
-              <div class="text-center py-4 text-gray-500">レコードがありません</div>
-            {/each}
-          </div>
+          <DataTable
+            data={recordsToColumnStruct(aggregationData.records)}
+            columns={RecordColumnDef}
+          />
         </div>
       {:else}
         <div class="py-4 text-center text-gray-500">データがありません</div>

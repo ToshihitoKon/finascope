@@ -58,6 +58,15 @@ services:
       - /app/node_modules
     networks:
       - finascope-net
+  openapi:
+    # access the OpenAPI documentation at http://localhost:8081
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./docs/openapi_swagger_doc.json:/docs/swagger.json
+    environment:
+      - SWAGGER_JSON=/docs/swagger.json
+    ports:
+      - "8081:8080"
 volumes:
   bundle_cache:
 

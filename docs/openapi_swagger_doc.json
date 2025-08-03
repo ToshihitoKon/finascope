@@ -1,0 +1,418 @@
+{
+  "info": {
+    "title": "API title",
+    "version": "0.0.1"
+  },
+  "swagger": "2.0",
+  "produces": [
+    "application/json"
+  ],
+  "host": "example.org",
+  "tags": [
+    {
+      "name": "healthcheck",
+      "description": "Operations about healthchecks"
+    },
+    {
+      "name": "records",
+      "description": "Operations about records"
+    },
+    {
+      "name": "categories",
+      "description": "Operations about categories"
+    },
+    {
+      "name": "payment_methods",
+      "description": "Operations about payment_methods"
+    },
+    {
+      "name": "invoice_records",
+      "description": "Operations about invoice_records"
+    },
+    {
+      "name": "view",
+      "description": "Operations about views"
+    }
+  ],
+  "paths": {
+    "/api/healthcheck": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Healthcheck(s)"
+          }
+        },
+        "tags": [
+          "healthcheck"
+        ],
+        "operationId": "getApiHealthcheck"
+      }
+    },
+    "/api/v1/healthcheck": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Healthcheck(s)"
+          }
+        },
+        "tags": [
+          "healthcheck"
+        ],
+        "operationId": "getApiV1Healthcheck"
+      }
+    },
+    "/api/v1/records": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Record(s)"
+          }
+        },
+        "tags": [
+          "records"
+        ],
+        "operationId": "getApiV1Records"
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "created Record"
+          }
+        },
+        "tags": [
+          "records"
+        ],
+        "operationId": "postApiV1Records"
+      }
+    },
+    "/api/v1/records/{id}": {
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "updated Record"
+          }
+        },
+        "tags": [
+          "records"
+        ],
+        "operationId": "putApiV1RecordsId"
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "deleted Record"
+          }
+        },
+        "tags": [
+          "records"
+        ],
+        "operationId": "deleteApiV1RecordsId"
+      }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Category(s)"
+          }
+        },
+        "tags": [
+          "categories"
+        ],
+        "operationId": "getApiV1Categories"
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "created Category"
+          }
+        },
+        "tags": [
+          "categories"
+        ],
+        "operationId": "postApiV1Categories"
+      }
+    },
+    "/api/v1/categories/{id}": {
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "updated Category"
+          }
+        },
+        "tags": [
+          "categories"
+        ],
+        "operationId": "putApiV1CategoriesId"
+      }
+    },
+    "/api/v1/payment_methods": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "get PaymentMethod(s)"
+          }
+        },
+        "tags": [
+          "payment_methods"
+        ],
+        "operationId": "getApiV1PaymentMethods"
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "created PaymentMethod"
+          }
+        },
+        "tags": [
+          "payment_methods"
+        ],
+        "operationId": "postApiV1PaymentMethods"
+      }
+    },
+    "/api/v1/payment_methods/{id}": {
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "updated PaymentMethod"
+          }
+        },
+        "tags": [
+          "payment_methods"
+        ],
+        "operationId": "putApiV1PaymentMethodsId"
+      }
+    },
+    "/api/v1/invoice_records": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "get InvoiceRecord(s)"
+          }
+        },
+        "tags": [
+          "invoice_records"
+        ],
+        "operationId": "getApiV1InvoiceRecords"
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "created InvoiceRecord"
+          }
+        },
+        "tags": [
+          "invoice_records"
+        ],
+        "operationId": "postApiV1InvoiceRecords"
+      }
+    },
+    "/api/v1/invoice_records/{id}": {
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "updated InvoiceRecord"
+          }
+        },
+        "tags": [
+          "invoice_records"
+        ],
+        "operationId": "putApiV1InvoiceRecordsId"
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "deleted InvoiceRecord"
+          }
+        },
+        "tags": [
+          "invoice_records"
+        ],
+        "operationId": "deleteApiV1InvoiceRecordsId"
+      }
+    },
+    "/api/v1/invoice_records/withdrawal_records_aggregation": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "description": "Target year",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "description": "Target month",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "payment_method_id",
+            "description": "Payment method ID",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get WithdrawalRecordsAggregation(s)"
+          }
+        },
+        "tags": [
+          "invoice_records"
+        ],
+        "operationId": "getApiV1InvoiceRecordsWithdrawalRecordsAggregation"
+      }
+    },
+    "/api/v1/view/categories/aggregation": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Aggregation(s)"
+          }
+        },
+        "tags": [
+          "view"
+        ],
+        "operationId": "getApiV1ViewCategoriesAggregation"
+      }
+    }
+  }
+}

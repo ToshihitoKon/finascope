@@ -1,0 +1,16 @@
+$LOAD_PATH.unshift(File.expand_path("./", __dir__))
+require "grape-swagger/rake/oapi_tasks"
+require "app/api/root"
+GrapeSwagger::Rake::OapiTasks.new(API::Documentation)
+
+task :environment do
+end
+
+namespace :openapi do
+  desc "Generate OpenAPI documentation for the API"
+  task :generate do
+    ENV["store"] = "../docs/openapi.json"
+    Rake::Task["oapi:fetch"].invoke
+    puts "OpenAPI documentation generated at #{ENV['store']}"
+  end
+end

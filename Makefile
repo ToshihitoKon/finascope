@@ -25,8 +25,7 @@ logs:
 	docker compose -f compose-dev.yml logs -f
 
 clean:
-	docker compose -f compose-dev.yml down
-	docker compose -f compose-dev-mysql.yml down
+	docker compose -f compose-dev.yml -f compose-dev-mysql.yml down
 
 # データベース操作
 schema-update:

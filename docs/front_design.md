@@ -47,6 +47,15 @@ Svelte + Bits UI を使用した家計簿アプリケーションの設計仕様
 .table-header      /* テーブルヘッダー */
 .table-row         /* テーブル行 */
 .table-input-row   /* 新規入力行 */
+
+/* テキストカラー系（用途別） */
+.page-title        /* ページタイトル */
+.section-heading   /* セクション見出し */
+.category-label    /* カテゴリラベル */
+.amount-display    /* 金額表示 */
+.meta-info         /* メタ情報（補足テキスト） */
+.table-data        /* テーブルデータ */
+.table-meta        /* テーブル内メタ情報 */
 ```
 
 ## ページ構成

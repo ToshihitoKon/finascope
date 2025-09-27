@@ -3,66 +3,94 @@
 
 <!-- メインページ：家計簿アプリ -->
 <div class="min-h-screen bg-gray-50">
-  <!-- サマリーセクション -->
-  <section class="card shadow-sm">
-    <div class="mx-auto max-w-7xl px-4 py-6">
-      <h1 class="mb-4 text-2xl text-title">家計簿</h1>
+  <!-- ページヘッダー -->
+  <div class="mx-auto max-w-7xl px-4 py-6">
+    <h1 class="page-title mb-6">家計簿</h1>
+  </div>
 
-      <!-- 今月の支出合計 -->
-      <div class="mb-4">
-        <h2 class="mb-2 text-lg text-heading">今月の支出</h2>
-        <p class="text-3xl text-title">¥0</p>
+  <div class="mx-auto max-w-7xl px-4 py-6 space-y-8">
+    <!-- 今月の支出合計コンポーネント -->
+    <div class="card p-6">
+      <h2 class="section-heading mb-2">今月の支出</h2>
+      <p class="amount-display text-3xl">¥0</p>
+    </div>
+
+    <!-- 主要カテゴリコンポーネント -->
+    <div class="card p-6">
+      <h2 class="section-heading mb-4">主要カテゴリ</h2>
+      <div class="table-container">
+        <table class="w-full">
+          <thead class="table-header">
+            <tr>
+              <th class="px-4 py-2 text-left">
+                <span class="meta-info">カテゴリ</span>
+              </th>
+              <th class="px-4 py-2 text-right">
+                <span class="meta-info">金額</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <tr class="table-row">
+              <td class="px-4 py-2">
+                <span class="category-label">食費</span>
+              </td>
+              <td class="px-4 py-2 text-right">
+                <span class="amount-display">¥0</span>
+              </td>
+            </tr>
+            <tr class="table-row">
+              <td class="px-4 py-2">
+                <span class="category-label">交通費</span>
+              </td>
+              <td class="px-4 py-2 text-right">
+                <span class="amount-display">¥0</span>
+              </td>
+            </tr>
+            <tr class="table-row">
+              <td class="px-4 py-2">
+                <span class="category-label">日用品</span>
+              </td>
+              <td class="px-4 py-2 text-right">
+                <span class="amount-display">¥0</span>
+              </td>
+            </tr>
+            <tr class="table-row">
+              <td class="px-4 py-2">
+                <span class="category-label">その他</span>
+              </td>
+              <td class="px-4 py-2 text-right">
+                <span class="amount-display">¥0</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <!-- 主要カテゴリ別金額（上位3-4項目） -->
-      <div>
-        <h3 class="text-md mb-2 text-label">主要カテゴリ</h3>
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div class="card-summary p-3">
-            <span class="text-sm text-muted">食費</span>
-            <p class="font-semibold">¥0</p>
-          </div>
-          <div class="card-summary p-3">
-            <span class="text-sm text-muted">交通費</span>
-            <p class="font-semibold">¥0</p>
-          </div>
-          <div class="card-summary p-3">
-            <span class="text-sm text-muted">日用品</span>
-            <p class="font-semibold">¥0</p>
-          </div>
-          <div class="card-summary p-3">
-            <span class="text-sm text-muted">その他</span>
-            <p class="font-semibold">¥0</p>
-          </div>
+    <!-- 支払方法別サマリーコンポーネント -->
+    <div class="card p-6">
+      <h2 class="section-heading mb-4">支払方法別サマリー</h2>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div class="card p-4">
+          <h3 class="category-label">現金</h3>
+          <p class="amount-display">¥0</p>
+        </div>
+        <div class="card p-4">
+          <h3 class="category-label">クレジットカード</h3>
+          <p class="amount-display">¥0</p>
+          <p class="meta-info">引き落とし: 27日</p>
+        </div>
+        <div class="card p-4">
+          <h3 class="category-label">電子マネー</h3>
+          <p class="amount-display">¥0</p>
         </div>
       </div>
     </div>
-  </section>
 
-  <div class="mx-auto max-w-7xl px-4 py-6">
-    <!-- 支払方法別サマリー -->
-    <section class="mb-8">
-      <h2 class="mb-4 text-xl text-heading">支払方法別サマリー</h2>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        <div class="card p-4">
-          <h3 class="font-medium text-gray-700">現金</h3>
-          <p class="text-xl font-bold text-gray-900">¥0</p>
-        </div>
-        <div class="card p-4">
-          <h3 class="font-medium text-gray-700">クレジットカード</h3>
-          <p class="text-xl font-bold text-gray-900">¥0</p>
-          <p class="text-xs text-gray-500">引き落とし: 27日</p>
-        </div>
-        <div class="card p-4">
-          <h3 class="font-medium text-gray-700">電子マネー</h3>
-          <p class="text-xl font-bold text-gray-900">¥0</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 明細一覧テーブル -->
-    <section>
-      <h2 class="mb-4 text-xl font-semibold text-gray-800">明細一覧</h2>
+    <!-- 明細一覧コンポーネント -->
+    <div class="card p-6">
+      <h2 class="section-heading mb-4">明細一覧</h2>
 
       <div class="table-container">
         <table class="w-full">
@@ -165,11 +193,11 @@
           <button class="btn-danger text-sm">選択項目を削除</button>
         </div>
         <div class="flex items-center space-x-2">
-          <span class="text-sm text-gray-600">1-10 / 100件</span>
+          <span class="meta-info">1-10 / 100件</span>
           <button class="btn-secondary px-3 py-1">前へ</button>
           <button class="btn-secondary px-3 py-1">次へ</button>
         </div>
       </div>
-    </section>
+    </div>
   </div>
 </div>

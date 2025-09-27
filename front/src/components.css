@@ -52,51 +52,7 @@
     border-radius: 0.5rem;
 }
 
-/* ボタン系コンポーネント */
-.btn-primary {
-    background-color: var(--color-accent);
-    color: white;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    transition: background-color 0.2s ease;
-}
 
-.btn-primary:hover {
-    background-color: var(--color-accent-hover);
-}
-
-.btn-secondary {
-    background-color: var(--color-bg-card);
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border-input);
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    transition: background-color 0.2s ease;
-}
-
-.btn-secondary:hover {
-    background-color: var(--color-hover-light);
-}
-
-.btn-danger {
-    color: var(--color-text-danger);
-    background-color: transparent;
-    transition: color 0.2s ease;
-}
-
-.btn-danger:hover {
-    color: #b91c1c;
-}
-
-/* リンク系 */
-.link-accent {
-    color: var(--color-accent);
-    transition: color 0.2s ease;
-}
-
-.link-accent:hover {
-    color: var(--color-accent-hover);
-}
 
 /* フォーム系コンポーネント */
 .form-input {

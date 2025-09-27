@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Button } from '$lib/components';
 </script>
 
 <!-- メインページ：家計簿アプリ -->
@@ -134,7 +135,7 @@
                 <span class="table-meta">昼食</span>
               </td>
               <td class="px-4 py-3">
-                <button class="link-accent">編集</button>
+                <Button variant="link">編集</Button>
               </td>
             </tr>
 
@@ -174,7 +175,7 @@
                 <input type="text" placeholder="摘要" class="form-input w-full px-2 py-1" />
               </td>
               <td class="px-4 py-3">
-                <button class="btn-danger text-xs px-2 py-1">削除</button>
+                <Button variant="danger" size="sm">削除</Button>
               </td>
             </tr>
 
@@ -214,7 +215,7 @@
                 <input type="text" placeholder="摘要" class="form-input w-full px-2 py-1" />
               </td>
               <td class="px-4 py-3">
-                <button class="btn-danger text-xs px-2 py-1">削除</button>
+                <Button variant="danger" size="sm">削除</Button>
               </td>
             </tr>
           </tbody>
@@ -222,22 +223,22 @@
       </div>
 
       <!-- 一括操作 -->
-      <div class="mt-4 mb-4 flex items-center justify-center">
+      <div class="mb-4 mt-4 flex items-center justify-center">
         <div class="flex items-center space-x-4">
-          <button class="btn-primary px-6 py-2">記入済みを一括追加</button>
-          <button class="btn-secondary px-3 py-1">入力行を追加</button>
+          <Button variant="primary">記入済みを一括追加</Button>
+          <Button variant="secondary">入力行を追加</Button>
         </div>
       </div>
 
       <!-- ページネーション/一括削除 -->
       <div class="mt-4 flex items-center justify-between">
         <div class="flex items-center space-x-2">
-          <button class="btn-danger text-sm">選択項目を削除</button>
+          <Button variant="danger">選択項目を削除</Button>
         </div>
         <div class="flex items-center space-x-2">
           <span class="meta-info">1-10 / 100件</span>
-          <button class="btn-secondary px-3 py-1">前へ</button>
-          <button class="btn-secondary px-3 py-1">次へ</button>
+          <Button variant="secondary" size="sm">前へ</Button>
+          <Button variant="secondary" size="sm">次へ</Button>
         </div>
       </div>
     </div>

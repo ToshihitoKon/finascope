@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { Button } from '$lib/components';
+  import { Button, Pagination } from '$lib/components';
+
+  // ページネーション用の状態
+  let currentPage = $state(1);
+  const totalItems = 100;
+  const itemsPerPage = 10;
 </script>
 
 <!-- メインページ：家計簿アプリ -->
@@ -230,16 +235,18 @@
         </div>
       </div>
 
-      <!-- ページネーション/一括削除 -->
+      <!-- 一括削除/ページネーション -->
       <div class="mt-4 flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <Button variant="danger">選択項目を削除</Button>
         </div>
-        <div class="flex items-center space-x-2">
-          <span class="meta-info">1-10 / 100件</span>
-          <Button variant="secondary" size="sm">前へ</Button>
-          <Button variant="secondary" size="sm">次へ</Button>
-        </div>
+
+        <!-- ページネーション -->
+        <Pagination
+          count={totalItems}
+          perPage={itemsPerPage}
+          bind:page={currentPage}
+        />
       </div>
     </div>
   </div>

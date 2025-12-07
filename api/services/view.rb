@@ -17,7 +17,8 @@ module Service
       aggregated_records = DB::Repository::FinanceRecord.get_aggregated_by_category(**opts)
 
       aggregated_records.map do |aggregated_record|
-        category = if aggregated_record[:category_id] == Constants::TODO_ID[:category] || aggregated_record[:encrypted_category].nil?
+        category = if aggregated_record[:category_id] == Constants::TODO_ID[:category] ||
+                      aggregated_record[:encrypted_category].nil?
                      "TODO"
                    else
                      @uhash.decrypt(aggregated_record[:encrypted_category])

@@ -26,7 +26,7 @@ module DB
         prev_month = target_date.prev_month
 
         # 締め日なし（0）の場合は通常の月計算
-        return [prev_month.beginning_of_month, prev_month.end_of_month] if closing_day_of_month == 0
+        return [prev_month.beginning_of_month, prev_month.end_of_month] if closing_day_of_month.zero?
 
         # 月末締め（-1）の場合 → 月末締め翌月払い
         if closing_day_of_month == -1

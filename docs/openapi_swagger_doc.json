@@ -74,6 +74,30 @@
         "produces": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "(Integer) Page number for pagination",
+            "type": "integer",
+            "format": "int32",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "begin_date",
+            "description": "(String) Begin date in ISO8601 format",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "description": "(String) End date in ISO8601 format",
+            "type": "string",
+            "required": false
+          }
+        ],
         "responses": {
           "200": {
             "description": "Get Records",
@@ -140,7 +164,7 @@
           {
             "in": "path",
             "name": "id",
-            "description": "Record ID",
+            "description": "(String) Record ID",
             "type": "string",
             "required": true
           },
@@ -175,7 +199,7 @@
           {
             "in": "path",
             "name": "id",
-            "description": "Record ID",
+            "description": "(String) Record ID",
             "type": "string",
             "required": true
           }
@@ -266,7 +290,7 @@
           {
             "in": "path",
             "name": "id",
-            "description": "Category ID",
+            "description": "(String) Category ID",
             "type": "string",
             "required": true
           },
@@ -365,7 +389,7 @@
           {
             "in": "path",
             "name": "id",
-            "description": "PaymentMethod ID",
+            "description": "(String) PaymentMethod ID",
             "type": "string",
             "required": true
           },
@@ -397,6 +421,24 @@
         "description": "Get Invoice Records",
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "description": "(Integer) Target year",
+            "type": "integer",
+            "format": "int32",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "description": "(Integer) Target month",
+            "type": "integer",
+            "format": "int32",
+            "required": false
+          }
         ],
         "responses": {
           "200": {
@@ -464,7 +506,7 @@
           {
             "in": "path",
             "name": "id",
-            "description": "Invoice record ID",
+            "description": "(Integer) Invoice record ID",
             "type": "integer",
             "format": "int32",
             "required": true
@@ -500,7 +542,7 @@
           {
             "in": "path",
             "name": "id",
-            "description": "Invoice record ID",
+            "description": "(String) Invoice record ID",
             "type": "string",
             "required": true
           }
@@ -529,7 +571,7 @@
           {
             "in": "query",
             "name": "year",
-            "description": "Target year",
+            "description": "(Integer) Target year",
             "type": "integer",
             "format": "int32",
             "required": true
@@ -537,7 +579,7 @@
           {
             "in": "query",
             "name": "month",
-            "description": "Target month",
+            "description": "(Integer) Target month",
             "type": "integer",
             "format": "int32",
             "required": true
@@ -545,7 +587,7 @@
           {
             "in": "query",
             "name": "payment_method_id",
-            "description": "Payment method ID",
+            "description": "(String) Payment method ID",
             "type": "string",
             "required": true
           }
@@ -579,14 +621,14 @@
           {
             "in": "query",
             "name": "begin_date",
-            "description": "Start date in YYYY-MM-DD format",
+            "description": "(String) Start date in YYYY-MM-DD format",
             "type": "string",
             "required": false
           },
           {
             "in": "query",
             "name": "end_date",
-            "description": "End date in YYYY-MM-DD format",
+            "description": "(String) End date in YYYY-MM-DD format",
             "type": "string",
             "required": false
           }
@@ -872,38 +914,38 @@
       "properties": {
         "title": {
           "type": "string",
-          "description": "Record title"
+          "description": "(String) Record title"
         },
         "type_id": {
           "type": "integer",
           "format": "int32",
-          "description": "Record type ID"
+          "description": "(Integer) Record type ID"
         },
         "state_id": {
           "type": "integer",
           "format": "int32",
-          "description": "Record state ID"
+          "description": "(Integer) Record state ID"
         },
         "description": {
           "type": "string",
-          "description": "Record description"
+          "description": "(String) Record description"
         },
         "amount": {
           "type": "integer",
           "format": "int32",
-          "description": "Record amount"
+          "description": "(Integer) Record amount"
         },
         "category_id": {
           "type": "string",
-          "description": "Record category ID"
+          "description": "(String) Record category ID"
         },
         "date": {
           "type": "string",
-          "description": "Record date in ISO8601 format"
+          "description": "(String) Record date in ISO8601 format"
         },
         "payment_method_id": {
           "type": "string",
-          "description": "Payment method ID"
+          "description": "(String) Payment method ID"
         }
       },
       "required": [
@@ -923,38 +965,38 @@
       "properties": {
         "title": {
           "type": "string",
-          "description": "Record title"
+          "description": "(String) Record title"
         },
         "type_id": {
           "type": "integer",
           "format": "int32",
-          "description": "Record type ID"
+          "description": "(Integer) Record type ID"
         },
         "state_id": {
           "type": "integer",
           "format": "int32",
-          "description": "Record state ID"
+          "description": "(Integer) Record state ID"
         },
         "description": {
           "type": "string",
-          "description": "Record description"
+          "description": "(String) Record description"
         },
         "amount": {
           "type": "integer",
           "format": "int32",
-          "description": "Record amount"
+          "description": "(Integer) Record amount"
         },
         "category_id": {
           "type": "string",
-          "description": "Record category ID"
+          "description": "(String) Record category ID"
         },
         "date": {
           "type": "string",
-          "description": "Record date in ISO8601 format"
+          "description": "(String) Record date in ISO8601 format"
         },
         "payment_method_id": {
           "type": "string",
-          "description": "Payment method ID"
+          "description": "(String) Payment method ID"
         }
       },
       "required": [
@@ -974,7 +1016,7 @@
       "properties": {
         "label": {
           "type": "string",
-          "description": "Category label"
+          "description": "(String) Category label"
         }
       },
       "required": [
@@ -987,7 +1029,7 @@
       "properties": {
         "label": {
           "type": "string",
-          "description": "Category label"
+          "description": "(String) Category label"
         }
       },
       "required": [
@@ -1000,17 +1042,17 @@
       "properties": {
         "label": {
           "type": "string",
-          "description": "PaymentMethod label"
+          "description": "(String) PaymentMethod label"
         },
         "withdrawal_day_of_month": {
           "type": "integer",
           "format": "int32",
-          "description": "Withdrawal day of month"
+          "description": "(Integer) Withdrawal day of month"
         },
         "closing_day_of_month": {
           "type": "integer",
           "format": "int32",
-          "description": "Closing day of month",
+          "description": "(Integer) Closing day of month",
           "default": 0
         }
       },
@@ -1025,17 +1067,17 @@
       "properties": {
         "label": {
           "type": "string",
-          "description": "PaymentMethod label"
+          "description": "(String) PaymentMethod label"
         },
         "withdrawal_day_of_month": {
           "type": "integer",
           "format": "int32",
-          "description": "Withdrawal day of month"
+          "description": "(Integer) Withdrawal day of month"
         },
         "closing_day_of_month": {
           "type": "integer",
           "format": "int32",
-          "description": "Closing day of month"
+          "description": "(Integer) Closing day of month"
         }
       },
       "required": [
@@ -1050,20 +1092,20 @@
         "amount": {
           "type": "integer",
           "format": "int32",
-          "description": "Invoice record amount"
+          "description": "(Integer) Invoice record amount"
         },
         "state_id": {
           "type": "integer",
           "format": "int32",
-          "description": "Invoice record state ID"
+          "description": "(Integer) Invoice record state ID"
         },
         "withdrawal_date": {
           "type": "string",
-          "description": "Withdrawal date in ISO8601 format"
+          "description": "(String) Withdrawal date in ISO8601 format"
         },
         "payment_method_id": {
           "type": "string",
-          "description": "Payment method ID"
+          "description": "(String) Payment method ID"
         }
       },
       "required": [
@@ -1080,16 +1122,16 @@
         "amount": {
           "type": "integer",
           "format": "int32",
-          "description": "Invoice record amount"
+          "description": "(Integer) Invoice record amount"
         },
         "state_id": {
           "type": "integer",
           "format": "int32",
-          "description": "Invoice record state ID"
+          "description": "(Integer) Invoice record state ID"
         },
         "withdrawal_date": {
           "type": "string",
-          "description": "Withdrawal date in ISO8601 format"
+          "description": "(String) Withdrawal date in ISO8601 format"
         }
       },
       "required": [

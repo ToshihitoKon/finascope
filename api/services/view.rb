@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'constants'
-require 'db/repositories'
-require_relative 'records'
+require "constants"
+require "db/repositories"
+require_relative "records"
 
 module Service
   class View
@@ -18,7 +18,7 @@ module Service
 
       aggregated_records.map do |aggregated_record|
         category = if aggregated_record[:category_id] == Constants::TODO_ID[:category] || aggregated_record[:encrypted_category].nil?
-                     'TODO'
+                     "TODO"
                    else
                      @uhash.decrypt(aggregated_record[:encrypted_category])
                    end

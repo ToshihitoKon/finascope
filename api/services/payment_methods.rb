@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'constants'
-require 'db/repositories'
-require 'lib/id'
-require 'lib/exceptions'
+require "constants"
+require "db/repositories"
+require "lib/id"
+require "lib/exceptions"
 
 module Service
   class PaymentMethods
@@ -42,7 +42,7 @@ module Service
         withdrawal_day_of_month: params[:withdrawal_day_of_month]&.present? ? params[:withdrawal_day_of_month] : nil,
         closing_day_of_month: params[:closing_day_of_month]&.present? ? params[:closing_day_of_month] : nil
       ).to_h.compact
-      raise Exceptions::InvalidArgument.exception('no params to update') if params_dto.empty?
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
 
       DB::Repository::PaymentMethod.update(id:, params: params_dto)
     end

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'constants'
-require 'db/repositories'
-require 'lib/id'
-require_relative 'records'
+require "constants"
+require "db/repositories"
+require "lib/id"
+require_relative "records"
 
 module Service
   class InvoiceRecords
@@ -22,7 +22,7 @@ module Service
         payment_method_id: params[:payment_method_id],
         withdrawal_date: params[:withdrawal_date]
       )
-      raise Exceptions::InvalidArgument.exception('invalid dto') unless dto.valid?
+      raise Exceptions::InvalidArgument.exception("invalid dto") unless dto.valid?
 
       DB::Repository::InvoiceRecord.create(dto)
     end
@@ -33,7 +33,7 @@ module Service
         state_id: params[:state_id],
         withdrawal_date: params[:withdrawal_date]
       ).to_h.compact
-      raise Exceptions::InvalidArgument.exception('no params to update') if params_dto.empty?
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
 
       DB::Repository::InvoiceRecord.update(id:, params: params_dto)
     end
@@ -83,7 +83,7 @@ module Service
       # 支払い方法の情報を取得
       payment_method = DB::Repository::PaymentMethod.get(id: payment_method_id)
 
-      raise Exceptions::InvalidArgument.exception('payment method not found') unless payment_method
+      raise Exceptions::InvalidArgument.exception("payment method not found") unless payment_method
 
       # 締め期間を計算
       begin_date, end_date = DB::Repository::FinanceRecord.calculate_closing_period(

@@ -20,6 +20,7 @@ module API
       mount API::V1::View
 
       resource :healthcheck do
+        desc "Check API Health"
         get do
           { status: 'healthy' }
         end

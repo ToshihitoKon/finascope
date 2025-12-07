@@ -3,6 +3,7 @@
 require "grape"
 require "lib/firebase"
 require "grape-swagger"
+require "grape-swagger-entity"
 require_relative "./v1/root"
 
 module API
@@ -46,6 +47,15 @@ module API
   class Documentation < Grape::API
     format :json
     mount API::Root
-    add_swagger_documentation
+    add_swagger_documentation \
+      models: [
+        API::Entities::Categories::Category,
+        API::Entities::CommonResponse,
+        API::Entities::InvoiceRecords::InvoiceRecord,
+        API::Entities::InvoiceRecords::WithdrawalRecordsAggregation,
+        API::Entities::PaymentMethods::PaymentMethod,
+        API::Entities::Records::Record,
+        API::Entities::View::CategoryAggregation
+      ]
   end
 end

@@ -1,18 +1,10 @@
 # Finascope開発用Makefile
 
-.PHONY: help dev dev-mysql logs schema-update console api-shell db-shell clean
+.PHONY: help dev dev-mysql logs schema-update console api-shell db-shell clean update-openapi openapi-viewer
 
 # デフォルトターゲット
 help:
-	@echo "Finascope開発用コマンド:"
-	@echo "  make dev           開発環境を起動 (compose-dev.yml)"
-	@echo "  make dev-mysql     共有MySQL環境を起動 (compose-dev-mysql.yml)"
-	@echo "  make logs          コンテナログを表示"
-	@echo "  make schema-update DBスキーマを更新"
-	@echo "  make console       APIコンソールを起動"
-	@echo "  make api-shell     APIコンテナのシェルに接続"
-	@echo "  make db-shell      MySQLシェルに接続"
-	@echo "  make clean         開発環境を停止・削除"
+	@cat Makefile | grep '^[a-zA-Z_-]\+:' | sed 's/://g' | awk '{printf " - %s\n", $$1}'
 
 # 開発環境管理
 dev:
@@ -42,3 +34,11 @@ api-shell:
 
 db-shell:
 	docker compose -f compose-dev.yml exec mysql mysql -u finascope -pfinascope finascope_dev
+
+# OpenAPI
+update-openapi:
+	docker run -it --rm -v `pwd`:/app ruby:3.4 bash -c "cd /app/api && bundle i && rake openapi:generate"
+
+openapi-viewer:
+	@echo "Access to http://localhost:9001 to view the OpenAPI documentation\n\n"
+	docker run -p 9001:8080 -v `pwd`/docs/openapi_swagger_doc.json:/openapi.json -e SWAGGER_JSON=/openapi.json docker.swagger.io/swaggerapi/swagger-ui

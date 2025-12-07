@@ -12,6 +12,8 @@ module API
   module V1
     class PaymentMethods < Grape::API
       resource :payment_methods do
+        desc "Get Payment Methods",
+          success: { model: API::Entities::PaymentMethods::PaymentMethod, is_array: true, as: :payment_methods }
         get do
           uid = request_userdata[:uid]
           payment_methods_service = Service::PaymentMethods.new(uid:)
@@ -21,13 +23,14 @@ module API
                   root: :payment_methods
         end
 
+        desc "Create a Payment Method",
+          entity: API::Entities::CommonResponse
+        params do
+          requires :label, type: String, desc: 'PaymentMethod label'
+          requires :withdrawal_day_of_month, type: Integer, desc: 'Withdrawal day of month'
+          optional :closing_day_of_month, type: Integer, desc: 'Closing day of month', default: 0
+        end
         post do
-          params do
-            requires :label, type: String, desc: 'PaymentMethod label'
-            requires :withdrawal_day_of_month, type: Integer, desc: 'Withdrawal day of month'
-            optional :closing_day_of_month, type: Integer, desc: 'Closing day of month', default: 0
-          end
-
           uid = request_userdata[:uid]
           payment_methods_service = Service::PaymentMethods.new(uid:)
           payment_method = payment_methods_service.create(
@@ -46,14 +49,15 @@ module API
           present resp, with: API::Entities::CommonResponse
         end
 
+        desc "Update a Payment Method",
+          entity: API::Entities::CommonResponse
+        params do
+          requires :id, type: String, desc: 'PaymentMethod ID'
+          requires :label, type: String, desc: 'PaymentMethod label'
+          requires :withdrawal_day_of_month, type: Integer, desc: 'Withdrawal day of month'
+          optional :closing_day_of_month, type: Integer, desc: 'Closing day of month'
+        end
         put ':id' do
-          params do
-            requires :id, type: String, desc: 'PaymentMethod ID'
-            requires :label, type: String, desc: 'PaymentMethod label'
-            requires :withdrawal_day_of_month, type: Integer, desc: 'Withdrawal day of month'
-            optional :closing_day_of_month, type: Integer, desc: 'Closing day of month'
-          end
-
           uid = request_userdata[:uid]
           payment_methods_service = Service::PaymentMethods.new(uid:)
           payment_method = payment_methods_service.update(

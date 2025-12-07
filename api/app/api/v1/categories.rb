@@ -12,6 +12,8 @@ module API
   module V1
     class Categories < Grape::API
       resource :categories do
+        desc "Get Categories",
+          success: { model: API::Entities::Categories::Category, is_array: true, as: :categories }
         get do
           uid = request_userdata[:uid]
           categories_service = Service::Categories.new(uid:)
@@ -19,11 +21,12 @@ module API
           present categories, with: API::Entities::Categories::Category, root: :categories
         end
 
+        desc "Create a Category",
+          entity: API::Entities::CommonResponse
+        params do
+          requires :label, type: String, desc: 'Category label'
+        end
         post do
-          params do
-            requires :label, type: String, desc: 'Category label'
-          end
-
           uid = request_userdata[:uid]
           categories_service = Service::Categories.new(uid:)
           category = categories_service.create(label: params[:label])
@@ -38,12 +41,13 @@ module API
           present resp, with: API::Entities::CommonResponse
         end
 
+        desc "Update a Category",
+          entity: API::Entities::CommonResponse
+        params do
+          requires :id, type: String, desc: 'Category ID'
+          requires :label, type: String, desc: 'Category label'
+        end
         put ':id' do
-          params do
-            requires :id, type: String, desc: 'PaymentMethod ID'
-            requires :label, type: String, desc: 'PaymentMethod label'
-          end
-
           uid = request_userdata[:uid]
           categories_service = Service::Categories.new(uid:)
           category = categories_service.update(

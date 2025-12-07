@@ -40,4 +40,5 @@ update-openapi:
 	docker run -it --rm -v `pwd`:/app ruby:3.4 bash -c "cd /app/api && bundle i && rake openapi:generate"
 
 openapi-viewer:
+	@echo "Access to http://localhost:9001 to view the OpenAPI documentation\n\n"
 	docker run -p 9001:8080 -v `pwd`/docs/openapi_swagger_doc.json:/openapi.json -e SWAGGER_JSON=/openapi.json docker.swagger.io/swaggerapi/swagger-ui

@@ -53,12 +53,13 @@
     },
     "/api/v1/healthcheck": {
       "get": {
+        "description": "Check API Health",
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "get Healthcheck(s)"
+            "description": "Check API Health"
           }
         },
         "tags": [
@@ -69,12 +70,24 @@
     },
     "/api/v1/records": {
       "get": {
+        "description": "Get Records",
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "get Record(s)"
+            "description": "Get Records",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "records": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/API_Entities_Records_Record"
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -83,15 +96,29 @@
         "operationId": "getApiV1Records"
       },
       "post": {
+        "description": "Create a Record",
         "produces": [
           "application/json"
         ],
         "consumes": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "name": "postApiV1Records",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postApiV1Records"
+            }
+          }
+        ],
         "responses": {
           "201": {
-            "description": "created Record"
+            "description": "Create a Record",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -102,6 +129,7 @@
     },
     "/api/v1/records/{id}": {
       "put": {
+        "description": "Update a Record",
         "produces": [
           "application/json"
         ],
@@ -112,14 +140,25 @@
           {
             "in": "path",
             "name": "id",
-            "type": "integer",
-            "format": "int32",
+            "description": "Record ID",
+            "type": "string",
             "required": true
+          },
+          {
+            "name": "putApiV1RecordsId",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putApiV1RecordsId"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "updated Record"
+            "description": "Update a Record",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -128,6 +167,7 @@
         "operationId": "putApiV1RecordsId"
       },
       "delete": {
+        "description": "Delete a Record",
         "produces": [
           "application/json"
         ],
@@ -135,14 +175,17 @@
           {
             "in": "path",
             "name": "id",
-            "type": "integer",
-            "format": "int32",
+            "description": "Record ID",
+            "type": "string",
             "required": true
           }
         ],
         "responses": {
-          "204": {
-            "description": "deleted Record"
+          "200": {
+            "description": "Delete a Record",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -153,12 +196,24 @@
     },
     "/api/v1/categories": {
       "get": {
+        "description": "Get Categories",
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "get Category(s)"
+            "description": "Get Categories",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/API_Entities_Categories_Category"
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -167,15 +222,29 @@
         "operationId": "getApiV1Categories"
       },
       "post": {
+        "description": "Create a Category",
         "produces": [
           "application/json"
         ],
         "consumes": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "name": "postApiV1Categories",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postApiV1Categories"
+            }
+          }
+        ],
         "responses": {
           "201": {
-            "description": "created Category"
+            "description": "Create a Category",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -186,6 +255,7 @@
     },
     "/api/v1/categories/{id}": {
       "put": {
+        "description": "Update a Category",
         "produces": [
           "application/json"
         ],
@@ -196,14 +266,25 @@
           {
             "in": "path",
             "name": "id",
-            "type": "integer",
-            "format": "int32",
+            "description": "Category ID",
+            "type": "string",
             "required": true
+          },
+          {
+            "name": "putApiV1CategoriesId",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putApiV1CategoriesId"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "updated Category"
+            "description": "Update a Category",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -214,12 +295,24 @@
     },
     "/api/v1/payment_methods": {
       "get": {
+        "description": "Get Payment Methods",
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "get PaymentMethod(s)"
+            "description": "Get Payment Methods",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "payment_methods": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/API_Entities_PaymentMethods_PaymentMethod"
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -228,15 +321,29 @@
         "operationId": "getApiV1PaymentMethods"
       },
       "post": {
+        "description": "Create a Payment Method",
         "produces": [
           "application/json"
         ],
         "consumes": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "name": "postApiV1PaymentMethods",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postApiV1PaymentMethods"
+            }
+          }
+        ],
         "responses": {
           "201": {
-            "description": "created PaymentMethod"
+            "description": "Create a Payment Method",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -247,6 +354,7 @@
     },
     "/api/v1/payment_methods/{id}": {
       "put": {
+        "description": "Update a Payment Method",
         "produces": [
           "application/json"
         ],
@@ -257,14 +365,25 @@
           {
             "in": "path",
             "name": "id",
-            "type": "integer",
-            "format": "int32",
+            "description": "PaymentMethod ID",
+            "type": "string",
             "required": true
+          },
+          {
+            "name": "putApiV1PaymentMethodsId",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putApiV1PaymentMethodsId"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "updated PaymentMethod"
+            "description": "Update a Payment Method",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -275,12 +394,24 @@
     },
     "/api/v1/invoice_records": {
       "get": {
+        "description": "Get Invoice Records",
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "get InvoiceRecord(s)"
+            "description": "Get Invoice Records",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "records": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/API_Entities_InvoiceRecords_InvoiceRecord"
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -289,15 +420,29 @@
         "operationId": "getApiV1InvoiceRecords"
       },
       "post": {
+        "description": "Create an Invoice Record",
         "produces": [
           "application/json"
         ],
         "consumes": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "name": "postApiV1InvoiceRecords",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postApiV1InvoiceRecords"
+            }
+          }
+        ],
         "responses": {
           "201": {
-            "description": "created InvoiceRecord"
+            "description": "Create an Invoice Record",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -308,6 +453,7 @@
     },
     "/api/v1/invoice_records/{id}": {
       "put": {
+        "description": "Update an Invoice Record",
         "produces": [
           "application/json"
         ],
@@ -318,14 +464,26 @@
           {
             "in": "path",
             "name": "id",
+            "description": "Invoice record ID",
             "type": "integer",
             "format": "int32",
             "required": true
+          },
+          {
+            "name": "putApiV1InvoiceRecordsId",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putApiV1InvoiceRecordsId"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "updated InvoiceRecord"
+            "description": "Update an Invoice Record",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -334,6 +492,7 @@
         "operationId": "putApiV1InvoiceRecordsId"
       },
       "delete": {
+        "description": "Delete an Invoice Record",
         "produces": [
           "application/json"
         ],
@@ -341,14 +500,17 @@
           {
             "in": "path",
             "name": "id",
-            "type": "integer",
-            "format": "int32",
+            "description": "Invoice record ID",
+            "type": "string",
             "required": true
           }
         ],
         "responses": {
-          "204": {
-            "description": "deleted InvoiceRecord"
+          "200": {
+            "description": "Delete an Invoice Record",
+            "schema": {
+              "$ref": "#/definitions/API_Entities_CommonResponse"
+            }
           }
         },
         "tags": [
@@ -359,6 +521,7 @@
     },
     "/api/v1/invoice_records/withdrawal_records_aggregation": {
       "get": {
+        "description": "Get Withdrawal Records Aggregation",
         "produces": [
           "application/json"
         ],
@@ -389,7 +552,15 @@
         ],
         "responses": {
           "200": {
-            "description": "get WithdrawalRecordsAggregation(s)"
+            "description": "Get Withdrawal Records Aggregation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "aggregation": {
+                  "$ref": "#/definitions/API_Entities_InvoiceRecords_WithdrawalRecordsAggregation"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -400,12 +571,40 @@
     },
     "/api/v1/view/categories/aggregation": {
       "get": {
+        "description": "Get Category Aggregation",
         "produces": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "begin_date",
+            "description": "Start date in YYYY-MM-DD format",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "description": "End date in YYYY-MM-DD format",
+            "type": "string",
+            "required": false
+          }
+        ],
         "responses": {
           "200": {
-            "description": "get Aggregation(s)"
+            "description": "Get Category Aggregation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "aggregations": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/API_Entities_View_CategoryAggregation"
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -413,6 +612,492 @@
         ],
         "operationId": "getApiV1ViewCategoriesAggregation"
       }
+    }
+  },
+  "definitions": {
+    "API_Entities_Categories_Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Category ID"
+        },
+        "label": {
+          "type": "string",
+          "description": "Category label"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "description": "API_Entities_Categories_Category model"
+    },
+    "API_Entities_CommonResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "id"
+      ],
+      "description": "API_Entities_CommonResponse model"
+    },
+    "API_Entities_InvoiceRecords_InvoiceRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "InvoiceRecord ID"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "InvoiceRecord amount"
+        },
+        "payment_method": {
+          "type": "string",
+          "description": "Payment method used"
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "Payment method ID"
+        },
+        "withdrawal_date": {
+          "type": "string",
+          "description": "Withdrawal date. ISO8601"
+        },
+        "state": {
+          "type": "string",
+          "description": "State of the invoice record"
+        },
+        "state_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "State ID of the invoice record"
+        }
+      },
+      "required": [
+        "id",
+        "amount",
+        "payment_method",
+        "payment_method_id",
+        "withdrawal_date",
+        "state",
+        "state_id"
+      ],
+      "description": "API_Entities_InvoiceRecords_InvoiceRecord model"
+    },
+    "API_Entities_InvoiceRecords_WithdrawalRecordsAggregation": {
+      "type": "object",
+      "properties": {
+        "payment_method_id": {
+          "type": "string",
+          "description": "Payment method ID"
+        },
+        "payment_method": {
+          "type": "string",
+          "description": "Payment method name"
+        },
+        "total_amount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Total amount for this payment method"
+        },
+        "begin_date": {
+          "type": "string",
+          "description": "Aggregation period start date (ISO8601)"
+        },
+        "end_date": {
+          "type": "string",
+          "description": "Aggregation period end date (ISO8601)"
+        },
+        "records": {
+          "$ref": "#/definitions/API_Entities_Records_Record",
+          "description": "Finance records for this payment method"
+        }
+      },
+      "required": [
+        "payment_method_id",
+        "payment_method",
+        "total_amount",
+        "begin_date",
+        "end_date",
+        "records"
+      ],
+      "description": "API_Entities_InvoiceRecords_WithdrawalRecordsAggregation model"
+    },
+    "API_Entities_Records_Record": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Record ID"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of record"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of record"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Amount of record"
+        },
+        "state": {
+          "type": "string",
+          "description": "State of record"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of record"
+        },
+        "payment_method": {
+          "type": "string",
+          "description": "Payment method used"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of record"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of record"
+        },
+        "record_type_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Record type ID"
+        },
+        "state_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "State ID"
+        },
+        "category_id": {
+          "type": "string",
+          "description": "Category ID"
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "Payment method ID"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "title",
+        "amount",
+        "state",
+        "category",
+        "payment_method",
+        "date",
+        "description",
+        "record_type_id",
+        "state_id",
+        "category_id",
+        "payment_method_id"
+      ],
+      "description": "API_Entities_Records_Record model"
+    },
+    "API_Entities_PaymentMethods_PaymentMethod": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "PaymentMethod ID"
+        },
+        "label": {
+          "type": "string",
+          "description": "PaymentMethod label"
+        },
+        "withdrawal_day_of_month": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Withdrawal day of month"
+        },
+        "closing_day_of_month": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Closing day of month"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "withdrawal_day_of_month",
+        "closing_day_of_month"
+      ],
+      "description": "API_Entities_PaymentMethods_PaymentMethod model"
+    },
+    "API_Entities_View_CategoryAggregation": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "total_amount": {
+          "type": "string"
+        },
+        "record_count": {
+          "type": "string"
+        },
+        "records": {
+          "$ref": "#/definitions/API_Entities_Records_Record"
+        }
+      },
+      "required": [
+        "category_id",
+        "category",
+        "total_amount",
+        "record_count",
+        "records"
+      ],
+      "description": "API_Entities_View_CategoryAggregation model"
+    },
+    "postApiV1Records": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Record title"
+        },
+        "type_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Record type ID"
+        },
+        "state_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Record state ID"
+        },
+        "description": {
+          "type": "string",
+          "description": "Record description"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Record amount"
+        },
+        "category_id": {
+          "type": "string",
+          "description": "Record category ID"
+        },
+        "date": {
+          "type": "string",
+          "description": "Record date in ISO8601 format"
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "Payment method ID"
+        }
+      },
+      "required": [
+        "title",
+        "type_id",
+        "state_id",
+        "description",
+        "amount",
+        "category_id",
+        "date",
+        "payment_method_id"
+      ],
+      "description": "Create a Record"
+    },
+    "putApiV1RecordsId": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Record title"
+        },
+        "type_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Record type ID"
+        },
+        "state_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Record state ID"
+        },
+        "description": {
+          "type": "string",
+          "description": "Record description"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Record amount"
+        },
+        "category_id": {
+          "type": "string",
+          "description": "Record category ID"
+        },
+        "date": {
+          "type": "string",
+          "description": "Record date in ISO8601 format"
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "Payment method ID"
+        }
+      },
+      "required": [
+        "title",
+        "type_id",
+        "state_id",
+        "description",
+        "amount",
+        "category_id",
+        "date",
+        "payment_method_id"
+      ],
+      "description": "Update a Record"
+    },
+    "postApiV1Categories": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Category label"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "description": "Create a Category"
+    },
+    "putApiV1CategoriesId": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Category label"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "description": "Update a Category"
+    },
+    "postApiV1PaymentMethods": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "PaymentMethod label"
+        },
+        "withdrawal_day_of_month": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Withdrawal day of month"
+        },
+        "closing_day_of_month": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Closing day of month",
+          "default": 0
+        }
+      },
+      "required": [
+        "label",
+        "withdrawal_day_of_month"
+      ],
+      "description": "Create a Payment Method"
+    },
+    "putApiV1PaymentMethodsId": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "PaymentMethod label"
+        },
+        "withdrawal_day_of_month": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Withdrawal day of month"
+        },
+        "closing_day_of_month": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Closing day of month"
+        }
+      },
+      "required": [
+        "label",
+        "withdrawal_day_of_month"
+      ],
+      "description": "Update a Payment Method"
+    },
+    "postApiV1InvoiceRecords": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Invoice record amount"
+        },
+        "state_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Invoice record state ID"
+        },
+        "withdrawal_date": {
+          "type": "string",
+          "description": "Withdrawal date in ISO8601 format"
+        },
+        "payment_method_id": {
+          "type": "string",
+          "description": "Payment method ID"
+        }
+      },
+      "required": [
+        "amount",
+        "state_id",
+        "withdrawal_date",
+        "payment_method_id"
+      ],
+      "description": "Create an Invoice Record"
+    },
+    "putApiV1InvoiceRecordsId": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Invoice record amount"
+        },
+        "state_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Invoice record state ID"
+        },
+        "withdrawal_date": {
+          "type": "string",
+          "description": "Withdrawal date in ISO8601 format"
+        }
+      },
+      "required": [
+        "amount",
+        "state_id",
+        "withdrawal_date"
+      ],
+      "description": "Update an Invoice Record"
     }
   }
 }

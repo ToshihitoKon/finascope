@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'grape'
-require 'grape-entity'
-require 'date'
+require "grape"
+require "grape-entity"
+require "date"
 
-require 'lib/id'
-require 'db/models'
-require 'services/records'
+require "lib/id"
+require "db/models"
+require "services/records"
 
-require_relative 'entities/records'
-require_relative 'entities/common'
+require_relative "entities/records"
+require_relative "entities/common"
 
 module API
   module V1
@@ -18,7 +18,7 @@ module API
 
       resource :records do
         desc "Get Records",
-          success: { model: API::Entities::Records::Record, is_array: true, as: :records }
+             success: { model: API::Entities::Records::Record, is_array: true, as: :records }
         get do
           page = params[:page].to_i if params[:page]
           begin_date = Date.parse(params[:begin_date])&.beginning_of_day if params[:begin_date]
@@ -31,16 +31,16 @@ module API
         end
 
         desc "Create a Record",
-          entity: API::Entities::CommonResponse
+             entity: API::Entities::CommonResponse
         params do
-          requires :title, type: String, desc: 'Record title'
-          requires :type_id, type: Integer, desc: 'Record type ID'
-          requires :state_id, type: Integer, desc: 'Record state ID'
-          requires :description, type: String, desc: 'Record description'
-          requires :amount, type: Integer, desc: 'Record amount'
-          requires :category_id, type: String, desc: 'Record category ID'
-          requires :date, type: String, desc: 'Record date in ISO8601 format'
-          requires :payment_method_id, type: String, desc: 'Payment method ID'
+          requires :title, type: String, desc: "Record title"
+          requires :type_id, type: Integer, desc: "Record type ID"
+          requires :state_id, type: Integer, desc: "Record state ID"
+          requires :description, type: String, desc: "Record description"
+          requires :amount, type: Integer, desc: "Record amount"
+          requires :category_id, type: String, desc: "Record category ID"
+          requires :date, type: String, desc: "Record date in ISO8601 format"
+          requires :payment_method_id, type: String, desc: "Payment method ID"
         end
         post do
           uid = request_userdata[:uid]
@@ -57,10 +57,10 @@ module API
           )
 
           if record
-            status = 'success'
+            status = "success"
           else
             status 422
-            status = 'failed'
+            status = "failed"
           end
 
           resp = { status:, id: record&.id }
@@ -68,19 +68,19 @@ module API
         end
 
         desc "Update a Record",
-          entity: API::Entities::CommonResponse
+             entity: API::Entities::CommonResponse
         params do
-          requires :id, type: String, desc: 'Record ID'
-          requires :title, type: String, desc: 'Record title'
-          requires :type_id, type: Integer, desc: 'Record type ID'
-          requires :state_id, type: Integer, desc: 'Record state ID'
-          requires :description, type: String, desc: 'Record description'
-          requires :amount, type: Integer, desc: 'Record amount'
-          requires :category_id, type: String, desc: 'Record category ID'
-          requires :date, type: String, desc: 'Record date in ISO8601 format'
-          requires :payment_method_id, type: String, desc: 'Payment method ID'
+          requires :id, type: String, desc: "Record ID"
+          requires :title, type: String, desc: "Record title"
+          requires :type_id, type: Integer, desc: "Record type ID"
+          requires :state_id, type: Integer, desc: "Record state ID"
+          requires :description, type: String, desc: "Record description"
+          requires :amount, type: Integer, desc: "Record amount"
+          requires :category_id, type: String, desc: "Record category ID"
+          requires :date, type: String, desc: "Record date in ISO8601 format"
+          requires :payment_method_id, type: String, desc: "Payment method ID"
         end
-        put ':id' do
+        put ":id" do
           uid = request_userdata[:uid]
           finance_records_service = Service::FinanceRecords.new(uid:)
           record = finance_records_service.update(
@@ -98,9 +98,9 @@ module API
           )
 
           if record.present?
-            status = 'success'
+            status = "success"
           else
-            status = 'failed'
+            status = "failed"
             status 422
           end
           resp = { status:, id: record&.id }
@@ -108,18 +108,18 @@ module API
         end
 
         desc "Delete a Record",
-          entity: API::Entities::CommonResponse
+             entity: API::Entities::CommonResponse
         params do
-          requires :id, type: String, desc: 'Record ID'
+          requires :id, type: String, desc: "Record ID"
         end
-        delete ':id' do
+        delete ":id" do
           uid = request_userdata[:uid]
           finance_records_service = Service::FinanceRecords.new(uid:)
           finance_records_service.delete( # NOTE: ダメなら exception が飛んでくる
             id: params[:id]
           )
 
-          status = 'success'
+          status = "success"
           resp = { status:, id: params[:id] }
           present resp, with: API::Entities::CommonResponse
         end

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'nanoid'
+require "nanoid"
 
 module ID
   def self.generate
-    Nanoid.generate(size: 12, alphabet: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    Nanoid.generate(size: 12, alphabet: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
   end
 end

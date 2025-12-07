@@ -1,0 +1,150 @@
+/* 共通コンポーネントスタイル */
+/* margin/padding系はTailwindを使用、色やボーダーなど見た目に関する要素はここで定義 */
+
+/* 色の意味別CSS変数定義 */
+:root {
+    /* アクセントカラー */
+    --color-accent: #E86B79;
+    --color-accent-hover: #d55a6a;
+
+    /* テキストカラー */
+    --color-text-primary: #111827;
+    /* メインテキスト */
+    --color-text-secondary: #374151;
+    /* セカンダリテキスト */
+    --color-text-muted: #4b5563;
+    /* 控えめなテキスト */
+    --color-text-subtle: #6b7280;
+    /* 補足情報 */
+    --color-text-danger: #dc2626;
+    /* 危険・エラー */
+
+    /* 背景カラー */
+    --color-bg-card: #ffffff;
+    /* カードの背景 */
+    --color-bg-summary: #f3f4f6;
+    /* サマリーカードの背景 */
+    --color-bg-table-header: #f9fafb;
+    /* テーブルヘッダーの背景 */
+    --color-bg-table-input: #f9fafb;
+    /* テーブル入力行の背景 */
+
+    /* ボーダーカラー */
+    --color-border-default: #e5e7eb;
+    /* 標準のボーダー */
+    --color-border-input: #d1d5db;
+    /* フォーム要素のボーダー */
+
+    /* 状態カラー */
+    --color-hover-light: #f9fafb;
+    /* ライトホバー */
+}
+
+/* カード系コンポーネント */
+.card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-default);
+    border-radius: 0.5rem;
+}
+
+.card-summary {
+    background-color: var(--color-bg-summary);
+    border-radius: 0.5rem;
+}
+
+
+
+/* フォーム系コンポーネント */
+.form-input {
+    border: 1px solid var(--color-border-input);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.form-select {
+    border: 1px solid var(--color-border-input);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    background-color: var(--color-bg-card);
+    transition: border-color 0.2s ease;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+/* テーブル系コンポーネント */
+.table-container {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-default);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.table-header {
+    background-color: var(--color-bg-table-header);
+}
+
+.table-row:hover {
+    background-color: var(--color-hover-light);
+}
+
+.table-input-row {
+    background-color: var(--color-bg-table-input);
+    border-top: 2px solid var(--color-border-default);
+}
+
+/* チェックボックス */
+.checkbox {
+    border-radius: 0.25rem;
+    border-color: var(--color-border-input);
+}
+
+.checkbox:checked {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+/* 用途別スタイル定義 */
+.page-title {
+    color: var(--color-text-primary);
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.section-heading {
+    color: var(--color-text-secondary);
+    font-weight: 600;
+}
+
+.category-label {
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.amount-display {
+    color: var(--color-text-primary);
+    font-weight: 700;
+}
+
+.meta-info {
+    color: var(--color-text-subtle);
+    font-size: 0.75rem;
+}
+
+.table-data {
+    color: var(--color-text-primary);
+}
+
+.table-meta {
+    color: var(--color-text-subtle);
+}

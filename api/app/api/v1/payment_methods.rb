@@ -26,9 +26,9 @@ module API
         desc "Create a Payment Method",
              entity: API::Entities::CommonResponse
         params do
-          requires :label, type: String, desc: "PaymentMethod label"
-          requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
-          optional :closing_day_of_month, type: Integer, desc: "Closing day of month", default: 0
+          requires :label, type: String, desc: "(String) PaymentMethod label"
+          requires :withdrawal_day_of_month, type: Integer, desc: "(Integer) Withdrawal day of month"
+          optional :closing_day_of_month, type: Integer, desc: "(Integer) Closing day of month", default: 0
         end
         post do
           uid = request_userdata[:uid]
@@ -52,10 +52,10 @@ module API
         desc "Update a Payment Method",
              entity: API::Entities::CommonResponse
         params do
-          requires :id, type: String, desc: "PaymentMethod ID"
-          requires :label, type: String, desc: "PaymentMethod label"
-          requires :withdrawal_day_of_month, type: Integer, desc: "Withdrawal day of month"
-          optional :closing_day_of_month, type: Integer, desc: "Closing day of month"
+          requires :id, type: String, desc: "(String) PaymentMethod ID"
+          requires :label, type: String, desc: "(String) PaymentMethod label"
+          requires :withdrawal_day_of_month, type: Integer, desc: "(Integer) Withdrawal day of month"
+          optional :closing_day_of_month, type: Integer, desc: "(Integer) Closing day of month"
         end
         put ":id" do
           uid = request_userdata[:uid]

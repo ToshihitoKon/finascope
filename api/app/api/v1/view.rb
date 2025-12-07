@@ -18,8 +18,8 @@ module API
           desc "Get Category Aggregation",
                success: { model: API::Entities::View::CategoryAggregation, is_array: true, as: :aggregations }
           params do
-            optional :begin_date, type: String, desc: "Start date in YYYY-MM-DD format"
-            optional :end_date, type: String, desc: "End date in YYYY-MM-DD format"
+            optional :begin_date, type: String, desc: "(String) Start date in YYYY-MM-DD format"
+            optional :end_date, type: String, desc: "(String) End date in YYYY-MM-DD format"
           end
           get :aggregation do
             # 期間指定のバリデーション

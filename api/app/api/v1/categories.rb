@@ -24,7 +24,7 @@ module API
         desc "Create a Category",
              entity: API::Entities::CommonResponse
         params do
-          requires :label, type: String, desc: "Category label"
+          requires :label, type: String, desc: "(String) Category label"
         end
         post do
           uid = request_userdata[:uid]
@@ -44,8 +44,8 @@ module API
         desc "Update a Category",
              entity: API::Entities::CommonResponse
         params do
-          requires :id, type: String, desc: "Category ID"
-          requires :label, type: String, desc: "Category label"
+          requires :id, type: String, desc: "(String) Category ID"
+          requires :label, type: String, desc: "(String) Category label"
         end
         put ":id" do
           uid = request_userdata[:uid]

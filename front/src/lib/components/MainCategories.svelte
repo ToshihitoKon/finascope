@@ -3,50 +3,50 @@
 
 <!-- 主要カテゴリ -->
 <div>
-  <h2 class="section-heading my-4">主要カテゴリ</h2>
-  <div class="table-container">
+  <h2 class="my-4 font-semibold">主要カテゴリ</h2>
+  <div class="overflow-hidden rounded-lg border">
     <table class="w-full">
-      <thead class="table-header">
+      <thead>
         <tr>
           <th class="px-4 py-2 text-left">
-            <span class="meta-info">カテゴリ</span>
+            <span class="text-xs">カテゴリ</span>
           </th>
           <th class="px-4 py-2 text-right">
-            <span class="meta-info">金額</span>
+            <span class="text-xs">金額</span>
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 bg-white">
-        <tr class="table-row">
+      <tbody class="divide-y">
+        <tr>
           <td class="px-4 py-2">
-            <span class="category-label">食費</span>
+            <span class="font-medium">食費</span>
           </td>
           <td class="px-4 py-2 text-right">
-            <span class="amount-display">¥0</span>
+            <span class="font-bold">¥0</span>
           </td>
         </tr>
-        <tr class="table-row">
+        <tr>
           <td class="px-4 py-2">
-            <span class="category-label">交通費</span>
+            <span class="font-medium">交通費</span>
           </td>
           <td class="px-4 py-2 text-right">
-            <span class="amount-display">¥0</span>
+            <span class="font-bold">¥0</span>
           </td>
         </tr>
-        <tr class="table-row">
+        <tr>
           <td class="px-4 py-2">
-            <span class="category-label">日用品</span>
+            <span class="font-medium">日用品</span>
           </td>
           <td class="px-4 py-2 text-right">
-            <span class="amount-display">¥0</span>
+            <span class="font-bold">¥0</span>
           </td>
         </tr>
-        <tr class="table-row">
+        <tr>
           <td class="px-4 py-2">
-            <span class="category-label">その他</span>
+            <span class="font-medium">その他</span>
           </td>
           <td class="px-4 py-2 text-right">
-            <span class="amount-display">¥0</span>
+            <span class="font-bold">¥0</span>
           </td>
         </tr>
       </tbody>

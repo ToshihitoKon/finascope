@@ -138,5 +138,9 @@ export const fetchInvoiceRecordsWithdrawalAggregation = async (
     month: req.month.toString(),
     payment_method_id: req.payment_method_id
   });
-  return apiBase(`v1/invoice_records/withdrawal_records_aggregation?${params.toString()}`, 'GET', {});
+  return apiBase(
+    `v1/invoice_records/withdrawal_records_aggregation?${params.toString()}`,
+    'GET',
+    {}
+  );
 };

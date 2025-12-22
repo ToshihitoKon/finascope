@@ -91,8 +91,8 @@ importers:
         specifier: ^3.4.1
         version: 3.4.1(prettier@3.7.4)(svelte@5.46.0)
       prettier-plugin-tailwindcss:
-        specifier: ^0.6.14
-        version: 0.6.14(prettier-plugin-svelte@3.4.1(prettier@3.7.4)(svelte@5.46.0))(prettier@3.7.4)
+        specifier: ^0.7.2
+        version: 0.7.2(prettier-plugin-svelte@3.4.1(prettier@3.7.4)(svelte@5.46.0))(prettier@3.7.4)
       svelte:
         specifier: ^5.46.0
         version: 5.46.0
@@ -106,8 +106,8 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0
       tailwind-variants:
-        specifier: ^0.3.1
-        version: 0.3.1(tailwindcss@3.4.19(yaml@2.8.0))
+        specifier: ^3.2.2
+        version: 3.2.2(tailwind-merge@3.4.0)(tailwindcss@3.4.19(yaml@2.8.0))
       tailwindcss:
         specifier: ^3.4.19
         version: 3.4.19(yaml@2.8.0)
@@ -1572,9 +1572,9 @@ packages:
       prettier: ^3.0.0
       svelte: ^3.2.0 || ^4.0.0-next.0 || ^5.0.0-next.0
 
-  prettier-plugin-tailwindcss@0.6.14:
-    resolution: {integrity: sha512-pi2e/+ZygeIqntN+vC573BcW5Cve8zUB0SSAGxqpB4f96boZF4M3phPVoOFCeypwkpRYdi7+jQ5YJJUwrkGUAg==}
-    engines: {node: '>=14.21.3'}
+  prettier-plugin-tailwindcss@0.7.2:
+    resolution: {integrity: sha512-LkphyK3Fw+q2HdMOoiEHWf93fNtYJwfamoKPl7UwtjFQdei/iIBoX11G6j706FzN3ymX9mPVi97qIY8328vdnA==}
+    engines: {node: '>=20.19'}
     peerDependencies:
       '@ianvs/prettier-plugin-sort-imports': '*'
       '@prettier/plugin-hermes': '*'
@@ -1586,14 +1586,12 @@ packages:
       prettier: ^3.0
       prettier-plugin-astro: '*'
       prettier-plugin-css-order: '*'
-      prettier-plugin-import-sort: '*'
       prettier-plugin-jsdoc: '*'
       prettier-plugin-marko: '*'
       prettier-plugin-multiline-arrays: '*'
       prettier-plugin-organize-attributes: '*'
       prettier-plugin-organize-imports: '*'
       prettier-plugin-sort-imports: '*'
-      prettier-plugin-style-order: '*'
       prettier-plugin-svelte: '*'
     peerDependenciesMeta:
       '@ianvs/prettier-plugin-sort-imports':
@@ -1614,8 +1612,6 @@ packages:
         optional: true
       prettier-plugin-css-order:
         optional: true
-      prettier-plugin-import-sort:
-        optional: true
       prettier-plugin-jsdoc:
         optional: true
       prettier-plugin-marko:
@@ -1627,8 +1623,6 @@ packages:
       prettier-plugin-organize-imports:
         optional: true
       prettier-plugin-sort-imports:
-        optional: true
-      prettier-plugin-style-order:
         optional: true
       prettier-plugin-svelte:
         optional: true
@@ -1815,17 +1809,18 @@ packages:
   tabbable@6.3.0:
     resolution: {integrity: sha512-EIHvdY5bPLuWForiR/AN2Bxngzpuwn1is4asboytXtpTgsArc+WmSJKVLlhdh71u7jFcryDqB2A8lQvj78MkyQ==}
 
-  tailwind-merge@2.5.4:
-    resolution: {integrity: sha512-0q8cfZHMu9nuYP/b5Shb7Y7Sh1B7Nnl5GqNr1U+n2p6+mybvRtayrQ+0042Z5byvTA8ihjlP8Odo8/VnHbZu4Q==}
-
   tailwind-merge@3.4.0:
     resolution: {integrity: sha512-uSaO4gnW+b3Y2aWoWfFpX62vn2sR3skfhbjsEnaBI81WD1wBLlHZe5sWf0AqjksNdYTbGBEd0UasQMT3SNV15g==}
 
-  tailwind-variants@0.3.1:
-    resolution: {integrity: sha512-krn67M3FpPwElg4FsZrOQd0U26o7UDH/QOkK8RNaiCCrr052f6YJPBUfNKnPo/s/xRzNPtv1Mldlxsg8Tb46BQ==}
+  tailwind-variants@3.2.2:
+    resolution: {integrity: sha512-Mi4kHeMTLvKlM98XPnK+7HoBPmf4gygdFmqQPaDivc3DpYS6aIY6KiG/PgThrGvii5YZJqRsPz0aPyhoFzmZgg==}
     engines: {node: '>=16.x', pnpm: '>=7.x'}
     peerDependencies:
+      tailwind-merge: '>=3.0.0'
       tailwindcss: '*'
+    peerDependenciesMeta:
+      tailwind-merge:
+        optional: true
 
   tailwindcss-animate@1.0.7:
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
@@ -3447,7 +3442,7 @@ snapshots:
       prettier: 3.7.4
       svelte: 5.46.0
 
-  prettier-plugin-tailwindcss@0.6.14(prettier-plugin-svelte@3.4.1(prettier@3.7.4)(svelte@5.46.0))(prettier@3.7.4):
+  prettier-plugin-tailwindcss@0.7.2(prettier-plugin-svelte@3.4.1(prettier@3.7.4)(svelte@5.46.0))(prettier@3.7.4):
     dependencies:
       prettier: 3.7.4
     optionalDependencies:
@@ -3676,14 +3671,13 @@ snapshots:
 
   tabbable@6.3.0: {}
 
-  tailwind-merge@2.5.4: {}
-
   tailwind-merge@3.4.0: {}
 
-  tailwind-variants@0.3.1(tailwindcss@3.4.19(yaml@2.8.0)):
+  tailwind-variants@3.2.2(tailwind-merge@3.4.0)(tailwindcss@3.4.19(yaml@2.8.0)):
     dependencies:
-      tailwind-merge: 2.5.4
       tailwindcss: 3.4.19(yaml@2.8.0)
+    optionalDependencies:
+      tailwind-merge: 3.4.0
 
   tailwindcss-animate@1.0.7(tailwindcss@3.4.19(yaml@2.8.0)):
     dependencies:

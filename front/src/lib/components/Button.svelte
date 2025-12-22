@@ -16,18 +16,17 @@
     variant = 'primary',
     size = 'md',
     class: className = '',
-    children, 
+    children,
     // FIXIT: https://svelte.dev/docs/svelte/compiler-warnings#custom_element_props_identifier
     // eslint-disable-next-line svelte/valid-compile
     ...restProps
   }: Props = $props();
 
   const variantClasses = {
-    primary: 'bg-[#E86B79] hover:bg-[#d55a6a] text-white rounded transition-colors',
-    secondary:
-      'bg-white hover:bg-gray-50 text-gray-600 border border-gray-300 rounded transition-colors',
-    danger: 'text-red-600 hover:text-red-700 transition-colors',
-    link: 'text-[#E86B79] hover:text-[#d55a6a] transition-colors'
+    primary: 'rounded',
+    secondary: 'border rounded',
+    danger: '',
+    link: ''
   };
 
   const sizeClasses = {

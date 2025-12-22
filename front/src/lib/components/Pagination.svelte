@@ -12,11 +12,9 @@
   let { count, page = $bindable(1), perPage = 10 }: Props = $props();
   const classes = {
     button:
-      'inline-flex items-center justify-center size-10 rounded-[9px] text-[15px] data-[selected]:bg-[#d55a6a] data-[selected]:text-white \
-      hover:bg-[#d55a6a] hover:text-white disabled:text-muted-foreground',
+      'inline-flex items-center justify-center size-10 rounded-[9px] text-[15px]',
     paginationArrow:
-      'size-10 rounded-[9px] inline-flex items-center justify-center bg-transparent disabled:cursor-not-allowed hover:bg-[#d55a6a] \
-      hover:text-white disabled:text-muted-foreground  disabled:hover:bg-transparent mx-[10px]',
+      'size-10 rounded-[9px] inline-flex items-center justify-center disabled:cursor-not-allowed mx-[10px]',
     ellipsis: 'inline-flex items-center justify-center size-6 text-[15px]'
   };
 </script>
@@ -43,7 +41,7 @@
         <CaretRight class="size-6" />
       </BitsPagination.NextButton>
     </div>
-    <p class="text-muted-foreground text-center text-sm">
+    <p class="text-center text-sm">
       Showing {range.start} - {range.end}
     </p>
   {/snippet}

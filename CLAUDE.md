@@ -70,6 +70,19 @@ The application implements a privacy-first encryption system:
 - **Authentication**: Firebase Auth with JWT token management
 - **API Client**: To be implemented in `front/src/lib/api/v1/api.ts`
 
+### Frontend Implementation Guidelines
+
+**Component Structure:**
+- Create Svelte components in `src/lib/components/` and import them in `src/routes/`
+- Components should be self-contained and reusable
+
+**Styling Approach:**
+- Define global CSS variables in `src/app.css`
+- Reference global variables in component styles
+- Follow BEM methodology: treat components as Blocks, define Elements and Modifiers within component styles
+- Route files (`src/routes/`) should only contain layout-related styles for component positioning
+- Component-specific styles should be defined within the component's `<style>` block
+
 ### Database Design
 - **Models**: ActiveRecord models in `api/db/models.rb`
 - **Encryption**: Sensitive fields prefixed with `encrypted_` 

@@ -8,8 +8,8 @@
 </script>
 
 <!-- メインページ：家計簿アプリ -->
-<div class="min-h-screen">
-  <div class="mx-auto max-w-7xl space-y-8 px-4 py-6">
+<div>
+  <div>
     <MonthlyExpenses />
     <MainCategories />
     <PaymentMethodsSummary />

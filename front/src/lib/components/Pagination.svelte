@@ -11,22 +11,20 @@
 
   let { count, page = $bindable(1), perPage = 10 }: Props = $props();
   const classes = {
-    button:
-      'inline-flex items-center justify-center size-10 rounded-[9px] text-[15px]',
-    paginationArrow:
-      'size-10 rounded-[9px] inline-flex items-center justify-center disabled:cursor-not-allowed mx-[10px]',
-    ellipsis: 'inline-flex items-center justify-center size-6 text-[15px]'
+    button: '',
+    paginationArrow: '',
+    ellipsis: ''
   };
 </script>
 
 <!-- ページネーション -->
 <BitsPagination.Root {count} {perPage} {page}>
   {#snippet children({ pages, range })}
-    <div class="my-2 flex items-center">
+    <div>
       <BitsPagination.PrevButton class={classes.paginationArrow}>
-        <CaretLeft class="size-6" />
+        <CaretLeft />
       </BitsPagination.PrevButton>
-      <div class="flex items-center gap-2.5">
+      <div>
         {#each pages as page (page.key)}
           {#if page.type === 'ellipsis'}
             <div class={classes.ellipsis}>...</div>
@@ -38,10 +36,10 @@
         {/each}
       </div>
       <BitsPagination.NextButton class={classes.paginationArrow}>
-        <CaretRight class="size-6" />
+        <CaretRight />
       </BitsPagination.NextButton>
     </div>
-    <p class="text-center text-sm">
+    <p>
       Showing {range.start} - {range.end}
     </p>
   {/snippet}

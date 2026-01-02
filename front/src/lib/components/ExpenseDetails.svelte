@@ -1,90 +1,87 @@
 <script lang="ts">
-  import { Button } from '$lib/components';
+  import { Button, DateField } from '$lib/components';
+
+  const newRecordValues = $state([{}]);
 </script>
 
 <div>
-  <h2 class="mb-4">明細一覧</h2>
+  <h2>明細一覧</h2>
 
-  <div class="">
-    <table class="w-full">
-      <thead class="">
+  <div>
+    <table>
+      <thead>
         <tr>
-          <th class="px-4 py-3 text-left"></th>
-          <th class="px-4 py-3 text-left">
+          <th></th>
+          <th>
             <span>日付</span>
           </th>
-          <th class="px-4 py-3 text-left">
+          <th>
             <span>金額</span>
           </th>
-          <th class="min-w-24 px-4 py-3 text-left">
+          <th>
             <span>カテゴリ</span>
           </th>
-          <th class="min-w-48 px-4 py-3 text-left">
+          <th>
             <span>支払方法</span>
           </th>
-          <th class="min-w-48 px-4 py-3 text-left">
+          <th>
             <span>何？</span>
           </th>
-          <th class="min-w-12 px-4 py-3 text-left">
+          <th>
             <span></span>
           </th>
         </tr>
       </thead>
-      <tbody class="">
+      <tbody>
         <!-- サンプルデータ行 -->
-        <tr class="">
-          <td class="px-4 py-3">
-            <input type="checkbox" class="rounded" />
+        <tr>
+          <td>
+            <input type="checkbox" />
           </td>
-          <td class="px-4 py-3">
-            <span class="">2024-12-27</span>
+          <td>
+            <span>2024-12-27</span>
           </td>
-          <td class="px-4 py-3">
-            <span class="">¥92,640</span>
+          <td>
+            <span>¥92,640</span>
           </td>
-          <td class="px-4 py-3">
-            <span class="">趣味</span>
+          <td>
+            <span>趣味</span>
           </td>
-          <td class="px-4 py-3">
-            <span class="">ANA Visa</span>
+          <td>
+            <span>ANA Visa</span>
           </td>
-          <td class="px-4 py-3">
-            <span class="">Fanatec GT DD Pro</span>
+          <td>
+            <span>Fanatec GT DD Pro</span>
           </td>
-          <td class="min-w-24 px-4 py-3">
+          <td>
             <Button variant="primary">編集</Button>
           </td>
         </tr>
 
         <!-- 新規入力行1 -->
-        <tr class="">
-          <td class="px-4 py-3">
-            <input type="checkbox" class="rounded" disabled />
+        <tr>
+          <td>
+            <input type="checkbox" disabled />
           </td>
-          <td class="px-4 py-3">
-            <input
-              type="date"
-              class="w-full rounded border px-2 py-1 text-sm"
-              value={new Date().toISOString().split('T')[0]}
-            />
+          <td>
+            <DateField />
           </td>
-          <td class="px-4 py-3">
+          <td>
             <input
               type="number"
               placeholder="金額"
-              class="w-full rounded border px-2 py-1 text-sm"
             />
           </td>
-          <td class="px-4 py-3">
-            <select class="w-full rounded border px-2 py-1 text-sm"></select>
+          <td>
+            <select></select>
           </td>
-          <td class="px-4 py-3">
-            <select class="w-full rounded border px-2 py-1 text-sm"> </select>
+          <td>
+            <select> </select>
           </td>
-          <td class="px-4 py-3">
-            <input type="text" placeholder="円盤" class="w-full rounded border px-2 py-1 text-sm" />
+          <td>
+            <input type="text" placeholder="円盤" />
           </td>
-          <td class="px-4 py-3">
+          <td>
             <Button variant="danger">削除</Button>
           </td>
         </tr>

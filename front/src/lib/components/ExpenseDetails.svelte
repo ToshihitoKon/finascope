@@ -1,5 +1,12 @@
 <script lang="ts">
   import { DateField } from '$lib/components';
+  import type { Record } from '$lib/api/v1/types';
+
+  interface Props {
+    records: Record[];
+  }
+
+  let { records }: Props = $props();
 </script>
 
 <div class="layout-container">
@@ -32,70 +39,29 @@
       </tr>
     </thead>
     <tbody>
-      <!-- サンプルデータ行 -->
-      <tr>
-        <td>
-          <input type="checkbox" />
-        </td>
-        <td>
-          <span>2024-12-27</span>
-        </td>
-        <td class="layout-money">
-          <span>¥92,640</span>
-        </td>
-        <td>
-          <span>趣味</span>
-        </td>
-        <td>
-          <span>ANA Visa</span>
-        </td>
-        <td>
-          <span>Fanatec GT DD Pro</span>
-        </td>
-        <td> </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="checkbox" />
-        </td>
-        <td>
-          <span>2024-12-27</span>
-        </td>
-        <td class="layout-money">
-          <span>¥92,640</span>
-        </td>
-        <td>
-          <span>趣味</span>
-        </td>
-        <td>
-          <span>ANA Visa</span>
-        </td>
-        <td>
-          <span>Fanatec GT DD Pro</span>
-        </td>
-        <td> </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="checkbox" />
-        </td>
-        <td>
-          <span>2024-12-27</span>
-        </td>
-        <td class="layout-money">
-          <span>¥92,640</span>
-        </td>
-        <td>
-          <span>趣味</span>
-        </td>
-        <td>
-          <span>ANA Visa</span>
-        </td>
-        <td>
-          <span>Fanatec GT DD Pro</span>
-        </td>
-        <td> </td>
-      </tr>
+      {#each records as record (record.id)}
+        <tr>
+          <td>
+            <input type="checkbox" />
+          </td>
+          <td>
+            <span>{record.date}</span>
+          </td>
+          <td class="layout-money">
+            <span>¥{record.amount.toLocaleString()}</span>
+          </td>
+          <td>
+            <span>{record.category}</span>
+          </td>
+          <td>
+            <span>{record.payment_method}</span>
+          </td>
+          <td>
+            <span>{record.title}</span>
+          </td>
+          <td> </td>
+        </tr>
+      {/each}
 
       <!-- 新規入力行1 -->
       <tr>

@@ -1,5 +1,15 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { MonthlyExpenses, ExpenseDetails } from '$lib/components';
+  import { fetchRecords } from '$lib/api/v1/mock';
+  import type { Record } from '$lib/api/v1/types';
+
+  let records: Record[] = $state([]);
+
+  onMount(async () => {
+    const response = await fetchRecords('');
+    records = response.records;
+  });
 </script>
 
 <div>
@@ -8,7 +18,7 @@
   </div>
   <div class="layout-devider style-devider"></div>
   <div class="layout-details">
-    <ExpenseDetails />
+    <ExpenseDetails {records} />
   </div>
 </div>
 

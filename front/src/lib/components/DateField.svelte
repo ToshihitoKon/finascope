@@ -19,11 +19,19 @@
     <DateField.Input>
       {#snippet children({ segments })}
         {#each segments as { part, value }, index (index)}
-          <DateField.Segment {part}>
-            {value}
-          </DateField.Segment>
+          <span class="layout-segment">
+            <DateField.Segment {part}>
+              {value}
+            </DateField.Segment>
+          </span>
         {/each}
       {/snippet}
     </DateField.Input>
   </div>
 </DateField.Root>
+
+<style>
+  .layout-segment {
+    padding: 0px 2px;
+  }
+</style>

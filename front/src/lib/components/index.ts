@@ -1,5 +1,4 @@
 // bits-ui components
-export { default as Button } from './Button.svelte';
 export { default as Pagination } from './Pagination.svelte';
 export { default as DateField } from './DateField.svelte';
 

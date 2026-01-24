@@ -78,8 +78,12 @@ The application implements a privacy-first encryption system:
 
 **Styling Approach:**
 - Define global CSS variables in `src/app.css`
-- Reference global variables in component styles
-- Follow BEM methodology: treat components as Blocks, define Elements and Modifiers within component styles
+- CSS variable naming convention: `--{type}-{role}` format
+  - Type prefixes: `color`, `px`, `rem`, `font`, etc.
+  - Examples: `--color-primary`, `--px-header-fontsize`, `--rem-spacing-large`
+- Reference global variables in component styles using `var(--variable-name)`
+- Use `style-*` prefix for styling-related class names (e.g., `style-divider`, `style-button`)
+- Use `layout-*` prefix for layout-related class names (e.g., `layout-container`, `layout-divider`)
 - Route files (`src/routes/`) should only contain layout-related styles for component positioning
 - Component-specific styles should be defined within the component's `<style>` block
 

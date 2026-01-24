@@ -1,20 +1,25 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { MonthlyExpenses, ExpenseDetails } from '$lib/components';
-  import { fetchRecords } from '$lib/api/v1/mock';
-  import type { Record } from '$lib/api/v1/types';
+  import { fetchRecords, fetchCategoryAggregation } from '$lib/api/v1/mock';
+  import type { Record, CategoryAggregation } from '$lib/api/v1/types';
 
   let records: Record[] = $state([]);
+  let categoryAggregations: CategoryAggregation[] = $state([]);
 
   onMount(async () => {
-    const response = await fetchRecords('');
-    records = response.records;
+    const [recordsResponse, aggregationResponse] = await Promise.all([
+      fetchRecords(''),
+      fetchCategoryAggregation('')
+    ]);
+    records = recordsResponse.records;
+    categoryAggregations = aggregationResponse.aggregations;
   });
 </script>
 
 <div>
   <div class="layout-summary">
-    <MonthlyExpenses />
+    <MonthlyExpenses {categoryAggregations} />
   </div>
   <div class="layout-devider style-devider"></div>
   <div class="layout-details">

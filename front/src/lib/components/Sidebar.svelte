@@ -97,10 +97,6 @@
     color: #fff;
   }
 
-  .style-nav-item.is-active {
-    color: var(--color-sidebar-active);
-  }
-
   .layout-overlay {
     display: none;
   }

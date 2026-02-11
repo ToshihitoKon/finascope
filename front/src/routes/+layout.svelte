@@ -8,16 +8,15 @@
 </script>
 
 <div class="layout-app-wrapper style-app">
-  <Sidebar bind:open={sidebarOpen} onclose={() => sidebarOpen = false} />
+  <Sidebar bind:open={sidebarOpen} onclose={() => (sidebarOpen = false)} />
 
   <button
     class="layout-hamburger style-hamburger"
-    onclick={() => sidebarOpen = true}
+    onclick={() => (sidebarOpen = true)}
     aria-label="Open menu"
   >
     &#9776;
   </button>
-
   <main class="layout-main">
     {@render children()}
   </main>
@@ -31,8 +30,8 @@
 
   .layout-main {
     flex: 1;
-    margin-left: var(--px-sidebar-width);
     max-width: 1200px;
+    margin: 0 auto;
   }
 
   .layout-hamburger {
@@ -53,9 +52,9 @@
     cursor: pointer;
   }
 
-  @media (max-width: 767px) {
-    .layout-main {
-      margin-left: 0;
+  @media (max-width: 1320px) {
+    .layout-app-wrapper {
+      padding-left: 0;
     }
 
     .layout-hamburger {

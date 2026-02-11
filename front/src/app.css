@@ -10,7 +10,7 @@
         calc(b + var(--var-shift-bg)));
     --color-page-bg: #fff;
 
-    --px-sidebar-width: 60px;
+    --px-sidebar-width: 160px;
     --color-sidebar-bg: #2c2c2c;
     --color-sidebar-text: #a0a0a0;
     --color-sidebar-active: var(--color-primary);

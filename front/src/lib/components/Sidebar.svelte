@@ -10,7 +10,7 @@
 
   const navItems = [
     { href: '/', label: 'Home' },
-  ];
+  ] as const;
 </script>
 
 {#if open}

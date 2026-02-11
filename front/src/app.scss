@@ -10,7 +10,8 @@
         calc(b + var(--var-shift-bg)));
     --color-page-bg: #fff;
 
-    --px-sidebar-width: 160px;
+    --px-sidebar-width: #{$px-sidebar-width};
+    --px-main-max-width: #{$px-main-max-width};
     --color-sidebar-bg: #2c2c2c;
     --color-sidebar-text: #a0a0a0;
     --color-sidebar-active: var(--color-primary);
@@ -22,7 +23,7 @@ body {
 
 /* styles for the main app container */
 .layout-app {
-    max-width: 1200px;
+    max-width: $px-main-max-width;
     margin: 0 auto;
     height: 100vh;
 }

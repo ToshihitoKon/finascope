@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '../app.css';
+  import '../app.scss';
   import { Sidebar } from '$lib/components';
 
   let { children } = $props();
@@ -22,7 +22,7 @@
   </main>
 </div>
 
-<style>
+<style lang="scss">
   .layout-app-wrapper {
     display: flex;
     min-height: 100vh;
@@ -30,7 +30,7 @@
 
   .layout-main {
     flex: 1;
-    max-width: 1200px;
+    max-width: var(--px-main-max-width);
     margin: 0 auto;
   }
 
@@ -52,11 +52,7 @@
     cursor: pointer;
   }
 
-  @media (max-width: 1320px) {
-    .layout-app-wrapper {
-      padding-left: 0;
-    }
-
+  @media (max-width: $px-sidebar-width + $px-main-max-width) {
     .layout-hamburger {
       display: block;
     }

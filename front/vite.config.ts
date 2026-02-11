@@ -8,5 +8,12 @@ export default defineConfig({
       interval: 3000
     }
   },
-  plugins: [sveltekit()]
+  plugins: [sveltekit()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use '$lib/styles/variables' as *;`
+      }
+    }
+  }
 });

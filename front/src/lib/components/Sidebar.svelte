@@ -38,7 +38,7 @@
   </ul>
 </nav>
 
-<style>
+<style lang="scss">
   .layout-sidebar {
     position: fixed;
     top: 0;
@@ -101,7 +101,7 @@
     display: none;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: $px-sidebar-width + $px-main-max-width) {
     .layout-sidebar {
       width: 200px;
       transform: translateX(-100%);

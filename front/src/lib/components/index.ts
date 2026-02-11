@@ -2,6 +2,9 @@
 export { default as Pagination } from './Pagination.svelte';
 export { default as DateField } from './DateField.svelte';
 
+// Layout Components
+export { default as Sidebar } from './Sidebar.svelte';
+
 // Dashoboard Components
 export { default as MainCategories } from './MainCategories.svelte';
 export { default as MonthlyExpenses } from './MonthlyExpenses.svelte';

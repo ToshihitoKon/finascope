@@ -1,20 +1,4 @@
 services:
-  nginx:
-    container_name: nginx
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    volumes:
-      - ./nginx/files/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/files/conf.d:/etc/nginx/conf.d/:ro
-      # - ./front/static:/usr/share/finascope:ro
-    ports:
-      - "8080:80"
-    depends_on:
-      - api
-      - front-dev
-    networks:
-      - finascope-net
   api:
     container_name: api
     build:
@@ -38,26 +22,6 @@ services:
       - DB_NAME=finascope
     networks:
       - finascope-net
-  front-dev:
-    container_name: front
-    environment:
-      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS=front
-      - SVELTE_KIT_OUT_DIR=/tmp/.svelte-kit
-    build:
-      context: ./front
-      dockerfile: Dockerfile
-      # NOTE: pnpm install is require stdin because using sh -c
-    command:
-      [
-        "sh",
-        "-c",
-        "yes | pnpm install --frozen-lockfile && pnpm dev --host 0.0.0.0 --debug",
-      ]
-    volumes:
-      - ./front:/app
-      - node_modules:/app/node_modules
-    networks:
-      - finascope-net
   openapi:
     # access the OpenAPI documentation at http://localhost:8081
     image: swaggerapi/swagger-ui
@@ -67,9 +31,9 @@ services:
       - SWAGGER_JSON=/docs/swagger.json
     ports:
       - "8081:8080"
+
 volumes:
   bundle_cache:
-  node_modules:
 
 networks:
   finascope-net:

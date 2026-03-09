@@ -101,7 +101,7 @@
     display: none;
   }
 
-  @media (max-width: $px-sidebar-width + $px-main-max-width) {
+  @media (max-width: #{$px-sidebar-width + $px-main-max-width}) {
     .layout-sidebar {
       width: 200px;
       transform: translateX(-100%);

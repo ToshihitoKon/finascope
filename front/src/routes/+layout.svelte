@@ -52,7 +52,7 @@
     cursor: pointer;
   }
 
-  @media (max-width: $px-sidebar-width + $px-main-max-width) {
+  @media (max-width: #{$px-sidebar-width + $px-main-max-width}) {
     .layout-hamburger {
       display: block;
     }

@@ -15,13 +15,13 @@ description: ユーザーにインタビューしながら Design Doc を作成�
 
 ### Step 2: 連番を決定する
 
-`design-doc/` ディレクトリの既存ファイルを確認し、最大の連番 + 1 を次の番号とする。ファイルがなければ `0001` から始める。
+`doc/design-doc/` ディレクトリの既存ファイルを確認し、最大の連番 + 1 を次の番号とする。ファイルがなければ `0001` から始める。
 
 ```bash
-ls design-doc/*.md 2>/dev/null | sort | tail -1
+ls doc/design-doc/*.md 2>/dev/null | sort | tail -1
 ```
 
-ファイル名の形式は `design-doc/[%04d]-[scope]-[feat].md`（例: `design-doc/0003-api-add-payment-method.md`）。
+ファイル名の形式は `doc/design-doc/[%04d]-[scope]-[feat].md`（例: `doc/design-doc/0003-api-add-payment-method.md`）。
 
 ### Step 3: ユーザーにインタビューする
 
@@ -55,7 +55,7 @@ ls design-doc/*.md 2>/dev/null | sort | tail -1
 
 ### Step 5: Design Doc を生成して保存する
 
-`design-doc/` ディレクトリがなければ作成し、以下のテンプレートに従ってファイルを生成する。
+`doc/design-doc/` ディレクトリがなければ作成し、以下のテンプレートに従ってファイルを生成する。
 
 変更がないセクション（API 変更がない場合の「API 設計」など）は省略してよい。
 

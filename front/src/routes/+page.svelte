@@ -7,14 +7,16 @@
   let records: Record[] = $state([]);
   let categoryAggregations: CategoryAggregation[] = $state([]);
 
-  onMount(async () => {
+  async function loadData() {
     const [recordsResponse, aggregationResponse] = await Promise.all([
       fetchRecords(''),
       fetchCategoryAggregation('')
     ]);
     records = recordsResponse.records;
     categoryAggregations = aggregationResponse.aggregations;
-  });
+  }
+
+  onMount(loadData);
 </script>
 
 <div>
@@ -23,7 +25,7 @@
   </div>
   <div class="layout-devider style-devider"></div>
   <div class="layout-details">
-    <ExpenseDetails {records} />
+    <ExpenseDetails {records} onRefresh={loadData} />
   </div>
 </div>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
   import '../app.scss';
   import { Sidebar } from '$lib/components';
+  import { Toaster } from 'svelte-sonner';
 
   let { children } = $props();
 
@@ -21,6 +22,8 @@
     {@render children()}
   </main>
 </div>
+
+<Toaster />
 
 <style lang="scss">
   .layout-app-wrapper {

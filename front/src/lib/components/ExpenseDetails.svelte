@@ -76,11 +76,9 @@
   }
 </script>
 
-<div class="layout-container">
+<div class="layout-details">
   <h2>明細一覧</h2>
-</div>
-
-<div class="layout-container">
+  <div class="layout-table-scroll">
   <table class="style-table">
     <thead>
       <tr>
@@ -102,10 +100,10 @@
           <td><span>{record.date}</span></td>
           <td><span>{record.type}</span></td>
           <td class="layout-money"><span>¥{record.amount.toLocaleString()}</span></td>
-          <td><span>{record.category}</span></td>
-          <td><span>{record.payment_method}</span></td>
+          <td class="layout-category"><span>{record.category}</span></td>
+          <td class="layout-payment-method"><span>{record.payment_method}</span></td>
           <td><span>{record.state}</span></td>
-          <td><span>{record.title}</span></td>
+          <td class="layout-title"><span>{record.title}</span></td>
           <td></td>
         </tr>
       {/each}
@@ -124,7 +122,7 @@
         <td class="layout-money">
           <input type="number" placeholder="金額" min="0" bind:value={newAmount} />
         </td>
-        <td>
+        <td class="layout-category">
           <select bind:value={newCategoryId}>
             <option value={TodoIds.Category}>TODO</option>
             {#each categories as cat (cat.id)}
@@ -132,7 +130,7 @@
             {/each}
           </select>
         </td>
-        <td>
+        <td class="layout-payment-method">
           <select bind:value={newPaymentMethodId}>
             <option value={TodoIds.PaymentMethod}>TODO</option>
             {#each paymentMethods as pm (pm.id)}
@@ -147,7 +145,7 @@
             {/each}
           </select>
         </td>
-        <td>
+        <td class="layout-title">
           <input type="text" placeholder="用途" bind:value={newTitle} />
         </td>
         <td class="layout-center">
@@ -164,28 +162,50 @@
       </tr>
     </tfoot>
   </table>
-</div>
+  </div>
+</div><!-- layout-details -->
 
 <style>
-  .layout-container {
-    display: flex;
-    justify-content: center;
+  .layout-details {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .layout-table-scroll {
+    overflow-x: auto;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .layout-table-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   .style-table {
     border-collapse: collapse;
     width: 100%;
     max-width: 960px;
+    min-width: 800px;
   }
 
   .style-table th {
     background-color: var(--color-primary-bg);
     padding: 8px 16px;
+    white-space: nowrap;
   }
 
   .style-table td {
     padding: 8px 16px;
     height: 36px;
+    white-space: nowrap;
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  .style-table td:nth-child(2),
+  .layout-title {
+    text-align: left;
   }
 
   .style-table tbody > tr:nth-of-type(even):not(.style-new-row) {
@@ -200,14 +220,71 @@
   .style-table input[type='number'],
   .style-table select {
     width: 100%;
-    padding: 2px 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 4px 8px;
+    border: none;
+    border-bottom: 1px solid transparent;
     box-sizing: border-box;
+    font-size: 0.875rem;
+    font-family: inherit;
+    height: 28px;
+    background-color: transparent;
+    color: inherit;
+    outline: none;
+    vertical-align: middle;
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+
+  .style-table input[type='text']:focus,
+  .style-table input[type='number']:focus,
+  .style-table select:focus {
+    border-bottom-color: var(--color-primary);
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .style-table input::placeholder {
+    color: #bbb;
+  }
+
+  .style-table input[type='number']::-webkit-inner-spin-button,
+  .style-table input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .style-table input[type='number'] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  .style-table select {
+    min-width: 80px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23bbb'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 24px;
+    cursor: pointer;
   }
 
   .layout-money {
     text-align: right;
+    min-width: 100px;
+  }
+
+  .layout-category {
+    min-width: 130px;
+  }
+
+  .layout-payment-method {
+    min-width: 170px;
+  }
+
+  .layout-title {
+    max-width: 300px;
+    min-width: 150px;
+    white-space: normal;
+    word-break: break-all;
   }
 
   .layout-center {

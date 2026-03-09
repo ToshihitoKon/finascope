@@ -177,3 +177,19 @@ bundle exec ruby scripts/finascope-console.rb
 - 本番デプロイは SvelteKit の static adapter を使用
 - GCP デプロイは `pnpm deploy` スクリプトで設定済み
 - 環境変数は Docker compose ファイルで管理
+
+## AI Agent による変更実行前の Design Doc 作成
+
+実装・リファクタリング・大きな変更を AI Agent に実行させる前に、`/make-ddoc` スキルを使って Design Doc を作成することを強く推奨する。
+
+**対象となる作業の例:**
+- 新機能の実装
+- 既存コードのリファクタリング
+- API・データベーススキーマの変更
+- フロントエンドの大規模な改修
+
+**運用フロー:**
+1. `/make-ddoc` を実行して Design Doc を作成・保存する
+2. Design Doc を AI Agent に参照させてから実装を依頼する
+
+Design Doc を事前に作成することで、実装方針のズレや手戻りを防ぎ、AI Agent の出力品質が向上する。

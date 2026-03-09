@@ -1,155 +1,161 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルはリポジトリ内のコードを扱う際の Claude Code (claude.ai/code) へのガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-Finascope is a personal finance management application with a microservices architecture:
-- **Backend API**: Ruby/Grape framework with ActiveRecord and MySQL
-- **Frontend**: SvelteKit with TypeScript and Firebase Auth
-- **Database**: MySQL 8.0 with encrypted user data
-- **Infrastructure**: Docker containers with Nginx reverse proxy
+Finascope は個人財務管理アプリケーションで、マイクロサービスアーキテクチャを採用しています：
+- バックエンド API: Ruby/Grape フレームワーク、ActiveRecord、MySQL
+- フロントエンド: SvelteKit + TypeScript + Firebase Auth
+- データベース: MySQL 8.0（ユーザーデータは暗号化）
+- インフラ: Docker コンテナ + Nginx リバースプロキシ
 
-## Directory Structure
+## ディレクトリ構成
 
-### Backend (`api/`)
-- `app/api/`: API endpoint definitions
-  - `root.rb`: Main API root with authentication helpers
-  - `v1/`: Versioned API endpoints organized by resource (categories, records, payment_methods, invoice_records, view)
-  - `v1/entities/`: Grape entities for response serialization
-- `db/`: Database layer
-  - `models.rb`: ActiveRecord model definitions
-  - `repositories.rb`: Data access layer with query methods
-  - `connection.rb`: Database connection configuration
-- `services/`: Business logic layer for each resource
-- `lib/`: Utility libraries (user data encryption, Firebase JWT verification, ID generation, exceptions)
-- `constants.rb`: Application-wide constants
-- `envs.rb`: Environment variable configuration
-- `scripts/`: Utility scripts for database setup and console access
+### バックエンド (`api/`)
+- `app/api/`: API エンドポイント定義
+  - `root.rb`: 認証ヘルパーを含むメイン API ルート
+  - `v1/`: リソース別のバージョン付き API エンドポイント（categories, records, payment_methods, invoice_records, view）
+  - `v1/entities/`: レスポンスシリアライズ用の Grape エンティティ
+- `db/`: データベース層
+  - `models.rb`: ActiveRecord モデル定義
+  - `repositories.rb`: クエリメソッドを含むデータアクセス層
+  - `connection.rb`: データベース接続設定
+- `services/`: リソース別のビジネスロジック層
+- `lib/`: ユーティリティライブラリ（ユーザーデータ暗号化、Firebase JWT 検証、ID 生成、例外）
+- `constants.rb`: アプリケーション全体の定数
+- `envs.rb`: 環境変数設定
+- `scripts/`: データベースセットアップやコンソールアクセス用のユーティリティスクリプト
 
-### Frontend (`front/`)
-- `src/lib/`: Shared libraries
-  - `api/v1/`: API client layer with type definitions and mock data
-  - `firebase/`: Firebase authentication integration
-  - `utils.ts`: Utility functions
-- `src/routes/`: SvelteKit pages following file-based routing
-- `src/app.html`, `src/app.css`: Application template and global styles
-- Configuration files: `package.json`, `svelte.config.js`, `tsconfig.json`, `vite.config.ts`
+### フロントエンド (`front/`)
+- `src/lib/`: 共有ライブラリ
+  - `api/v1/`: 型定義とモックデータを含む API クライアント層
+  - `firebase/`: Firebase 認証インテグレーション
+  - `utils.ts`: ユーティリティ関数
+- `src/routes/`: ファイルベースルーティングに従った SvelteKit ページ
+- `src/app.html`, `src/app.css`: アプリケーションテンプレートとグローバルスタイル
+- 設定ファイル: `package.json`, `svelte.config.js`, `tsconfig.json`, `vite.config.ts`
 
-### Infrastructure
-- `mysql/init.d/`: Database initialization SQL scripts
-- `nginx/`: Nginx reverse proxy configuration and Dockerfile
-- `compose*.yml`: Docker Compose configurations for production and development environments
+### インフラ
+- `mysql/init.d/`: データベース初期化 SQL スクリプト
+- `nginx/`: Nginx リバースプロキシ設定と Dockerfile
+- `compose.yml`: 本番・開発環境用の Docker Compose 設定
 
-### Key Files for Common Tasks
-- Adding API endpoint: `api/app/api/v1/[resource].rb`
-- Adding page: `front/src/routes/[page]/+page.svelte`
-- Database queries: `api/db/repositories.rb`
-- Business logic: `api/services/[resource].rb`
-- API types: `front/src/lib/api/v1/types.d.ts`
-- Constants: `api/constants.rb` and `front/src/lib/api/v1/const.ts`
+### よく使うファイル
+- API エンドポイント追加: `api/app/api/v1/[resource].rb`
+- ページ追加: `front/src/routes/[page]/+page.svelte`
+- データベースクエリ: `api/db/repositories.rb`
+- ビジネスロジック: `api/services/[resource].rb`
+- API 型定義: `front/src/lib/api/v1/types.d.ts`
+- 定数: `api/constants.rb` と `front/src/lib/api/v1/const.ts`
 
-## Architecture Patterns
+## アーキテクチャパターン
 
-### Security Model
-The application implements a privacy-first encryption system:
-- User identification via Firebase Auth UID
-- Data encrypted using user-specific hashes (see `api/lib/user_hash.rb`)
-- User data tables isolated with separate salt (`UserHash#user_info_hash`)
-- No direct foreign key relations between user data and other tables
+### セキュリティモデル
+プライバシーファーストの暗号化システムを実装しています：
+- Firebase Auth UID によるユーザー識別
+- ユーザー固有のハッシュによるデータ暗号化（`api/lib/user_hash.rb` 参照）
+- 別のソルトで隔離されたユーザーデータテーブル（`UserHash#user_info_hash`）
+- ユーザーデータと他テーブル間に直接の外部キー関係なし
 
-### API Structure
-- **Framework**: Grape API with JSON format
-- **Authentication**: Firebase JWT Bearer tokens
-- **Entities**: Grape entities for response serialization (`api/app/api/v1/entities/`)
-- **Services**: Business logic layer (`api/services/`)
-- **Repositories**: Data access layer (`api/db/repositories.rb`)
+### API 構造
+- フレームワーク: Grape API（JSON 形式）
+- 認証: Firebase JWT Bearer トークン
+- エンティティ: レスポンスシリアライズ用 Grape エンティティ（`api/app/api/v1/entities/`）
+- サービス: ビジネスロジック層（`api/services/`）
+- リポジトリ: データアクセス層（`api/db/repositories.rb`）
 
-### Frontend Architecture
-- **Framework**: SvelteKit 5 with TypeScript
-- **Authentication**: Firebase Auth with JWT token management
-- **API Client**: To be implemented in `front/src/lib/api/v1/api.ts`
+### フロントエンドアーキテクチャ
+- フレームワーク: SvelteKit 5 + TypeScript
+- 認証: Firebase Auth + JWT トークン管理
+- API クライアント: `front/src/lib/api/v1/api.ts` に実装予定
 
-### Frontend Implementation Guidelines
+### フロントエンド実装ガイドライン
 
-**Component Structure:**
-- Create Svelte components in `src/lib/components/` and import them in `src/routes/`
-- Components should be self-contained and reusable
+ファイル構成の役割分担:
+- UI 要素（テーブル、フォーム、サイドバーなど）は `src/lib/components/` に実装する
+- `src/routes/+page.svelte` にはコンポーネントのインポート・配置、ページ固有の状態管理・TypeScript、ページレベルのレイアウト・スタイルを記述する
+- `src/lib/components/index.ts` でコンポーネントをまとめてエクスポートする
 
-**Styling Approach:**
-- Define global CSS variables in `src/app.css`
-- CSS variable naming convention: `--{type}-{role}` format
-  - Type prefixes: `color`, `px`, `rem`, `font`, etc.
-  - Examples: `--color-primary`, `--px-header-fontsize`, `--rem-spacing-large`
-- Reference global variables in component styles using `var(--variable-name)`
-- Use `style-*` prefix for styling-related class names (e.g., `style-divider`, `style-button`)
-- Use `layout-*` prefix for layout-related class names (e.g., `layout-container`, `layout-divider`)
-- Route files (`src/routes/`) should only contain layout-related styles for component positioning
-- Component-specific styles should be defined within the component's `<style>` block
+スタイリング方針:
+- グローバル CSS 変数とグローバル SCSS 変数は `src/app.scss` に定義する
+- CSS/SCSS 変数命名規則: `--{type}-{role}` 形式（CSS変数）、`${type}-{role}`（SCSS変数）
+  - タイプ接頭辞: `color`, `px`, `rem`, `font` など
+  - 例: `--color-primary`, `--px-sidebar-width`, `--px-main-max-width`
+- コンポーネントスタイルでは `var(--variable-name)` でグローバル CSS 変数を参照する
+- メディアクエリのブレークポイント計算には SCSS 変数を使用する（`@media (max-width: $px-sidebar-width + $px-main-max-width)`）
 
-### Database Design
-- **Models**: ActiveRecord models in `api/db/models.rb`
-- **Encryption**: Sensitive fields prefixed with `encrypted_` 
-- **Pagination**: Kaminari gem for API pagination
-- **Connection**: MySQL via `api/db/connection.rb`
+クラス名のプレフィックスルール:
+- `layout-` クラス: DOM の配置・レイアウトに関するスタイル（`display`, `flex`, `position`, `margin`, `padding`, `text-align` など）
+  - 例: `layout-container`, `layout-summary`, `layout-money`, `layout-center`
+- `style-` クラス: 色・フォント・ボーダーなど見た目に関するスタイル（`color`, `background`, `border`, `font-size` など）
+  - 例: `style-table`, `style-button`, `style-divider`
+- 両方の性質を持つ要素には `layout-foo style-foo` のように両クラスを付与する
+- 各 Svelte ファイルの `<style>` ブロック内で `layout-*` と `style-*` を分けて記述する
 
-## Key Implementation Notes
+### データベース設計
+- モデル: `api/db/models.rb` の ActiveRecord モデル
+- 暗号化: 機密フィールドは `encrypted_` プレフィックス付き
+- ページネーション: Kaminari gem
+- 接続: `api/db/connection.rb` 経由で MySQL
 
-### User Data Encryption
-All user-sensitive data is encrypted using the `UserHash` class:
+## 実装上の重要な注意点
+
+### ユーザーデータ暗号化
+ユーザーの機密データはすべて `UserHash` クラスで暗号化します：
 ```ruby
 uhash = UserHash.new(firebase_uid)
 encrypted_data = uhash.encrypt(sensitive_string)
 decrypted_data = uhash.decrypt(encrypted_data)
 ```
 
-### API Authentication
-Every API endpoint expects Firebase JWT tokens:
+### API 認証
+すべての API エンドポイントは Firebase JWT トークンを要求します：
 ```ruby
-# In API helpers (api/app/api/root.rb)
+# API ヘルパー内 (api/app/api/root.rb)
 def request_userdata
   jwt = authorization_header&.gsub("Bearer ", "")
   Firebase.decode_jwt(jwt)
 end
 ```
 
-### Frontend API Communication
-API calls will include Firebase JWT tokens:
+### フロントエンド API 通信
+API 呼び出しには Firebase JWT トークンを含めます：
 ```typescript
-// API calls to be implemented in front/src/lib/api/v1/api.ts
+// front/src/lib/api/v1/api.ts に実装予定
 const jwt = await getFirebaseToken();
 opts.headers['Authorization'] = `Bearer ${jwt}`;
 ```
 
-### TODO Item Handling (Deplecated)
-The application uses special TODO IDs for records with unset categories or payment methods:
+### TODO アイテム処理（非推奨）
+カテゴリや支払い方法が未設定のレコードには特別な TODO ID を使用します：
 
-**TODO ID Constants:**
-- Frontend: `front/src/lib/api/v1/const.ts` - `TodoIds.Category` and `TodoIds.PaymentMethod` (to be implemented)
-- Backend: `api/constants.rb` - `TODO_ID[:category]` and `TODO_ID[:payment_method]`
-- Values: `'TODO_CATEGORY_ID'` and `'TODO_PAYMENT_METHOD_ID'`
+TODO ID 定数:
+- フロントエンド: `front/src/lib/api/v1/const.ts` - `TodoIds.Category` と `TodoIds.PaymentMethod`（実装予定）
+- バックエンド: `api/constants.rb` - `TODO_ID[:category]` と `TODO_ID[:payment_method]`
+- 値: `'TODO_CATEGORY_ID'` と `'TODO_PAYMENT_METHOD_ID'`
 
-**Implementation Details:**
-- Records can be created with `category_id: 'TODO_CATEGORY_ID'` for unset categories
-- TODO items are displayed as "TODO" in both lists and aggregations
-- Frontend record creation dialog will include TODO as default option (to be implemented)
-- Backend repositories use `left_joins(:category)` to include TODO items in aggregations
-- TODO records are fully functional - can be created, edited, and aggregated
+実装詳細:
+- カテゴリ未設定のレコードは `category_id: 'TODO_CATEGORY_ID'` で作成可能
+- TODO アイテムは一覧・集計の両方で「TODO」として表示される
+- フロントエンドのレコード作成ダイアログにはデフォルトオプションとして TODO を含める予定（実装予定）
+- バックエンドリポジトリは `left_joins(:category)` で集計に TODO アイテムを含める
+- TODO レコードは作成・編集・集計が完全に機能する
 
-**TODO Items in Category Aggregation:**
-TODO items appear as a separate "TODO" category in `/view/categories/aggregation` and can be clicked to see detailed records.
+カテゴリ集計における TODO アイテム:
+TODO アイテムは `/view/categories/aggregation` で独立した「TODO」カテゴリとして表示され、クリックで詳細レコードを確認できます。
 
-## Database Operations
+## データベース操作
 
-**Console Access:**
+コンソールアクセス:
 ```bash
 cd api
 bundle exec ruby scripts/finascope-console.rb
 ```
 
-## Deployment Notes
+## デプロイメント
 
-- Frontend builds static assets: `pnpm build`
-- Production deployment uses static adapter for SvelteKit
-- GCP deployment configured via `pnpm deploy` script
-- Environment variables managed through Docker compose files
+- フロントエンドは静的アセットをビルドする: `pnpm build`
+- 本番デプロイは SvelteKit の static adapter を使用
+- GCP デプロイは `pnpm deploy` スクリプトで設定済み
+- 環境変数は Docker compose ファイルで管理

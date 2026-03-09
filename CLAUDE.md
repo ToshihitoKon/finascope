@@ -83,7 +83,8 @@ Finascope は個人財務管理アプリケーションで、マイクロサー�
   - タイプ接頭辞: `color`, `px`, `rem`, `font` など
   - 例: `--color-primary`, `--px-sidebar-width`, `--px-main-max-width`
 - コンポーネントスタイルでは `var(--variable-name)` でグローバル CSS 変数を参照する
-- メディアクエリのブレークポイント計算には SCSS 変数を使用する（`@media (max-width: $px-sidebar-width + $px-main-max-width)`）
+- メディアクエリのブレークポイント計算には SCSS 変数を使用する（`@media (max-width: #{$px-sidebar-width + $px-main-max-width})`）
+  - dart-sass では `@media` 内の算術式を `#{}` で補間する必要がある
 
 クラス名のプレフィックスルール:
 - `layout-` クラス: DOM の配置・レイアウトに関するスタイル（`display`, `flex`, `position`, `margin`, `padding`, `text-align` など）
@@ -144,6 +145,23 @@ TODO ID 定数:
 
 カテゴリ集計における TODO アイテム:
 TODO アイテムは `/view/categories/aggregation` で独立した「TODO」カテゴリとして表示され、クリックで詳細レコードを確認できます。
+
+## 型チェック
+
+### フロントエンド
+
+フロントエンドの型チェックは `svelte-check` で行う（TypeScript + Svelte テンプレートの両方をチェックする）：
+
+```bash
+cd front
+pnpm svelte-check
+```
+
+`tsc --noEmit` は TypeScript のみのチェックで、Svelte テンプレート内の型エラーは検出されないため使わない。
+
+型チェックが通らない場合の確認事項:
+- `.svelte-kit/` の型が古い場合は `pnpm svelte-kit sync` で再生成する
+- `sass-embedded` が必要（`svelte-check` が SCSS プリプロセスに使用する）
 
 ## データベース操作
 

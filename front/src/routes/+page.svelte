@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { MonthlyExpenses, ExpenseDetails } from '$lib/components';
+  import { MonthlyExpenses, ExpenseDetails, CategoryDetails } from '$lib/components';
   import { fetchRecords, fetchCategoryAggregation } from '$lib/api/v1';
   import type { Record, CategoryAggregation } from '$lib/api/v1/types';
 
@@ -26,6 +26,10 @@
   <div class="layout-devider style-devider"></div>
   <div class="layout-details">
     <ExpenseDetails {records} onRefresh={loadData} />
+  </div>
+  <div class="layout-devider style-devider"></div>
+  <div class="layout-details">
+    <CategoryDetails />
   </div>
 </div>
 

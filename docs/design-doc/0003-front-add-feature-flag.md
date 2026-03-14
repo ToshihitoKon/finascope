@@ -96,4 +96,25 @@ SvelteKit の `$env/static/public` を使い、ビルド時に切り替える方
 ## 未解決事項
 
 - **API による feature flag 取得（将来拡張）**: feature flag を API エンドポイントで管理し、フロントが起動時に取得して `flags` を動的に上書きする仕組み。その場合 DB にフラグ設定テーブルが必要になる。今回は実装しないが、`feature-flags.ts` の構造はこの拡張を妨げないよう設計する。
-- **`mock/index.ts` の `fetchInvoiceRecords` シグネチャ**: 実 API 側（`api.ts`）は `query: string` を引数に取るが、mock 側は引数なし。index.ts で re-export する際に型不一致が出る可能性があるため、実装時に確認・修正が必要。
+
+## 実装サマリー
+
+> **commit**: `00a5090` | **date**: 2026-03-14
+
+設計通りに実装完了。追加で発生した対応は以下の通り。
+
+### mock の fetchInvoiceRecords シグネチャ修正
+
+未解決事項として挙げていた型不一致が実装時に確認された。`mock/index.ts` の `fetchInvoiceRecords` に `query?: string` のオプション引数を追加してシグネチャを統一した。
+
+```ts
+// 変更前
+export const fetchInvoiceRecords = async (): Promise<apitype.InvoiceRecordsResponse>
+
+// 変更後
+export const fetchInvoiceRecords = async (query?: string): Promise<apitype.InvoiceRecordsResponse>
+```
+
+### 型チェック
+
+`pnpm svelte-check` で 0 errors / 0 warnings を確認。

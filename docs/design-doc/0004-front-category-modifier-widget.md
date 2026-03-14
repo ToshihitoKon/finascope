@@ -93,3 +93,17 @@ let newLabel = $state<string>('');             // 新規追加フォームの la
 ## 未解決事項
 
 - カテゴリ削除時のレコード紐付け処理は API 側の改修後に別 Design Doc で対応予定
+
+## 実装サマリー
+
+commit: `a8d931b`
+
+### 作成・変更したファイル
+
+- `front/src/lib/components/CategoryDetails.svelte` — 新規作成
+  - `onMount` で `fetchCategories()` を呼び出しカテゴリ一覧を取得
+  - `editingId` / `editingLabel` で編集中の行を管理するインライン編集を実装
+  - `createCategory` / `updateCategory` 呼び出し後に `loadCategories()` でリロード
+  - `ExpenseDetails` 準拠のスタイル（`style-table`, `style-button` など）を使用
+- `front/src/lib/components/index.ts` — `CategoryDetails` をエクスポートに追加
+- `front/src/routes/+page.svelte` — divider + `<CategoryDetails />` をページ末尾に追加

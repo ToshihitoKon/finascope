@@ -29,7 +29,6 @@ ls docs/design-doc/*.md 2>/dev/null | sort | tail -1
 
 **基本情報（必須）:**
 - 何を作るか（機能の概要）
-- なぜ必要か（解決する課題・背景）
 - スコープ（`api` / `front` / `db` / `infra` など、複数可）
 - 機能名（ファイル名に使う短い英語スネークケース）
 
@@ -68,19 +67,15 @@ ls docs/design-doc/*.md 2>/dev/null | sort | tail -1
 ```markdown
 # [%04d] [機能名]
 
-> **scope**: [scope] | **status**: Draft | **date**: [YYYY-MM-DD]
+> **scope**: [scope] | **date**: [YYYY-MM-DD]
 
 ## 概要
 
 [1〜2文で機能を説明する]
 
-## 背景・課題
-
-[なぜこの機能が必要か。現状の問題点と、これを作ることで何が改善されるか]
-
 ## 目標
 
-- [ ] [達成したいこと]
+- [達成したいこと]
 
 ## 非目標
 
@@ -137,5 +132,5 @@ ALTER TABLE xxx ADD COLUMN ...;
 
 ## 未解決事項
 
-- [ ] [決まっていないこと]
+- [決まっていないこと]
 ```

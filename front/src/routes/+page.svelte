@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { MonthlyExpenses, ExpenseDetails } from '$lib/components';
-  import { fetchRecords, fetchCategoryAggregation } from '$lib/api/v1/mock';
+  import { fetchRecords, fetchCategoryAggregation } from '$lib/api/v1';
   import type { Record, CategoryAggregation } from '$lib/api/v1/types';
 
   let records: Record[] = $state([]);

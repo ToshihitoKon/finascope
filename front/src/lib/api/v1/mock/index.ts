@@ -176,8 +176,8 @@ export const updatePaymentMethod = async (
 // };
 
 // Invoice Records
-export const fetchInvoiceRecords = async (): Promise<apitype.InvoiceRecordsResponse> => {
-  console.log('mock: fetchInvoiceRecords.');
+export const fetchInvoiceRecords = async (query?: string): Promise<apitype.InvoiceRecordsResponse> => {
+  console.log('mock: fetchInvoiceRecords.', query);
   return {
     records: [
       {

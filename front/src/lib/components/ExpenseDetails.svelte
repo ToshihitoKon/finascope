@@ -4,7 +4,7 @@
   import { today, getLocalTimeZone } from '@internationalized/date';
   import type { CalendarDate } from '@internationalized/date';
   import type { Record, Category, PaymentMethod } from '$lib/api/v1/types';
-  import * as api from '$lib/api/v1/mock';
+  import * as api from '$lib/api/v1';
   import { States, RecordTypes, TodoIds } from '$lib/api/v1/const';
   import { toast } from 'svelte-sonner';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { InvoiceRecord, PaymentMethod } from '$lib/api/v1/types';
-  import * as api from '$lib/api/v1/api';
+  import * as api from '$lib/api/v1';
   import { toast } from 'svelte-sonner';
 
   interface Props {

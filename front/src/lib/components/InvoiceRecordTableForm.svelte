@@ -252,21 +252,24 @@
   }
 
   .style-table th {
-    background-color: var(--color-primary-bg);
+    background-color: var(--color-table-header-bg);
     padding: 8px 16px;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   .style-table td {
     padding: 8px 16px;
     height: 36px;
-  }
-
-  .style-table tbody > tr:nth-of-type(odd):not(.unregistered-row) {
-    background-color: rgb(237 238 242);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .unregistered-row {
-    background-color: #f8f9fa;
+    background-color: var(--color-table-header-bg);
     font-style: italic;
   }
 
@@ -287,28 +290,42 @@
   }
 
   .text-muted {
-    color: #999;
+    color: var(--color-text-muted);
   }
 
   .style-button {
-    background-color: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 4px 12px;
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    border-radius: 4px;
+    padding: 3px 10px;
     cursor: pointer;
+    font-size: 0.8rem;
     margin: 0 2px;
   }
 
   .style-button:hover {
-    opacity: 0.8;
+    background-color: var(--color-primary);
+    color: white;
   }
 
   .style-button-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .style-button-danger:hover {
     background-color: #dc3545;
+    color: white;
   }
 
   .style-button-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+  }
+
+  .style-button-secondary:hover {
     background-color: #6c757d;
+    color: white;
   }
 </style>

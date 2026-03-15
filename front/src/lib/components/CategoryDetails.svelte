@@ -104,9 +104,16 @@
 
 <style>
   .layout-details {
-    max-width: 1024px;
-    margin: 0 auto;
-    padding: 0 16px;
+    width: 100%;
+  }
+
+  .layout-details h2 {
+    margin: 0 0 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .layout-table-scroll {
@@ -127,9 +134,15 @@
   }
 
   .style-table th {
-    background-color: var(--color-primary-bg);
+    background-color: var(--color-table-header-bg);
     padding: 8px 16px;
     white-space: nowrap;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   .style-table td {
@@ -138,14 +151,11 @@
     white-space: nowrap;
     vertical-align: middle;
     text-align: left;
-  }
-
-  .style-table tbody > tr:nth-of-type(even):not(.style-new-row) {
-    background-color: rgb(237 238 242);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .style-new-row {
-    background-color: #f0f4ff;
+    background-color: var(--color-table-header-bg);
   }
 
   .style-table input[type='text'] {
@@ -180,20 +190,28 @@
   }
 
   .style-button {
-    background-color: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 4px 8px;
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    border-radius: 4px;
+    padding: 3px 10px;
     cursor: pointer;
+    font-size: 0.8rem;
   }
 
   .style-button:hover {
-    opacity: 0.8;
+    background-color: var(--color-primary);
+    color: white;
   }
 
   .style-button-secondary {
-    background-color: #6c757d;
+    color: #6c757d;
+    border-color: #6c757d;
     margin-left: 4px;
+  }
+
+  .style-button-secondary:hover {
+    background-color: #6c757d;
+    color: white;
   }
 </style>

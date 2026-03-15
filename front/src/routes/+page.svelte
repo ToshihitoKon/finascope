@@ -15,44 +15,49 @@
   });
 </script>
 
-<div>
+<div class="layout-page">
   <div class="layout-month-selector-wrapper">
     <MonthSelector />
   </div>
   <div class="layout-summary">
     <MonthlyExpenses {categoryAggregations} />
   </div>
-  <div class="layout-devider style-devider"></div>
-  <div class="layout-details">
+  <div class="layout-section style-card">
     <ExpenseDetails />
   </div>
-  <div class="layout-devider style-devider"></div>
-  <div class="layout-details">
+  <div class="layout-section style-card">
     <CategoryDetails />
   </div>
 </div>
 
 <style>
+  .layout-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+  }
+
   .layout-month-selector-wrapper {
     display: flex;
     justify-content: center;
-    padding: 16px 16px 0;
   }
 
   .layout-summary {
     display: flex;
     justify-content: center;
     gap: 16px;
-    padding: 16px;
   }
 
-  .layout-devider {
-    margin: 16px;
+  .layout-section {
+    min-width: 0;
   }
 
-  .style-devider {
-    height: 0px;
-    border: 1px solid var(--color-primary);
-    border-radius: 1px;
+  .style-card {
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 24px;
   }
 </style>

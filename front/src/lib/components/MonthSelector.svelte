@@ -63,9 +63,11 @@
 
   .style-select {
     padding: 4px 8px;
-    border: 1px solid var(--color-primary);
-    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
     font-size: 0.9rem;
     cursor: pointer;
+    background-color: var(--color-card-bg);
+    color: inherit;
   }
 </style>

@@ -25,8 +25,10 @@
 
 <style>
   .style-total {
-    border: 2px solid var(--color-primary);
-    border-radius: 16px;
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
     padding: 16px;
     text-align: center;
     width: fit-content;

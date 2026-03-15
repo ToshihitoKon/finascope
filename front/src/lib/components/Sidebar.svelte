@@ -53,6 +53,7 @@
 
   .style-sidebar {
     background-color: var(--color-sidebar-bg);
+    border-right: 1px solid var(--color-border);
   }
 
   .layout-sidebar-header {
@@ -94,7 +95,7 @@
   }
 
   .style-nav-item:hover {
-    color: #fff;
+    color: #111827;
   }
 
   .layout-overlay {

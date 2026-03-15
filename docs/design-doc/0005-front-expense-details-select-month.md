@@ -118,3 +118,34 @@ mock も同様に変更する。
 ## 未解決事項
 
 - 年セレクトボックスの選択可能範囲（現在年 ± 何年か）は実装時に適当に決める
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-03-15
+
+### 変更ファイル
+
+- `front/src/lib/stores/selectedMonth.ts` — 新規作成。年・月のwritable store + begin/end dateのderived store
+- `front/src/lib/components/MonthSelector.svelte` — 新規作成。◀ 年セレクト 月セレクト ▶ のUI。ストアを直接操作
+- `front/src/lib/components/index.ts` — `MonthSelector` をエクスポートに追加
+- `front/src/lib/api/v1/api.ts` — `fetchRecords` を `(beginDate?, endDate?)` シグネチャに変更
+- `front/src/lib/api/v1/mock/index.ts` — `fetchRecords` / `fetchCategoryAggregation` 両方のシグネチャを統一、mockレコードの日付を引数の年月に連動させる対応も追加
+- `front/src/lib/components/ExpenseDetails.svelte` — `records`/`onRefresh` props を削除し、`$effect` でストアを購読して自律fetch
+- `front/src/routes/+page.svelte` — `MonthSelector` 配置、`$effect` でカテゴリ集計をストア連動に変更、`ExpenseDetails` へのprops削除
+
+### 実装内容
+
+設計通りに進んだ。`svelte/store` で年・月を共有し、`ExpenseDetails` と `MonthlyExpenses`（親経由）が同じ月で連動して更新される。`MonthSelector` は ◀▶ ボタンで月またぎも正しくハンドルする（12月→翌年1月など）。年の選択範囲は現在年 ± 3年（計7年）とした。
+
+ddocには記載がなかったが、mockの `fetchCategoryAggregation` のシグネチャも `params: string` のままで `api.ts` と不一致だったため合わせて修正した。また、mockレコードの日付が固定値だと月切り替えの動作確認ができないため、`beginDate` の年月をレコードの日付に反映するよう修正した。
+
+### 確認・検証
+
+`pnpm svelte-check` → 0 errors, 0 warnings
+
+### 気づき・備考
+
+- `$effect` は Svelte 5 Runes の機能で、ストアの変化を自動追跡して再実行される。`onMount` + store subscribe の組み合わせより簡潔に書ける
+- mockの日付を動的にすることでブラウザ上での月切り替え動作確認が容易になった

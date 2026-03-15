@@ -155,3 +155,45 @@ Tailwind CSS を使用せず、CLAUDE.md の CSS 設計規則に則り、フロ�
 ## 未解決事項
 
 なし
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-03-15
+
+### 変更ファイル
+
+- `front/src/app.scss` — グローバル CSS 変数を追加・更新（`--color-page-bg` をグレー化、`--color-card-bg` / `--color-border` / `--color-text-muted` / `--shadow-md` / `--color-table-header-bg` / `--color-text-heading` を追加、サイドバー変数をライトグレー系に変更）
+- `front/src/routes/+layout.svelte` — `layout-main` のパディングを削除（ページ側に委譲）
+- `front/src/routes/+page.svelte` — `layout-devider` / `style-devider` を削除、`style-card` / `layout-page` でカードレイアウトを構成、MonthSelector を ExpenseDetails の下に移動、各セクションを左寄せ、CategoryDetails に `layout-section-narrow`（`max-width: 680px`）を適用
+- `front/src/lib/components/MonthlyExpenses.svelte` — `border` をカードスタイルに置き換え
+- `front/src/lib/components/ExpenseDetails.svelte` — ゼブラ柄削除・`border-bottom` 追加、テーブルヘッダーをグレー文字＋薄グレー背景に、ボタンをアウトラインスタイルに、カードタイトルのスタイル追加
+- `front/src/lib/components/CategoryDetails.svelte` — 同上に加え、`layout-actions` を右寄せに変更
+- `front/src/lib/components/MonthSelector.svelte` — `style-select` のボーダーを `--color-border` に変更
+- `front/src/lib/components/InvoiceRecordTableForm.svelte` — ゼブラ柄削除・`border-bottom` 追加、テーブルヘッダースタイル統一、ボタンをアウトラインスタイルに、`text-muted` を CSS 変数に変更
+- `front/src/lib/components/Sidebar.svelte` — ライトグレー系に変更、`border-right` 追加、ホバー色更新
+
+### 実装内容
+
+ddoc の設計通りに概ね進んだ。以下の点で設計時から変更・追加があった：
+
+- **パディング構造の再設計**: 当初は `layout-main` / `layout-details` 両方にパディングを設定していたが、二重になる問題が発生。`layout-main` のパディングを削除し、`layout-page`（ページ外縁）と `style-card`（カード内）に分離して管理する構造に整理した。
+- **`layout-section` の `width: 100%` 問題**: flex 子要素に `width: 100%` を指定すると `layout-page` の `padding` 分がはみ出す問題が発生。`width: 100%` を削除し `min-width: 0` のみに変更した。
+- **CSS 変数の追加**: ddoc に記載のなかった `--color-table-header-bg`（`#f9fafb`）と `--color-text-heading`（`#374151`）を追加。テーブルヘッダーのピンク背景廃止とカードタイトルのスタイル統一に使用。
+- **レビュー対応で追加した変更**: 実装後のレビューを経て以下を追加実施した：
+  - テーブルヘッダーのピンク背景（`--color-primary-bg`）を薄グレー（`#f9fafb`）に変更
+  - シャドウを `0 1px 3px rgba(0,0,0,0.06)` に引き締め
+  - ボタンをアウトラインスタイル（白背景・ピンク枠・ピンク文字、ホバー時塗りつぶし）に変更
+  - カードタイトルの文字サイズ・太さ・色を調整（最終的に `1rem` / `font-weight: 700` / `#1f2937`）
+  - CategoryDetails カードを `max-width: 680px` で左寄せ、MonthSelector を ExpenseDetails の下に移動
+
+### 確認・検証
+
+`pnpm svelte-check` でエラー・警告ともに 0 件を確認。
+
+### 気づき・備考
+
+- カードスタイル（`style-card`）は `+page.svelte` 側で定義・適用し、コンポーネント内の `layout-details` はコンテンツ管理のみに専念させた。コンポーネント境界でカードを制御する構造は再利用性が高い。
+- `--color-primary-bg` は今後テーブルヘッダーや入力行の背景としては使わず、ピンクアクセントが必要な箇所に限定するとよい。テーブル系の背景は `--color-table-header-bg` で統一するのが望ましい。
+- `layout-section-narrow` のような幅制限クラスをページ側で管理するパターンは、コンポーネントを汎用的に保ちつつページごとのレイアウト調整がしやすく有効。

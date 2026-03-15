@@ -11,3 +11,4 @@ export { default as MonthlyExpenses } from './MonthlyExpenses.svelte';
 export { default as ExpenseDetails } from './ExpenseDetails.svelte';
 export { default as CategoryDetails } from './CategoryDetails.svelte';
 export { default as InvoiceRecordTableForm } from './InvoiceRecordTableForm.svelte';
+export { default as MonthSelector } from './MonthSelector.svelte';

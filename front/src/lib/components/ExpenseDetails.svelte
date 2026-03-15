@@ -7,14 +7,9 @@
   import * as api from '$lib/api/v1';
   import { States, RecordTypes, TodoIds } from '$lib/api/v1/const';
   import { toast } from 'svelte-sonner';
+  import { selectedMonthRange } from '$lib/stores/selectedMonth';
 
-  interface Props {
-    records: Record[];
-    onRefresh?: () => void;
-  }
-
-  let { records, onRefresh }: Props = $props();
-
+  let records = $state<Record[]>([]);
   let categories = $state<Category[]>([]);
   let paymentMethods = $state<PaymentMethod[]>([]);
 
@@ -26,6 +21,15 @@
   let newTitle = $state<string>('');
   let newTypeId = $state<number>(0);
   let newStateId = $state<number>(0);
+
+  async function loadRecords(beginDate: string, endDate: string) {
+    const res = await api.fetchRecords(beginDate, endDate);
+    records = res.records;
+  }
+
+  $effect(() => {
+    loadRecords($selectedMonthRange.beginDate, $selectedMonthRange.endDate);
+  });
 
   onMount(async () => {
     const [categoriesRes, paymentMethodsRes] = await Promise.all([
@@ -69,7 +73,7 @@
       if (categories.length > 0) newCategoryId = categories[0].id;
       if (paymentMethods.length > 0) newPaymentMethodId = paymentMethods[0].id;
 
-      if (onRefresh) onRefresh();
+      await loadRecords($selectedMonthRange.beginDate, $selectedMonthRange.endDate);
     } catch {
       toast.error('レコードの作成に失敗しました');
     }

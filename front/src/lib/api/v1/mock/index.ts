@@ -1,8 +1,12 @@
 import type * as apitype from '../types';
 
 // Records
-export const fetchRecords = async (params: string): Promise<apitype.RecordsResponse> => {
-  console.log('mock: fetchRecords.', params);
+export const fetchRecords = async (
+  beginDate?: string,
+  endDate?: string
+): Promise<apitype.RecordsResponse> => {
+  console.log('mock: fetchRecords.', beginDate, endDate);
+  const ym = beginDate ? beginDate.slice(0, 7) : new Date().toISOString().slice(0, 7);
   return {
     records: [
       {
@@ -13,8 +17,8 @@ export const fetchRecords = async (params: string): Promise<apitype.RecordsRespo
         state: '検討中',
         category: '給与',
         payment_method: '銀行振込',
-        date: '2024-03-20',
-        description: '3月分の給与',
+        date: `${ym}-01`,
+        description: '給与',
         record_type_id: 1,
         state_id: 1,
         category_id: 'X2yLmV9P',
@@ -28,7 +32,7 @@ export const fetchRecords = async (params: string): Promise<apitype.RecordsRespo
         state: '支払済',
         category: '教育',
         payment_method: 'クレジットカード',
-        date: '2024-03-24',
+        date: `${ym}-15`,
         description: '技術書籍「Ruby超入門」',
         record_type_id: 2,
         state_id: 2,
@@ -43,7 +47,7 @@ export const fetchRecords = async (params: string): Promise<apitype.RecordsRespo
         state: '支払済',
         category: '食費',
         payment_method: '現金',
-        date: '2024-03-25',
+        date: `${ym}-20`,
         description: '社員食堂にて',
         record_type_id: 2,
         state_id: 2,
@@ -234,9 +238,10 @@ export const deleteInvoiceRecord = async (
 
 // View - Category Aggregation
 export const fetchCategoryAggregation = async (
-  params: string
+  beginDate?: string,
+  endDate?: string
 ): Promise<apitype.CategoryAggregationResponse> => {
-  console.log('mock: fetchCategoryAggregation.', params);
+  console.log('mock: fetchCategoryAggregation.', beginDate, endDate);
   return {
     aggregations: [
       {

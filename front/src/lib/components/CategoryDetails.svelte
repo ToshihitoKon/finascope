@@ -109,11 +109,10 @@
 
   .layout-details h2 {
     margin: 0 0 16px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-text-heading);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+    letter-spacing: 0.02em;
   }
 
   .layout-table-scroll {
@@ -184,7 +183,7 @@
   }
 
   .layout-actions {
-    text-align: center;
+    text-align: right;
     white-space: nowrap;
     width: 160px;
   }

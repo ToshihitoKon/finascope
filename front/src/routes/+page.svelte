@@ -16,16 +16,16 @@
 </script>
 
 <div class="layout-page">
-  <div class="layout-month-selector-wrapper">
-    <MonthSelector />
-  </div>
   <div class="layout-summary">
     <MonthlyExpenses {categoryAggregations} />
   </div>
   <div class="layout-section style-card">
     <ExpenseDetails />
   </div>
-  <div class="layout-section style-card">
+  <div class="layout-month-selector-wrapper">
+    <MonthSelector />
+  </div>
+  <div class="layout-section layout-section-narrow style-card">
     <CategoryDetails />
   </div>
 </div>
@@ -40,17 +40,19 @@
 
   .layout-month-selector-wrapper {
     display: flex;
-    justify-content: center;
   }
 
   .layout-summary {
     display: flex;
-    justify-content: center;
     gap: 16px;
   }
 
   .layout-section {
     min-width: 0;
+  }
+
+  .layout-section-narrow {
+    max-width: 680px;
   }
 
   .style-card {

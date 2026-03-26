@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
+  import { flags, setMockApi } from '$lib/feature-flags';
 
   interface Props {
     open: boolean;
@@ -7,6 +8,13 @@
   }
 
   let { open = $bindable(), onclose }: Props = $props();
+
+  let useMockApi = $state(flags.useMockApi);
+
+  const toggleMockApi = () => {
+    useMockApi = !useMockApi;
+    setMockApi(useMockApi);
+  };
 
   const navItems = [
     { href: '/', label: 'Home' },
@@ -36,6 +44,11 @@
       </li>
     {/each}
   </ul>
+  <div class="layout-flags">
+    <button onclick={toggleMockApi}>
+      Mock API: {useMockApi ? 'ON' : 'OFF'}
+    </button>
+  </div>
 </nav>
 
 <style lang="scss">
@@ -96,6 +109,11 @@
 
   .style-nav-item:hover {
     color: #111827;
+  }
+
+  .layout-flags {
+    margin-top: auto;
+    padding: 12px;
   }
 
   .layout-overlay {

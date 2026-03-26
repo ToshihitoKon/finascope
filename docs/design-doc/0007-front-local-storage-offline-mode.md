@@ -121,3 +121,31 @@ export const createRecord: typeof api.createRecord = (...args) => getImpl().crea
 
 - 非ログイン時のローカルデータが大量になった場合の上限制御（今回はスコープ外）
 - ログイン/ログアウト時にローカルデータを破棄するかどうか（今回は破棄しない方針）
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-03-26
+
+### 変更ファイル
+
+- `front/src/lib/api/v1/localStorageApi.ts` — 新規作成。全リソースの LocalStorage CRUD と空の集計レスポンスを実装
+- `front/src/lib/api/v1/index.ts` — 静的デストラクチャから `getImpl()` パターンに変更。mock / api / localApi の 3 実装を切り替え
+- `front/src/lib/feature-flags.ts` — 静的 const から localStorage getter + `setMockApi()` setter に変更
+- `front/src/lib/components/Sidebar.svelte` — Mock API トグルボタンを追加（localStorage 永続化）
+
+### 実装内容
+
+ddoc の設計通りに進んだ。`localStorageApi.ts` は `api.ts` と同一シグネチャで実装し、`index.ts` の `getImpl()` が `auth.currentUser` を見てログイン状態に応じて実装を切り替える。
+
+ddoc 作成後に feature flag の切り替え UI も追加要件として実装した。`feature-flags.ts` を localStorage getter に変更し、Sidebar にトグルボタンを配置。
+
+### 確認・検証
+
+`pnpm svelte-check` で型エラーなしを確認。
+
+### 気づき・備考
+
+- `api.ts` の `updatePaymentMethod` が `UpdatePaymentMethodRequest` ではなく `UpdateCategoryRequest` を誤って使用していた。`localStorageApi.ts` では正しい `UpdatePaymentMethodRequest` を採用し、`index.ts` の型アノテーションを `typeof mock.updatePaymentMethod` に変えることで解決した。
+- `typeof localStorage === 'undefined'` では SSR 環境でダミーオブジェクトが存在する場合にすり抜けるため、`$app/environment` の `browser` フラグを使う必要がある。

@@ -236,15 +236,12 @@ export const deleteInvoiceRecord = async (
 
 // View - aggregations (not supported in local mode)
 
-export const fetchCategoryAggregation = async (
-  _beginDate?: string,
-  _endDate?: string
-): Promise<apitype.CategoryAggregationResponse> => {
+export const fetchCategoryAggregation = async (): Promise<apitype.CategoryAggregationResponse> => {
   return { aggregations: [] };
 };
 
 export const fetchInvoiceRecordsWithdrawalAggregation = async (
-  _req: apitype.InvoiceRecordsWithdrawalAggregationRequest
+  _: apitype.InvoiceRecordsWithdrawalAggregationRequest
 ): Promise<apitype.InvoiceRecordsWithdrawalAggregationResponse> => {
   return {
     aggregation: {

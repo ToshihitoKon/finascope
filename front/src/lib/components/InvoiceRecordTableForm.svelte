@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { InvoiceRecord, PaymentMethod } from '$lib/api/v1/types';
   import * as api from '$lib/api/v1';
+  import { SvelteMap } from 'svelte/reactivity';
   import { toast } from 'svelte-sonner';
 
   interface Props {
@@ -13,7 +14,7 @@
   let { paymentMethods, year, month, onRefresh }: Props = $props();
 
   // InvoiceRecordsをPaymentMethodごとにマッピング
-  let invoiceRecordsByPaymentMethod = $state<Map<string, InvoiceRecord>>(new Map());
+  let invoiceRecordsByPaymentMethod = new SvelteMap<string, InvoiceRecord>();
   let loading = $state(true);
 
   // 編集中の行
@@ -32,12 +33,11 @@
       const response = await api.fetchInvoiceRecords(query);
 
       // PaymentMethodごとにマッピング
-      const map = new Map<string, InvoiceRecord>();
+      invoiceRecordsByPaymentMethod.clear();
       response.records.forEach((record) => {
-        map.set(record.payment_method_id, record);
+        invoiceRecordsByPaymentMethod.set(record.payment_method_id, record);
       });
-      invoiceRecordsByPaymentMethod = map;
-    } catch (error) {
+    } catch (_error) {
       toast.error('請求レコードの取得に失敗しました');
     } finally {
       loading = false;
@@ -81,7 +81,7 @@
 
       await loadInvoiceRecords();
       if (onRefresh) onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('請求レコードの作成に失敗しました');
     }
   }
@@ -93,7 +93,7 @@
 
       await loadInvoiceRecords();
       if (onRefresh) onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('請求レコードの削除に失敗しました');
     }
   }
@@ -129,7 +129,7 @@
 
       await loadInvoiceRecords();
       if (onRefresh) onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('請求レコードの更新に失敗しました');
     }
   }

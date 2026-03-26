@@ -163,6 +163,24 @@ pnpm svelte-check
 - `.svelte-kit/` の型が古い場合は `pnpm svelte-kit sync` で再生成する
 - `sass-embedded` が必要（`svelte-check` が SCSS プリプロセスに使用する）
 
+## Lint チェック
+
+### フロントエンド
+
+ESLint は `svelte-check` とは別に実行する：
+
+```bash
+cd front
+pnpm eslint
+```
+
+コード変更後は `svelte-check` と `eslint` の両方をパスさせること。
+
+注意事項:
+- 未使用変数・引数は `_` プレフィックスで無視できる（例: `_error`, `_req`）
+- Svelte 5 のリアクティブ Map は `SvelteMap`（`svelte/reactivity`）を使う。`$state` でラップすると `svelte/no-unnecessary-state-wrap` エラーになるため不要
+- `SvelteMap` を変数ごと再代入するのではなく `.clear()` + `.set()` で変更する（再代入すると `$state` なしでは reactivity が失われる）
+
 ## データベース操作
 
 コンソールアクセス:

@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { DateField } from '$lib/components';
-  import { today, getLocalTimeZone } from '@internationalized/date';
-  import type { CalendarDate } from '@internationalized/date';
+  import { NumberDateField } from '$lib/components';
   import type { Record, Category, PaymentMethod } from '$lib/api/v1/types';
   import * as api from '$lib/api/v1';
   import { States, RecordTypes, TodoIds } from '$lib/api/v1/const';
@@ -13,8 +11,11 @@
   let categories = $state<Category[]>([]);
   let paymentMethods = $state<PaymentMethod[]>([]);
 
+  interface DateValue { year: number; month: number; day: number; }
+
   // 新規入力フォーム
-  let newDate = $state<CalendarDate | undefined>(today(getLocalTimeZone()));
+  const _today = new Date();
+  let newDate = $state<DateValue | undefined>({ year: _today.getFullYear(), month: _today.getMonth() + 1, day: _today.getDate() });
   let newAmount = $state<number | undefined>(undefined);
   let newCategoryId = $state<string>(TodoIds.Category);
   let newPaymentMethodId = $state<string>(TodoIds.PaymentMethod);
@@ -44,12 +45,17 @@
   });
 
   async function handleCreate() {
-    if (!newDate || newAmount === undefined || newAmount <= 0 || !newTitle.trim()) {
-      toast.error('日付・金額・用途を入力してください');
+    if (!newDate) {
+      toast.error('日付が不正です');
+      return;
+    }
+    if (newAmount === undefined || newAmount <= 0 || !newTitle.trim()) {
+      toast.error('金額・用途を入力してください');
       return;
     }
 
     const dateStr = `${newDate.year}-${String(newDate.month).padStart(2, '0')}-${String(newDate.day).padStart(2, '0')}`;
+
 
     try {
       await api.createRecord({
@@ -65,7 +71,8 @@
       toast.success('レコードを作成しました');
 
       // フォームリセット
-      newDate = today(getLocalTimeZone());
+      const _r = new Date();
+      newDate = { year: _r.getFullYear(), month: _r.getMonth() + 1, day: _r.getDate() };
       newAmount = undefined;
       newTitle = '';
       newTypeId = 0;
@@ -101,7 +108,7 @@
       {#each records as record (record.id)}
         <tr>
           <td><input type="checkbox" /></td>
-          <td><span>{record.date}</span></td>
+          <td><span>{record.date.split('-')[0]}</span><span class="date-sep">/</span><span>{record.date.split('-')[1]}</span><span class="date-sep">/</span><span>{record.date.split('-')[2]}</span></td>
           <td><span>{record.type}</span></td>
           <td class="layout-money"><span>¥{record.amount.toLocaleString()}</span></td>
           <td class="layout-category"><span>{record.category}</span></td>
@@ -115,7 +122,7 @@
       <!-- 新規入力行 -->
       <tr class="style-new-row">
         <td><input type="checkbox" disabled /></td>
-        <td><DateField bind:value={newDate} /></td>
+        <td><NumberDateField bind:value={newDate} /></td>
         <td>
           <select bind:value={newTypeId}>
             {#each RecordTypes as rt (rt.id)}
@@ -220,6 +227,11 @@
     border-bottom: 1px solid var(--color-border);
   }
 
+  .date-sep {
+    padding: 0 2px;
+    color: var(--color-text-muted);
+  }
+
   .style-table td:nth-child(2),
   .layout-title {
     text-align: left;
@@ -235,7 +247,7 @@
     width: 100%;
     padding: 4px 8px;
     border: none;
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid var(--color-border);
     box-sizing: border-box;
     font-size: 0.875rem;
     font-family: inherit;

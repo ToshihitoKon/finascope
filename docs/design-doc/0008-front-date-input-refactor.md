@@ -91,3 +91,35 @@ props:
 ## 未解決事項
 
 - なし
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-04-21
+
+### 変更ファイル
+
+- `front/src/lib/components/NumberDateField.svelte` — 新規作成。年・月・日を `type=text` + `inputmode=numeric` で横並び、focusout 時にゼロパディング正規化とバリデーション実行
+- `front/src/lib/components/index.ts` — `NumberDateField` をエクスポート追加
+- `front/src/lib/components/ExpenseDetails.svelte` — `DateField` → `NumberDateField` に差し替え、`newDate` 型変更、既存行の日付表示を `date-sep` span で統一
+
+### 実装内容
+
+ddoc の設計通りに実装した。主な変更点：
+
+- 月・日を `type=number` ではなく `type=text` + `inputmode=numeric` に変更。`type=number` ではゼロパディング表示を制御できないため。
+- バリデーションは `focusout` イベントで `relatedTarget` を確認し、コンポーネント外にフォーカスが出たときのみ実行。
+- invalid 時は赤下線 + 淡い赤背景でスタイル表示し、追加ボタン押下時に `toast.error('日付が不正です')` を表示。
+- 既存行の日付表示も `date-sep` クラスの span（`padding: 0 2px`）で区切り、入力行と同じスペーシングに統一。
+- 全 input/select に常時下線（`var(--color-border)`）を追加し、非アクティブ時も入力欄として認識できるようにした。
+
+### 確認・検証
+
+- `pnpm svelte-check` — エラーなし
+- `pnpm eslint` — エラーなし
+
+### 気づき・備考
+
+- `{@const}` は `<td>` 直下に置けない（`{#each}` 等のブロック内のみ有効）。既存行の日付分割はインラインの `split('-')[n]` で対応。
+- `type=number` の input は OS・ブラウザによって spinner が表示されたりゼロパディングが無視されたりするため、数字入力でも `type=text` + `inputmode=numeric` の組み合わせが使いやすい。

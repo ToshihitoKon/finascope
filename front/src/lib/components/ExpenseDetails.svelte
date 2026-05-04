@@ -108,7 +108,7 @@
       {#each records as record (record.id)}
         <tr>
           <td><input type="checkbox" /></td>
-          <td><span>{record.date.split('-')[0]}</span><span class="date-sep">/</span><span>{record.date.split('-')[1]}</span><span class="date-sep">/</span><span>{record.date.split('-')[2]}</span></td>
+          <td><span>{record.date.split('-')[0]}</span><span class="style-date-sep">/</span><span>{record.date.split('-')[1]}</span><span class="style-date-sep">/</span><span>{record.date.split('-')[2]}</span></td>
           <td><span>{record.type}</span></td>
           <td class="layout-money"><span>¥{record.amount.toLocaleString()}</span></td>
           <td class="layout-category"><span>{record.category}</span></td>
@@ -227,7 +227,7 @@
     border-bottom: 1px solid var(--color-border);
   }
 
-  .date-sep {
+  .style-date-sep {
     padding: 0 2px;
     color: var(--color-text-muted);
   }

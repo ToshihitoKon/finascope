@@ -209,7 +209,7 @@
             </tr>
           {:else}
             <!-- 未作成のInvoiceRecord -->
-            <tr class="unregistered-row">
+            <tr class="style-unregistered-row">
               <td>
                 <span>{pm.label}</span>
               </td>
@@ -217,10 +217,10 @@
                 <span>{calculateWithdrawalDate(pm)}</span>
               </td>
               <td class="layout-money">
-                <span class="text-muted">-</span>
+                <span class="style-text-muted">-</span>
               </td>
               <td>
-                <span class="text-muted">-</span>
+                <span class="style-text-muted">-</span>
               </td>
               <td class="layout-center">
                 <button class="style-button" onclick={() => handleCreate(pm.id)}>作成</button>
@@ -268,7 +268,7 @@
     border-bottom: 1px solid var(--color-border);
   }
 
-  .unregistered-row {
+  .style-unregistered-row {
     background-color: var(--color-table-header-bg);
     font-style: italic;
   }
@@ -289,7 +289,7 @@
     text-align: center;
   }
 
-  .text-muted {
+  .style-text-muted {
     color: var(--color-text-muted);
   }
 

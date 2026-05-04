@@ -1,6 +1,5 @@
 // bits-ui components
 export { default as Pagination } from './Pagination.svelte';
-export { default as DateField } from './DateField.svelte';
 export { default as NumberDateField } from './NumberDateField.svelte';
 
 // Layout Components

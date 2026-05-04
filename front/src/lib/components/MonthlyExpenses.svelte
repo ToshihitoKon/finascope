@@ -23,7 +23,7 @@
   <p>¥<span class="style-total-amount">{totalAmount.toLocaleString()}</span></p>
 </div>
 
-<style>
+<style lang="scss">
   .style-total {
     background-color: var(--color-card-bg);
     border: 1px solid var(--color-border);
@@ -43,5 +43,19 @@
   .style-total-amount {
     font-size: 2rem;
     font-weight: bold;
+  }
+
+  @media (max-width: $bp-sp-max) {
+    .style-total {
+      // デスクトップの min-width: 360px は SP 360px 幅で余白込みではみ出すため解除
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+    }
+
+    .style-total-amount {
+      font-size: 1.5rem;
+    }
   }
 </style>

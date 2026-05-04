@@ -143,6 +143,7 @@
   {#if loading}
     <p>読み込み中...</p>
   {:else}
+    <div class="layout-table-scroll">
     <table class="style-table">
       <thead>
         <tr>
@@ -230,20 +231,33 @@
         {/each}
       </tbody>
     </table>
+    </div>
   {/if}
 </div>
 
-<style>
+<style lang="scss">
   .layout-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 24px;
+    // flex item の暗黙の min-width: auto を解除し、子テーブルラッパーが親幅に追従できるようにする
+    min-width: 0;
   }
 
-  .layout-container > .style-table {
+  .layout-container > .layout-table-scroll {
     width: 100%;
     max-width: 960px;
+  }
+
+  .layout-table-scroll {
+    overflow-x: auto;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .layout-table-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   .style-table {
@@ -327,5 +341,29 @@
   .style-button-secondary:hover {
     background-color: #6c757d;
     color: white;
+  }
+
+  @media (max-width: $bp-sp-max) {
+    // SP では列を間引かず、横スクロールで全列を見せる
+    .style-table {
+      min-width: 720px;
+    }
+
+    .style-table th,
+    .style-table td {
+      padding: 8px 10px;
+    }
+
+    .style-table input,
+    .style-table select {
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
+      padding: 6px 8px;
+    }
+
+    .style-button {
+      padding: 8px 12px;
+      font-size: 0.875rem;
+    }
   }
 </style>

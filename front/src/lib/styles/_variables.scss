@@ -1,2 +1,8 @@
 $px-sidebar-width: 160px;
 $px-main-max-width: 1200px;
+
+// SP（スマートフォン）対応のブレイクポイント
+// 360px: 想定する SP 最小幅（Android 一般的な最小幅）
+// 678px: SP / デスクトップの境界。これ以下が SP レイアウト
+$bp-sp-min: 360px;
+$bp-sp-max: 678px;

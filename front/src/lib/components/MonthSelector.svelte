@@ -41,7 +41,7 @@
   <button class="style-nav-button" onclick={nextMonth}>▶</button>
 </div>
 
-<style>
+<style lang="scss">
   .layout-month-selector {
     display: flex;
     align-items: center;
@@ -69,5 +69,23 @@
     cursor: pointer;
     background-color: var(--color-card-bg);
     color: inherit;
+  }
+
+  @media (max-width: $bp-sp-max) {
+    .layout-month-selector {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .style-nav-button {
+      font-size: 1.25rem;
+      padding: 6px 10px;
+    }
+
+    .style-select {
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
+      padding: 6px 8px;
+    }
   }
 </style>

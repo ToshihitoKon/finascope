@@ -176,7 +176,7 @@
   </div>
 </div><!-- layout-details -->
 
-<style>
+<style lang="scss">
   .layout-details {
     width: 100%;
   }
@@ -339,5 +339,30 @@
   .style-button-danger:hover {
     background-color: #dc3545;
     color: white;
+  }
+
+  @media (max-width: $bp-sp-max) {
+    .style-table th,
+    .style-table td {
+      padding: 8px 10px;
+    }
+
+    .style-table input[type='text'],
+    .style-table input[type='number'],
+    .style-table select {
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
+      height: 36px;
+    }
+
+    .style-button {
+      padding: 8px 12px;
+      font-size: 0.875rem;
+    }
+
+    .layout-title {
+      max-width: 200px;
+      min-width: 120px;
+    }
   }
 </style>

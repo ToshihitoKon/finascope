@@ -29,10 +29,16 @@
   .layout-app-wrapper {
     display: flex;
     min-height: 100vh;
+    width: 100%;
+    // flex item の暗黙の min-width: auto を解除し、子コンテンツが縮まれるようにする
+    min-width: 0;
+    // 幅超過が起きてもビューポート外への押し出しを防ぐ最終防衛線
+    overflow-x: hidden;
   }
 
   .layout-main {
     flex: 1;
+    min-width: 0;
     max-width: var(--px-main-max-width);
     margin: 0 auto;
   }

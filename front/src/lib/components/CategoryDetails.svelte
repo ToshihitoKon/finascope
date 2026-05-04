@@ -102,7 +102,7 @@
   </div>
 </div>
 
-<style>
+<style lang="scss">
   .layout-details {
     width: 100%;
   }
@@ -212,5 +212,32 @@
   .style-button-secondary:hover {
     background-color: #6c757d;
     color: white;
+  }
+
+  @media (max-width: $bp-sp-max) {
+    .style-table {
+      // SP 360px 幅に収まるよう min-width を緩和
+      min-width: 320px;
+    }
+
+    .style-table th,
+    .style-table td {
+      padding: 8px 10px;
+    }
+
+    .style-table input[type='text'] {
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
+      height: 36px;
+    }
+
+    .style-button {
+      padding: 8px 12px;
+      font-size: 0.875rem;
+    }
+
+    .layout-actions {
+      width: auto;
+    }
   }
 </style>

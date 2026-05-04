@@ -77,7 +77,7 @@
   />
 </div>
 
-<style>
+<style lang="scss">
   .layout-date-field {
     display: inline-flex;
     align-items: center;
@@ -146,4 +146,17 @@
     user-select: none;
   }
   /* stylelint-enable selector-class-pattern */
+
+  @media (max-width: $bp-sp-max) {
+    .layout-date-field {
+      height: 36px;
+      padding: 6px 0;
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
+    }
+
+    .layout-date-field input {
+      font-size: 1rem;
+    }
+  }
 </style>

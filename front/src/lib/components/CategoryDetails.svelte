@@ -102,7 +102,7 @@
   </div>
 </div>
 
-<style>
+<style lang="scss">
   .layout-details {
     width: 100%;
   }
@@ -212,5 +212,30 @@
   .style-button-secondary:hover {
     background-color: #6c757d;
     color: white;
+  }
+
+  @media (max-width: $bp-sp-max) {
+    .style-table {
+      min-width: 320px; // 400px → 320px で SP 360px 幅に収まるよう緩和
+    }
+
+    .style-table th,
+    .style-table td {
+      padding: 8px 10px; // 16px → 10px で SP の横余白を詰める
+    }
+
+    .style-table input[type='text'] {
+      font-size: 1rem; // SP で意図しないズーム回避
+      height: 36px; // タップ領域確保
+    }
+
+    .style-button {
+      padding: 8px 12px; // SP でタップしやすく拡大
+      font-size: 0.875rem;
+    }
+
+    .layout-actions {
+      width: auto; // 160px 固定だと SP でアクション列が無駄に広い
+    }
   }
 </style>

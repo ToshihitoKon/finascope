@@ -242,3 +242,46 @@ CSS の値（`px`, `rem`, `%` など）にマジックナンバーを使う場�
 - **`InvoiceRecordTableForm` の SP レイアウトの最終形**: 横スクロールで通すか、入力 UI をカード型に組み替えるか。実装着手時に DevTools で実際に並べてみて判断する。判断は実装者に委ねる
 - **テーブルの列間引き基準**: どの列を SP で隠すかは各テーブルで個別判断。原則「主キー的な列（日付・金額）は残す、補助列（メモ・カテゴリ詳細）は候補」
 - **タップ領域 44px の厳格適用**: 既存ボタンで 44px を満たさないものがある場合、SP のみ拡大するか全体で揃えるか。今回は **SP のみ拡大** で進めるが、デザイン整合に違和感が出たら相談
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-05-04
+
+### 変更ファイル
+
+- `front/src/lib/styles/_variables.scss` — `$bp-sp-min: 360px` / `$bp-sp-max: 678px` をコメント付きで追加
+- `.claude/rules/front-component-structure.md` — 「SP（スマートフォン）対応」セクションを末尾に追加（ブレイクポイント / メディアクエリ統一フォーマット / 検証 / マジックナンバー扱い）
+- `front/src/routes/+layout.svelte` — `.layout-app-wrapper` に `width: 100%` / `min-width: 0` / `overflow-x: hidden`、`.layout-main` に `min-width: 0` を追加
+- `front/src/routes/+page.svelte` — `.layout-page` / `.layout-summary` に `min-width: 0`、SP 用に余白・カードの `padding` / `border-radius` を縮小
+- `front/src/lib/components/NumberDateField.svelte` — SP で高さ・余白拡大、`font-size: 1rem` で iOS のズーム回避
+- `front/src/lib/components/InvoiceRecordTableForm.svelte` — テーブルを `layout-table-scroll` でラップして横スクロール許容、SP で入力 / ボタンサイズ拡大、`.layout-container` に `min-width: 0`
+- `front/src/lib/components/ExpenseDetails.svelte` — SP でセル余白詰め、入力サイズ拡大、用途列の幅縮小
+- `front/src/lib/components/MonthSelector.svelte` — SP で `flex-wrap`、ボタン / select の拡大
+- `front/src/lib/components/MonthlyExpenses.svelte` — SP で `min-width: 360px` 固定を解除、金額フォントを 2rem → 1.5rem に縮小
+- `front/src/lib/components/CategoryDetails.svelte` — SP で `min-width` 緩和、入力 / ボタン拡大、アクション列幅自動
+
+### 実装内容
+
+ddoc の設計通り、デスクトップファースト + 単一ブレイクポイント `$bp-sp-max` で `@media (max-width: $bp-sp-max) { ... }` の統一フォーマットを各コンポーネントの `<style lang="scss">` 末尾に追加した。マジックナンバーには日本語コメントを併記している。
+
+#### ddoc から外れた / 拡張した点
+
+- **`Pagination.svelte` / `MainCategories.svelte` は今回スキップ**: 前者は `classes.button: ''` などすべて空文字でスタイル実体が無いダミー実装、後者は CSS クラス未付与で `<style>` ブロックすら無い。SP 対応を入れても適用先が無いため、実体スタイルが入った時点で対応するのが妥当と判断した。
+- **`+layout.svelte` / `+page.svelte` / `InvoiceRecordTableForm.svelte` の親要素群に `min-width: 0` を追加**: 初回実装で DevTools 確認した際、テーブルの `min-width` が祖先の flex item を押し広げてビューポート全体が縮小レンダリングされる問題が発生した。原因は flexbox の暗黙の `min-width: auto`（flex item はコンテンツの最小幅までしか縮まない）。対応として、テーブルラッパー（`.layout-table-scroll`）に至るまでの祖先 flex item 全てに `min-width: 0` を追加した。最終防衛線として `.layout-app-wrapper` に `overflow-x: hidden` も付与した。
+- **`InvoiceRecordTableForm` の SP レイアウト**: 横スクロール許容で着地。テーブルの編集モード/表示モードを toggle する既存構造と縦並びカード化の相性が悪く、テーブルのほうが情報密度・入力フローが崩れない。
+- **タップ領域**: 厳密な 44px は満たしていない箇所があるが、入力 `height: 36px` + `padding: 8px 12px`、ボタン `padding: 8px 12px` で SP のみ拡大した。デザイン整合との折衷。
+
+### 確認・検証
+
+- `pnpm svelte-check` → **0 errors, 0 warnings**
+- `pnpm eslint` → **EXIT 0**
+- `pnpm lint:style` → **EXIT 0**
+- Chrome DevTools のデバイスツールバーで 360px / 678px / デスクトップを目視確認、ビューポートからのはみ出しが無いことを確認
+
+### 気づき・備考
+
+- **flexbox の `min-width: auto` 問題**は、レスポンシブ実装で必ず踏む地雷。テーブルや横長コンテンツを抱える flex 階層では、祖先の flex item 全てに `min-width: 0` を付ける必要がある。今後同種の対応をするときは、`overflow-x: auto` のラッパーを置くだけでなく **祖先の `min-width: 0` チェーン**を確認する手順をルール化する余地あり。
+- `<style>` を `<style lang="scss">` に変更する手間が複数ファイルで発生した。SCSS 変数を使えるよう、新規コンポーネントは最初から `<style lang="scss">` で書くよう `.claude/rules/front-component-structure.md` の SP セクションに明記済み。
+- `Pagination.svelte` / `MainCategories.svelte` は実装が入った時点で SP 対応を再確認する必要がある（フォローアップ issue 候補）。

@@ -143,6 +143,7 @@
   {#if loading}
     <p>読み込み中...</p>
   {:else}
+    <div class="layout-table-scroll">
     <table class="style-table">
       <thead>
         <tr>
@@ -230,20 +231,32 @@
         {/each}
       </tbody>
     </table>
+    </div>
   {/if}
 </div>
 
-<style>
+<style lang="scss">
   .layout-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 24px;
+    min-width: 0; // 子のテーブルラッパーが親幅に追従できるよう暗黙の min-width: auto を解除
   }
 
-  .layout-container > .style-table {
+  .layout-container > .layout-table-scroll {
     width: 100%;
     max-width: 960px;
+  }
+
+  .layout-table-scroll {
+    overflow-x: auto;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .layout-table-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   .style-table {
@@ -327,5 +340,27 @@
   .style-button-secondary:hover {
     background-color: #6c757d;
     color: white;
+  }
+
+  @media (max-width: $bp-sp-max) {
+    .style-table {
+      min-width: 720px; // 720px = SP では横スクロールで全列見せる（列を間引かない方針）
+    }
+
+    .style-table th,
+    .style-table td {
+      padding: 8px 10px; // 横余白を 16px から 10px に詰めて情報密度を上げる
+    }
+
+    .style-table input,
+    .style-table select {
+      font-size: 1rem; // SP で入力時の意図しないズーム回避
+      padding: 6px 8px; // タップ領域確保
+    }
+
+    .style-button {
+      padding: 8px 12px; // SP でタップしやすいサイズに拡大
+      font-size: 0.875rem;
+    }
   }
 </style>

@@ -37,3 +37,46 @@ CSS クラス命名規則は別ファイル `.claude/rules/front-style-naming.md
 - 未使用変数・引数は `_` プレフィックスで無視できる（例: `_error`, `_req`）
 - Svelte 5 のリアクティブ Map は `SvelteMap`（`svelte/reactivity`）を使う。`$state` でラップすると `svelte/no-unnecessary-state-wrap` エラーになるため不要
 - `SvelteMap` を変数ごと再代入するのではなく `.clear()` + `.set()` で変更する（再代入すると `$state` なしでは reactivity が失われる）
+
+## SP（スマートフォン）対応
+
+### ブレイクポイント
+
+`src/lib/styles/_variables.scss` に SP 用のブレイクポイントが定義されている。
+
+- `$bp-sp-min: 360px` — 想定する SP 最小幅（コンポーネント設計時の参照用）
+- `$bp-sp-max: 678px` — SP / デスクトップの境界。これ以下が SP レイアウト
+
+### メディアクエリの書き方（統一）
+
+デスクトップファーストで記述する。SP 用の上書きは以下の唯一のフォーマットで書く。
+
+```scss
+@media (max-width: $bp-sp-max) {
+  .layout-foo {
+    // SP 用の上書き
+  }
+}
+```
+
+- `max-width` を使う（`min-width` 併用、`between` 系は使わない）
+- 値は必ず `$bp-sp-max` を参照する（`678px` 直書き禁止）
+- ブロックは `<style>` 末尾にまとめて置く
+- SCSS 変数を参照するため `<style lang="scss">` を必ず付ける
+
+### 検証
+
+Chrome DevTools のデバイスツールバーで以下を目視確認する。
+
+- 360px / 678px / デスクトップ幅でビューポートからはみ出さない
+- 入力フォームがタップしやすい（最低 44px のタップ領域）
+- テーブルは `overflow-x: auto` でコンポーネント単位スクロール
+
+### 付記: マジックナンバーの扱い
+
+CSS の値（`px`, `rem`, `%` など）にマジックナンバーを使う場合、なぜその値かをコメントで残す。
+```scss
+.layout-foo {
+  padding: 12px 8px; // 12px = タップ領域確保、8px = 横詰め
+}
+```

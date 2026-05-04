@@ -77,7 +77,7 @@
   />
 </div>
 
-<style>
+<style lang="scss">
   .layout-date-field {
     display: inline-flex;
     align-items: center;
@@ -146,4 +146,16 @@
     user-select: none;
   }
   /* stylelint-enable selector-class-pattern */
+
+  @media (max-width: $bp-sp-max) {
+    .layout-date-field {
+      height: 36px; // 36px = SP でタップ領域確保（min 44px に近づける）
+      padding: 6px 0; // 6px = 縦余白を増やしてタップしやすく
+      font-size: 1rem; // SP では入力時に意図しないズームを避けるため 16px 相当
+    }
+
+    .layout-date-field input {
+      font-size: 1rem; // 同上
+    }
+  }
 </style>

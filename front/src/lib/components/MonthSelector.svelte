@@ -41,7 +41,7 @@
   <button class="style-nav-button" onclick={nextMonth}>▶</button>
 </div>
 
-<style>
+<style lang="scss">
   .layout-month-selector {
     display: flex;
     align-items: center;
@@ -69,5 +69,22 @@
     cursor: pointer;
     background-color: var(--color-card-bg);
     color: inherit;
+  }
+
+  @media (max-width: $bp-sp-max) {
+    .layout-month-selector {
+      flex-wrap: wrap; // 幅が足りなくなったら折り返す
+      gap: 6px;
+    }
+
+    .style-nav-button {
+      font-size: 1.25rem; // SP でタップしやすく拡大
+      padding: 6px 10px;
+    }
+
+    .style-select {
+      font-size: 1rem; // SP で意図しないズーム回避
+      padding: 6px 8px;
+    }
   }
 </style>

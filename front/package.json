@@ -12,6 +12,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint .",
+    "lint:style": "stylelint 'src/**/*.{svelte,scss,css}'",
     "deploy": "gcloud compute scp --recurse ./build/finascope/* ${DEPLOY_GCE_USER}@${DEPLOY_GCE_HOST}:${DEPLOY_GCE_PATH}"
   },
   "devDependencies": {
@@ -35,11 +36,14 @@
     "lucide-svelte": "~0.563.0",
     "mode-watcher": "^1.1.0",
     "phosphor-svelte": "^3.1.0",
+    "postcss-html": "^1.8.1",
     "prettier": "^3.8.1",
     "prettier-plugin-svelte": "^3.4.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "sass": "^1.97.3",
     "sass-embedded": "^1.97.3",
+    "stylelint": "^17.10.0",
+    "stylelint-config-standard-scss": "^17.0.0",
     "svelte": "^5.50.1",
     "svelte-check": "^4.3.6",
     "svelte-sonner": "^1.0.7",

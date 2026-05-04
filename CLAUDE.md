@@ -72,27 +72,10 @@ Finascope は個人財務管理アプリケーションで、マイクロサー�
 
 ### フロントエンド実装ガイドライン
 
-ファイル構成の役割分担:
-- UI 要素（テーブル、フォーム、サイドバーなど）は `src/lib/components/` に実装する
-- `src/routes/+page.svelte` にはコンポーネントのインポート・配置、ページ固有の状態管理・TypeScript、ページレベルのレイアウト・スタイルを記述する
-- `src/lib/components/index.ts` でコンポーネントをまとめてエクスポートする
+フロントエンドのファイル構成・スタイリング方針・CSS クラス命名規則は `.claude/rules/` に分離されている。`front/` 配下のファイルを編集する際に自動的に読み込まれる。
 
-スタイリング方針:
-- グローバル CSS 変数とグローバル SCSS 変数は `src/app.scss` に定義する
-- CSS/SCSS 変数命名規則: `--{type}-{role}` 形式（CSS変数）、`${type}-{role}`（SCSS変数）
-  - タイプ接頭辞: `color`, `px`, `rem`, `font` など
-  - 例: `--color-primary`, `--px-sidebar-width`, `--px-main-max-width`
-- コンポーネントスタイルでは `var(--variable-name)` でグローバル CSS 変数を参照する
-- メディアクエリのブレークポイント計算には SCSS 変数を使用する（`@media (max-width: #{$px-sidebar-width + $px-main-max-width})`）
-  - dart-sass では `@media` 内の算術式を `#{}` で補間する必要がある
-
-クラス名のプレフィックスルール:
-- `layout-` クラス: DOM の配置・レイアウトに関するスタイル（`display`, `flex`, `position`, `margin`, `padding`, `text-align` など）
-  - 例: `layout-container`, `layout-summary`, `layout-money`, `layout-center`
-- `style-` クラス: 色・フォント・ボーダーなど見た目に関するスタイル（`color`, `background`, `border`, `font-size` など）
-  - 例: `style-table`, `style-button`, `style-divider`
-- 両方の性質を持つ要素には `layout-foo style-foo` のように両クラスを付与する
-- 各 Svelte ファイルの `<style>` ブロック内で `layout-*` と `style-*` を分けて記述する
+- `.claude/rules/front-component-structure.md` — ファイル構成、CSS/SCSS 変数規約、Svelte 5 の注意点
+- `.claude/rules/front-style-naming.md` — CSS クラス命名規則（`layout-` / `style-` / `is-` / `has-`）
 
 ### データベース設計
 - モデル: `api/db/models.rb` の ActiveRecord モデル
@@ -167,19 +150,19 @@ pnpm svelte-check
 
 ### フロントエンド
 
-ESLint は `svelte-check` とは別に実行する：
+ESLint と Stylelint は `svelte-check` とは別に実行する：
 
 ```bash
 cd front
 pnpm eslint
+pnpm lint:style
 ```
 
-コード変更後は `svelte-check` と `eslint` の両方をパスさせること。
+コード変更後は `svelte-check`, `eslint`, `lint:style` の 3 つすべてをパスさせること。
 
-注意事項:
-- 未使用変数・引数は `_` プレフィックスで無視できる（例: `_error`, `_req`）
-- Svelte 5 のリアクティブ Map は `SvelteMap`（`svelte/reactivity`）を使う。`$state` でラップすると `svelte/no-unnecessary-state-wrap` エラーになるため不要
-- `SvelteMap` を変数ごと再代入するのではなく `.clear()` + `.set()` で変更する（再代入すると `$state` なしでは reactivity が失われる）
+`lint:style` は CSS クラス命名規則（`layout-` / `style-` / `is-` / `has-`）を強制する。詳細は `.claude/rules/front-style-naming.md` を参照。
+
+ESLint の注意事項や Svelte 5 関連の注意点は `.claude/rules/front-component-structure.md` に記載されている。
 
 ## データベース操作
 

@@ -259,3 +259,55 @@ paths:
 
 - Stylelint の `selector-class-pattern` でコンポーネント内ローカルクラス（`.input-day` 等）をどう例外扱いするかは、実装時に試行して決定する（disable コメントで明示するか、正規表現を緩めるか）
 - `.org`, `.w3`（`ExpenseDetails.svelte`）の本来の意図と適切なリネーム先は、実装時にコードを読み解いて判断する（HTML 出力、テーブルセルのレイアウト用クラスの可能性が高い）
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-05-04
+
+### 変更ファイル
+
+新規:
+- `.claude/rules/front-component-structure.md` — フロントエンドのファイル構成・スタイリング方針・Svelte 5 の注意点を `paths` スコープ付きで記述
+- `.claude/rules/front-style-naming.md` — CSS クラス命名規則（`layout-` / `style-` / `is-` / `has-`）とコンポーネント内ローカルクラス例外を `paths` スコープ付きで記述
+- `front/.stylelintrc.json` — `selector-class-pattern` のみを有効化した最小構成
+
+削除:
+- `front/src/lib/components/DateField.svelte` — `NumberDateField` への置換後に未使用になっていた
+
+修正:
+- `CLAUDE.md` — 「フロントエンド実装ガイドライン」セクションを `.claude/rules/` へのポインタに置き換え、Lint チェック節に `pnpm lint:style` を追記
+- `front/package.json` — `lint:style` script 追加、`stylelint` / `stylelint-config-standard-scss` / `postcss-html` を devDependency に追加
+- `front/pnpm-lock.yaml` — 依存追加に伴い更新
+- `front/src/app.scss` — 未使用の `.layout-app` 定義を削除
+- `front/src/lib/components/index.ts` — `DateField` の export を削除
+- `front/src/lib/components/ExpenseDetails.svelte` — `.date-sep` → `.style-date-sep` リネーム
+- `front/src/lib/components/InvoiceRecordTableForm.svelte` — `.text-muted` → `.style-text-muted`、`.unregistered-row` → `.style-unregistered-row` リネーム
+- `front/src/lib/components/NumberDateField.svelte` — `.invalid` → `.is-invalid` リネーム（CSS セレクタ、`class:` ディレクティブ、JS 変数 `invalid` → `isInvalid` を同時更新）、ローカルクラス（`.input-year` / `.input-month` / `.input-day` / `.sep`）に `stylelint-disable selector-class-pattern` ブロックを付与
+
+### 実装内容
+
+ddoc の実装ステップ 1 〜 8 を順に実施した。リネームは小さい単位で進め、各ステップ完了時に `pnpm svelte-check` と `pnpm eslint` を実行してレグレッションがないことを確認した。
+
+主な決定:
+- **未解決事項 1（Stylelint のローカルクラス例外処理）**: 案 (a) の `stylelint-disable` コメント方式を採用。例外箇所がコード上で可視化され、例外が増えた場合に気づける利点を重視した。`NumberDateField.svelte` の 4 つのローカルクラス（`.input-year`, `.input-month`, `.input-day`, `.sep`）を `disable`/`enable` ブロックで囲み、コメントで `.claude/rules/front-style-naming.md` の例外規定への参照を残した。
+- **未解決事項 2（`.org`, `.w3` のリネーム）**: 事前調査時の grep が SVG `data:` URL 内の `xmlns='http://www.w3.org/2000/svg'` から `w3` と `org` を機械的に拾ってしまった誤検出と判明。実際の CSS クラスとしては存在しないため、対応不要として確定。
+- **`.invalid` → `.is-invalid` リネームに伴う JS 変数名の同時更新**: ddoc には CSS セレクタと `class:` ディレクティブの変更のみ記載されていたが、命名の整合性のため JS 側の `invalid` も `isInvalid` に変更した（命名規則として `is-` プレフィックスは JS 状態変数名とも揃える方針を `front-style-naming.md` に明記）。
+- **`stylelint-config-standard-scss` の `extends` を外した**: 規約準拠の前にデフォルトルールで 28 件のエラー（`rgba()` → `rgb()`、`0.6` → `60%`、`#ffffff` → `#fff`、ベンダープレフィックス禁止など）が出た。今回の ddoc の目的は「クラス命名規則の強制」のみのため、`extends` を外して `selector-class-pattern` のみを有効化する最小構成にした。デフォルトルールの導入は別 issue に切り出す方針。
+
+### 確認・検証
+
+- `pnpm svelte-check` — 0 errors / 0 warnings ✓
+- `pnpm eslint .` — exit 0 ✓
+- `pnpm lint:style` — exit 0 ✓
+
+ブラウザでの目視確認は実施していない。CSS クラスのリネームのみで `var(--color-*)` などの参照には影響していないため見た目の変化はないはずだが、必要なら開発サーバーで確認すること。
+
+### 気づき・備考
+
+- **`.claude/rules/` のパススコープルールは初回利用**: `paths` frontmatter で対象ファイルを限定すると、AI Agent が該当ファイルを開いたタイミングでだけルールが読み込まれる。CLAUDE.md は全セッションで読み込まれるため、フロントエンド固有の詳細ルールはこの仕組みに移すと CLAUDE.md のコンテキスト消費を削減できる。
+- **pnpm のストア移動が必要だった**: 環境変更（おそらく pnpm のグローバル設定変更）により、依存追加時に `ERR_PNPM_UNEXPECTED_STORE` が発生。`CI=true pnpm install` で全依存を新ストアに再リンクしてから Stylelint を追加した。
+- **Stylelint 公式の Svelte サポート**: `customSyntax: "postcss-html"` を `overrides` で `*.svelte` に明示する形で動作確認できた。`stylelint` v17 + `postcss-html` v1.8 の組み合わせ。
+- **`stylelint-config-standard-scss` の追加ルール導入余地**: 今回スコープ外とした 28 件は、色記法・ベンダープレフィックス・空行ルールなど、コードベース全体の品質向上に寄与する。別 issue で段階的に導入する価値はある。
+- **誤検出を防ぐ事前調査の改善点**: 単純な `grep '\.[a-zA-Z]'` だと SVG 内 URL のドットも拾ってしまう。今後類似の調査を行う場合は、`<style>` ブロック内に絞った上で属性値を除外する工夫が必要。

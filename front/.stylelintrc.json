@@ -1,0 +1,21 @@
+{
+  "customSyntax": "postcss-html",
+  "overrides": [
+    {
+      "files": ["**/*.svelte"],
+      "customSyntax": "postcss-html"
+    },
+    {
+      "files": ["**/*.scss"],
+      "customSyntax": "postcss-scss"
+    }
+  ],
+  "rules": {
+    "selector-class-pattern": [
+      "^(layout|style|is|has)-[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      {
+        "message": "クラス名は layout-/style-/is-/has- のいずれかのプレフィックスで始め、ケバブケースで記述してください (.claude/rules/front-style-naming.md 参照)"
+      }
+    ]
+  }
+}

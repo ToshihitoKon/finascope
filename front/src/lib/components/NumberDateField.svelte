@@ -18,7 +18,7 @@
   let dayStr = $state(String(value?.day ?? today.getDate()).padStart(2, '0'));
 
   let container: HTMLDivElement;
-  let invalid = $state(false);
+  let isInvalid = $state(false);
 
   function validate() {
     const y = parseInt(yearStr, 10);
@@ -27,11 +27,11 @@
     const date = new Date(y, m - 1, d);
     if (date.getFullYear() === y && date.getMonth() + 1 === m && date.getDate() === d) {
       value = { year: y, month: m, day: d };
-      invalid = false;
+      isInvalid = false;
       onValidationError?.(null);
     } else {
       value = undefined;
-      invalid = true;
+      isInvalid = true;
       onValidationError?.('存在しない日付です');
     }
   }
@@ -48,7 +48,7 @@
   }
 </script>
 
-<div class="layout-date-field" class:invalid bind:this={container} onfocusout={handleFocusout}>
+<div class="layout-date-field" class:is-invalid={isInvalid} bind:this={container} onfocusout={handleFocusout}>
   <input
     class="input-year"
     type="text"
@@ -96,12 +96,12 @@
     background-color: rgba(255, 255, 255, 0.6);
   }
 
-  .layout-date-field.invalid {
+  .layout-date-field.is-invalid {
     border-bottom-color: #dc3545;
     background-color: rgba(220, 53, 69, 0.08);
   }
 
-  .layout-date-field.invalid:focus-within {
+  .layout-date-field.is-invalid:focus-within {
     border-bottom-color: #dc3545;
     background-color: rgba(220, 53, 69, 0.08);
   }
@@ -126,6 +126,8 @@
     margin: 0;
   }
 
+  /* コンポーネント内ローカルクラス（.claude/rules/front-style-naming.md の例外規定） */
+  /* stylelint-disable selector-class-pattern */
   .input-year {
     width: 4ch;
   }
@@ -143,4 +145,5 @@
     color: var(--color-text-muted);
     user-select: none;
   }
+  /* stylelint-enable selector-class-pattern */
 </style>

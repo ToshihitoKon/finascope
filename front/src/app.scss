@@ -27,13 +27,6 @@ body {
     margin: 0;
 }
 
-/* styles for the main app container */
-.layout-app {
-    max-width: $px-main-max-width;
-    margin: 0 auto;
-    height: 100vh;
-}
-
 .style-app {
     background-color: var(--color-page-bg);
     font-family: "Helvetica Neue",

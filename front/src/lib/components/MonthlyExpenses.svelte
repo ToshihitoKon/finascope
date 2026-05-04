@@ -47,14 +47,15 @@
 
   @media (max-width: $bp-sp-max) {
     .style-total {
-      min-width: 0; // SP では親幅に合わせて縮小可能にする（360px 固定だとはみ出す）
+      // デスクトップの min-width: 360px は SP 360px 幅で余白込みではみ出すため解除
+      min-width: 0;
       width: 100%;
       box-sizing: border-box;
-      padding: 12px; // 16px → 12px で SP の余白を詰める
+      padding: 12px;
     }
 
     .style-total-amount {
-      font-size: 1.5rem; // 2rem → 1.5rem で SP に収める
+      font-size: 1.5rem;
     }
   }
 </style>

@@ -216,26 +216,28 @@
 
   @media (max-width: $bp-sp-max) {
     .style-table {
-      min-width: 320px; // 400px → 320px で SP 360px 幅に収まるよう緩和
+      // SP 360px 幅に収まるよう min-width を緩和
+      min-width: 320px;
     }
 
     .style-table th,
     .style-table td {
-      padding: 8px 10px; // 16px → 10px で SP の横余白を詰める
+      padding: 8px 10px;
     }
 
     .style-table input[type='text'] {
-      font-size: 1rem; // SP で意図しないズーム回避
-      height: 36px; // タップ領域確保
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
+      height: 36px;
     }
 
     .style-button {
-      padding: 8px 12px; // SP でタップしやすく拡大
+      padding: 8px 12px;
       font-size: 0.875rem;
     }
 
     .layout-actions {
-      width: auto; // 160px 固定だと SP でアクション列が無駄に広い
+      width: auto;
     }
   }
 </style>

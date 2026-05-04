@@ -74,9 +74,23 @@ Chrome DevTools のデバイスツールバーで以下を目視確認する。
 
 ### 付記: マジックナンバーの扱い
 
-CSS の値（`px`, `rem`, `%` など）にマジックナンバーを使う場合、なぜその値かをコメントで残す。
+CSS の値そのものに**意図や非自明な背景**がある場合のみコメントを残す。値の単純な詰め・拡大・縮小（`padding: 8px 10px`、`font-size: 1.5rem` など）は CSS から自明なのでコメント不要。
+
+コメントを残す例:
+
+- ブレイクポイント値そのもの（なぜ `360px` / `678px` か）
+- iOS Safari のフォーカス時ズーム回避（`font-size: 1rem`）
+- flex item の暗黙の `min-width: auto` 解除目的の `min-width: 0`
+- 既存の `min-width` をあえて緩める / 解除する場合（理由があるはず）
+
 ```scss
 .layout-foo {
-  padding: 12px 8px; // 12px = タップ領域確保、8px = 横詰め
+  // flex item の暗黙の min-width: auto を解除し、子要素が親幅に追従できるようにする
+  min-width: 0;
+}
+
+input {
+  // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+  font-size: 1rem;
 }
 ```

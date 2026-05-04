@@ -73,17 +73,18 @@
 
   @media (max-width: $bp-sp-max) {
     .layout-month-selector {
-      flex-wrap: wrap; // 幅が足りなくなったら折り返す
+      flex-wrap: wrap;
       gap: 6px;
     }
 
     .style-nav-button {
-      font-size: 1.25rem; // SP でタップしやすく拡大
+      font-size: 1.25rem;
       padding: 6px 10px;
     }
 
     .style-select {
-      font-size: 1rem; // SP で意図しないズーム回避
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
       padding: 6px 8px;
     }
   }

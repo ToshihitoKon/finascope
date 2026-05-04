@@ -149,13 +149,14 @@
 
   @media (max-width: $bp-sp-max) {
     .layout-date-field {
-      height: 36px; // 36px = SP でタップ領域確保（min 44px に近づける）
-      padding: 6px 0; // 6px = 縦余白を増やしてタップしやすく
-      font-size: 1rem; // SP では入力時に意図しないズームを避けるため 16px 相当
+      height: 36px;
+      padding: 6px 0;
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
     }
 
     .layout-date-field input {
-      font-size: 1rem; // 同上
+      font-size: 1rem;
     }
   }
 </style>

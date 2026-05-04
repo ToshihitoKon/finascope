@@ -241,7 +241,8 @@
     flex-direction: column;
     align-items: center;
     margin-bottom: 24px;
-    min-width: 0; // 子のテーブルラッパーが親幅に追従できるよう暗黙の min-width: auto を解除
+    // flex item の暗黙の min-width: auto を解除し、子テーブルラッパーが親幅に追従できるようにする
+    min-width: 0;
   }
 
   .layout-container > .layout-table-scroll {
@@ -343,23 +344,25 @@
   }
 
   @media (max-width: $bp-sp-max) {
+    // SP では列を間引かず、横スクロールで全列を見せる
     .style-table {
-      min-width: 720px; // 720px = SP では横スクロールで全列見せる（列を間引かない方針）
+      min-width: 720px;
     }
 
     .style-table th,
     .style-table td {
-      padding: 8px 10px; // 横余白を 16px から 10px に詰めて情報密度を上げる
+      padding: 8px 10px;
     }
 
     .style-table input,
     .style-table select {
-      font-size: 1rem; // SP で入力時の意図しないズーム回避
-      padding: 6px 8px; // タップ領域確保
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
+      padding: 6px 8px;
     }
 
     .style-button {
-      padding: 8px 12px; // SP でタップしやすいサイズに拡大
+      padding: 8px 12px;
       font-size: 0.875rem;
     }
   }

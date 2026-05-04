@@ -344,18 +344,19 @@
   @media (max-width: $bp-sp-max) {
     .style-table th,
     .style-table td {
-      padding: 8px 10px; // 横余白を 16px → 10px に詰める
+      padding: 8px 10px;
     }
 
     .style-table input[type='text'],
     .style-table input[type='number'],
     .style-table select {
-      font-size: 1rem; // SP で入力時の意図しないズーム回避
-      height: 36px; // SP タップ領域確保
+      // 16px 未満だと iOS Safari がフォーカス時にズームしてしまうため 1rem
+      font-size: 1rem;
+      height: 36px;
     }
 
     .style-button {
-      padding: 8px 12px; // SP でタップしやすいサイズに拡大
+      padding: 8px 12px;
       font-size: 0.875rem;
     }
 

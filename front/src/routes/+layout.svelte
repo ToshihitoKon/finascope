@@ -30,13 +30,15 @@
     display: flex;
     min-height: 100vh;
     width: 100%;
-    min-width: 0; // flex 子が縮まれるよう、暗黙の min-width: auto を解除
-    overflow-x: hidden; // どこかで幅超過があってもビューポート外への押し出しを防ぐ最終防衛線
+    // flex item の暗黙の min-width: auto を解除し、子コンテンツが縮まれるようにする
+    min-width: 0;
+    // 幅超過が起きてもビューポート外への押し出しを防ぐ最終防衛線
+    overflow-x: hidden;
   }
 
   .layout-main {
     flex: 1;
-    min-width: 0; // 同上。子テーブルの min-width にこの要素が引きずられないように
+    min-width: 0;
     max-width: var(--px-main-max-width);
     margin: 0 auto;
   }

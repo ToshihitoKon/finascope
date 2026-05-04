@@ -36,7 +36,8 @@
     flex-direction: column;
     gap: 24px;
     padding: 24px;
-    min-width: 0; // 子のテーブル min-width で親が押し広げられないように
+    // flex item の暗黙の min-width: auto を解除（子テーブルの min-width で親が押し広げられるのを防ぐ）
+    min-width: 0;
   }
 
   .layout-month-selector-wrapper {
@@ -46,7 +47,7 @@
   .layout-summary {
     display: flex;
     gap: 16px;
-    min-width: 0; // 同上（flex 子の暗黙 min-width: auto を解除）
+    min-width: 0;
   }
 
   .layout-section {
@@ -67,13 +68,13 @@
 
   @media (max-width: $bp-sp-max) {
     .layout-page {
-      gap: 16px; // 24px → 16px で SP の余白を詰める
-      padding: 12px; // 24px → 12px。さらに左 8px のハンバーガーボタンと干渉しない最低限
+      gap: 16px;
+      padding: 12px;
     }
 
     .style-card {
-      padding: 12px; // 24px → 12px
-      border-radius: 8px; // 12px → 8px で SP の小型カードに合わせる
+      padding: 12px;
+      border-radius: 8px;
     }
   }
 </style>

@@ -179,6 +179,12 @@ ESLint の注意事項や Svelte 5 関連の注意点は `.claude/rules/front-co
 docker compose -f compose-dev-test-api.yml exec api-test bundle exec rspec
 ```
 
+### テスト追記の方針
+
+- `api/` 配下を変更する際は、対応する spec を追加するか、既存 spec が通ることを確認してからコミットする
+- 新規エンドポイントや機能追加時は `api/spec/api/v1/` に spec を追加する
+- spec は golden path（正常系）を最低 1 ケース書く。異常系は任意
+
 ## データベース操作
 
 コンソールアクセス:

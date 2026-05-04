@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Design Doc を作りたい
+    url: https://github.com/ToshihitoKon/finascope/tree/main/docs/design-doc
+    about: 既存の Design Doc 一覧を確認したい場合はこちら

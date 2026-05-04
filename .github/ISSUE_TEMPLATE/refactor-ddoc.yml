@@ -1,0 +1,121 @@
+name: リファクタリング / 既存改修
+description: 既存コードのリファクタリングや改修の TODO。Claude Code に渡すと /make-ddoc で Design Doc を作成できる。
+title: "[refactor] "
+labels:
+  - refactor
+  - needs-ddoc
+body:
+  - type: markdown
+    attributes:
+      value: |
+        この issue は Design Doc 作成の入力として使う。
+        Claude Code に「この issue をもとに `/make-ddoc` を起動して」と伝えると、以下の内容を回答として Design Doc が生成される。
+
+        - 不明な項目は `未定` と書いて構わない（インタビューで深掘りされる）。
+        - Design Doc は `docs/design-doc/[連番]-[scope]-[feat].md` に保存される。
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: なぜリファクタするか（動機 / 課題）
+      description: 現状のコードの何が問題か、放置すると何が困るかを書く。
+      placeholder: |
+        例）ExpenseDetails と InvoiceRecordTableForm で日付入力の実装が重複しており、
+        片方だけバグ修正されて挙動がずれている。
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 改修の概要
+      description: どう変えるか、向かうべき形を 1〜3 文で書く。
+      placeholder: 例）日付入力ロジックを NumberDateField コンポーネントに集約し、両画面で共通化する。
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: スコープ
+      description: 影響範囲を選択する（複数可）。
+      options:
+        - label: api（バックエンド API / Grape）
+        - label: front（SvelteKit フロントエンド）
+        - label: db（MySQL スキーマ / マイグレーション）
+        - label: infra（Docker / Nginx / デプロイ設定）
+        - label: docs（ドキュメントのみ）
+    validations:
+      required: true
+
+  - type: input
+    id: feature_name
+    attributes:
+      label: 改修名（英語スネークケース）
+      description: Design Doc のファイル名に使う短い識別子。`docs/design-doc/[連番]-[scope]-[ここ].md` の `ここ` に入る。
+      placeholder: 例）unify-date-input
+    validations:
+      required: true
+
+  - type: textarea
+    id: goals
+    attributes:
+      label: 目標（完了条件）
+      description: 何が達成されれば close できるかを箇条書きで書く。
+      placeholder: |
+        - 日付入力が NumberDateField コンポーネント 1 つに集約されている
+        - 既存画面の見た目・挙動が壊れていない
+        - svelte-check / eslint がパスする
+    validations:
+      required: true
+
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: 非目標（今回はやらないこと）
+      placeholder: |
+        - 日付ライブラリの差し替え
+        - タイムゾーン対応の見直し
+    validations:
+      required: false
+
+  - type: textarea
+    id: target_files
+    attributes:
+      label: 対象ファイル / コンポーネント
+      description: 触る予定のファイルを分かる範囲で列挙する。
+      placeholder: |
+        - front/src/lib/components/NumberDateField.svelte
+        - front/src/lib/components/ExpenseDetails.svelte
+        - front/src/lib/components/InvoiceRecordTableForm.svelte
+    validations:
+      required: false
+
+  - type: textarea
+    id: behavior_constraints
+    attributes:
+      label: 維持すべき挙動 / 壊してはいけないもの
+      description: リファクタ前後で同じであるべき入出力・UI 上の挙動を書く。
+      placeholder: |
+        - 既存レコードの編集時に表示される日付フォーマットは "YYYY / MM / DD" のまま
+        - blur 時にバリデーションが走る
+    validations:
+      required: false
+
+  - type: textarea
+    id: open_questions
+    attributes:
+      label: 未解決の懸念点 / 決まっていないこと
+      placeholder: |
+        - 共通化したコンポーネントを lib/components/index.ts でエクスポートするかどうか
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### 次のアクション
+
+        - Claude Code でこの issue を開き、「この issue の内容で `/make-ddoc` を起動して」と依頼する。
+        - Design Doc が `docs/design-doc/` に保存されたら、続けて `/impl-from-ddoc` で実装に進める。

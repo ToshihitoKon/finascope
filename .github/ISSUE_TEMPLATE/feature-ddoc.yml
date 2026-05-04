@@ -1,0 +1,134 @@
+name: 新機能 / 機能追加
+description: 新しい機能や機能追加の TODO。Claude Code に渡すと /make-ddoc で Design Doc を作成できる。
+title: "[feat] "
+labels:
+  - feature
+  - needs-ddoc
+body:
+  - type: markdown
+    attributes:
+      value: |
+        この issue は Design Doc 作成の入力として使う。
+        Claude Code に「この issue をもとに `/make-ddoc` を起動して」と伝えると、以下の内容を回答として Design Doc が生成される。
+
+        - 不明な項目は `未定` と書いて構わない（インタビューで深掘りされる）。
+        - Design Doc は `docs/design-doc/[連番]-[scope]-[feat].md` に保存される。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 何を作るか（機能の概要）
+      description: 1〜3 文で機能の目的と概要を書く。
+      placeholder: 例）家計簿のレコード一覧から複数選択して一括削除できるようにする。
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: スコープ
+      description: 影響範囲を選択する（複数可）。
+      options:
+        - label: api（バックエンド API / Grape）
+        - label: front（SvelteKit フロントエンド）
+        - label: db（MySQL スキーマ / マイグレーション）
+        - label: infra（Docker / Nginx / デプロイ設定）
+        - label: docs（ドキュメントのみ）
+    validations:
+      required: true
+
+  - type: input
+    id: feature_name
+    attributes:
+      label: 機能名（英語スネークケース）
+      description: Design Doc のファイル名に使う短い識別子。`docs/design-doc/[連番]-[scope]-[ここ].md` の `ここ` に入る。
+      placeholder: 例）bulk-delete-records
+    validations:
+      required: true
+
+  - type: textarea
+    id: goals
+    attributes:
+      label: 目標（完了条件）
+      description: 何が達成されればこの issue を close できるかを箇条書きで書く。
+      placeholder: |
+        - レコード一覧画面でチェックボックスにより複数選択できる
+        - 「選択削除」ボタンで一括削除 API が呼ばれる
+        - 削除確認ダイアログを表示する
+    validations:
+      required: true
+
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: 非目標（今回はやらないこと）
+      description: 今回のスコープ外にすることを箇条書きで書く。
+      placeholder: |
+        - 削除のアンドゥ機能
+        - 一括編集機能
+    validations:
+      required: false
+
+  - type: textarea
+    id: api_changes
+    attributes:
+      label: API の変更（あれば）
+      description: 追加・変更するエンドポイント、HTTP メソッド、リクエスト / レスポンスの形を分かる範囲で書く。
+      placeholder: |
+        - DELETE /api/v1/records/bulk
+          - request: { ids: string[] }
+          - response: { deleted_count: number }
+    validations:
+      required: false
+
+  - type: textarea
+    id: db_changes
+    attributes:
+      label: DB の変更（あれば）
+      description: テーブル・カラム追加 / 変更、マイグレーション方針を書く。
+      placeholder: |
+        - records テーブルに soft delete 用 deleted_at カラム追加
+    validations:
+      required: false
+
+  - type: textarea
+    id: front_changes
+    attributes:
+      label: フロントエンドの変更（あれば）
+      description: 新規ページ・コンポーネント・状態管理の方針を書く。
+      placeholder: |
+        - 一覧テーブルにチェックボックス列を追加
+        - 選択中 ID を Svelte の $state で保持
+    validations:
+      required: false
+
+  - type: textarea
+    id: known_files
+    attributes:
+      label: 変更が必要なファイル（分かる範囲で）
+      description: 既知のファイルパスを列挙する。実装時に AI が参照する。
+      placeholder: |
+        - front/src/routes/records/+page.svelte
+        - api/app/api/v1/records.rb
+    validations:
+      required: false
+
+  - type: textarea
+    id: open_questions
+    attributes:
+      label: 未解決の懸念点 / 決まっていないこと
+      description: Design Doc 作成のインタビューで深掘りしてほしいポイントを書く。
+      placeholder: |
+        - soft delete にすべきか hard delete にすべきか
+        - 削除権限のチェック単位
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### 次のアクション
+
+        - Claude Code でこの issue を開き、「この issue の内容で `/make-ddoc` を起動して」と依頼する。
+        - Design Doc が `docs/design-doc/` に保存されたら、続けて `/impl-from-ddoc` で実装に進める。

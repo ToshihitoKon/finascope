@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
-require 'grape'
-require 'lib/id'
-require 'db/models'
-require 'services/payment_methods'
+require "grape"
+require "lib/id"
+require "db/models"
+require "services/payment_methods"
 
-require_relative 'entities/payment_methods'
-require_relative 'entities/common'
+require_relative "entities/payment_methods"
+require_relative "entities/common"
 
 module API
   module V1
     class PaymentMethods < Grape::API
       resource :payment_methods do
+        desc "Get Payment Methods",
+             success: { model: API::Entities::PaymentMethods::PaymentMethod, is_array: true, as: :payment_methods }
         get do
           uid = request_userdata[:uid]
           payment_methods_service = Service::PaymentMethods.new(uid:)
@@ -21,13 +23,14 @@ module API
                   root: :payment_methods
         end
 
+        desc "Create a Payment Method",
+             entity: API::Entities::CommonResponse
+        params do
+          requires :label, type: String, desc: "(String) PaymentMethod label"
+          requires :withdrawal_day_of_month, type: Integer, desc: "(Integer) Withdrawal day of month"
+          optional :closing_day_of_month, type: Integer, desc: "(Integer) Closing day of month", default: 0
+        end
         post do
-          params do
-            requires :label, type: String, desc: 'PaymentMethod label'
-            requires :withdrawal_day_of_month, type: Integer, desc: 'Withdrawal day of month'
-            optional :closing_day_of_month, type: Integer, desc: 'Closing day of month', default: 0
-          end
-
           uid = request_userdata[:uid]
           payment_methods_service = Service::PaymentMethods.new(uid:)
           payment_method = payment_methods_service.create(
@@ -37,23 +40,24 @@ module API
           )
 
           if payment_method
-            status = 'success'
+            status = "success"
           else
-            status = 'failed'
+            status = "failed"
             status 422
           end
           resp = { status:, id: payment_method&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        put ':id' do
-          params do
-            requires :id, type: String, desc: 'PaymentMethod ID'
-            requires :label, type: String, desc: 'PaymentMethod label'
-            requires :withdrawal_day_of_month, type: Integer, desc: 'Withdrawal day of month'
-            optional :closing_day_of_month, type: Integer, desc: 'Closing day of month'
-          end
-
+        desc "Update a Payment Method",
+             entity: API::Entities::CommonResponse
+        params do
+          requires :id, type: String, desc: "(String) PaymentMethod ID"
+          requires :label, type: String, desc: "(String) PaymentMethod label"
+          requires :withdrawal_day_of_month, type: Integer, desc: "(Integer) Withdrawal day of month"
+          optional :closing_day_of_month, type: Integer, desc: "(Integer) Closing day of month"
+        end
+        put ":id" do
           uid = request_userdata[:uid]
           payment_methods_service = Service::PaymentMethods.new(uid:)
           payment_method = payment_methods_service.update(
@@ -66,9 +70,9 @@ module API
           )
 
           if payment_method.present?
-            status = 'success'
+            status = "success"
           else
-            status = 'failed'
+            status = "failed"
             status 422
           end
           resp = { status:, id: payment_method&.id }

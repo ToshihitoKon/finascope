@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'constants'
-require 'db/repositories'
-require 'lib/id'
+require "constants"
+require "db/repositories"
+require "lib/id"
 
 module Service
   class Categories
@@ -37,7 +37,7 @@ module Service
       params_dto = DB::Model::Category.dto.new(
         encrypted_label: params[:label]&.present? ? @uhash.encrypt(params[:label]) : nil
       ).to_h.compact
-      raise Exceptions::InvalidArgument.exception('no params to update') if params_dto.empty?
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
 
       DB::Repository::Category.update(id:, params: params_dto)
     end

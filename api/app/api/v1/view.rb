@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'grape'
-require 'grape-entity'
-require 'date'
+require "grape"
+require "grape-entity"
+require "date"
 
-require 'services/view'
-require_relative 'entities/view'
-require_relative 'entities/common'
+require "services/view"
+require_relative "entities/view"
+require_relative "entities/common"
 
 module API
   module V1
@@ -15,16 +15,17 @@ module API
 
       resource :view do
         namespace :categories do
+          desc "Get Category Aggregation",
+               success: { model: API::Entities::View::CategoryAggregation, is_array: true, as: :aggregations }
+          params do
+            optional :begin_date, type: String, desc: "(String) Start date in YYYY-MM-DD format"
+            optional :end_date, type: String, desc: "(String) End date in YYYY-MM-DD format"
+          end
           get :aggregation do
-            params do
-              optional :begin_date, type: String, desc: 'Start date in YYYY-MM-DD format'
-              optional :end_date, type: String, desc: 'End date in YYYY-MM-DD format'
-            end
-
             # 期間指定のバリデーション
             if (params[:begin_date].present? && params[:end_date].blank?) ||
                (params[:begin_date].blank? && params[:end_date].present?)
-              error!('Both begin_date and end_date must be specified together', 400)
+              error!("Both begin_date and end_date must be specified together", 400)
             end
 
             # 日付パース

@@ -17,7 +17,7 @@ module DB
       end
 
       def self.dto
-        return const_get('DTO') if const_defined?('DTO')
+        return const_get("DTO") if const_defined?("DTO")
 
         columns = DB::TableColumns.get_columns_set(self).to_a
         str = Struct.new(
@@ -29,7 +29,7 @@ module DB
             # TODO: NOT NULL だけコレにする
             is_valid = true
             members.each do |m|
-              next if %i[created_at updated_at deleted_at].include?(m)
+              next if [:created_at, :updated_at, :deleted_at].include?(m)
 
               if self[m].nil?
                 is_valid = false
@@ -39,7 +39,7 @@ module DB
             is_valid
           end
         end
-        const_set('DTO', str)
+        const_set("DTO", str)
       end
 
       def self.to_dto(item)

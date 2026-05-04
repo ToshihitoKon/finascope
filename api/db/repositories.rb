@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'kaminari'
-require 'lib/user_hash'
+require "kaminari"
+require "lib/user_hash"
 
 module DB
   module Repository
@@ -26,7 +26,7 @@ module DB
         prev_month = target_date.prev_month
 
         # 締め日なし（0）の場合は通常の月計算
-        return [prev_month.beginning_of_month, prev_month.end_of_month] if closing_day_of_month == 0
+        return [prev_month.beginning_of_month, prev_month.end_of_month] if closing_day_of_month.zero?
 
         # 月末締め（-1）の場合 → 月末締め翌月払い
         if closing_day_of_month == -1
@@ -101,17 +101,17 @@ module DB
         if begin_date && end_date
           query = query.where(date: begin_date..end_date)
         elsif begin_date
-          query = query.where('date >= ?', begin_date)
+          query = query.where("date >= ?", begin_date)
         elsif end_date
-          query = query.where('date <= ?', end_date)
+          query = query.where("date <= ?", end_date)
         end
 
-        query.group('finance_records.category_id')
+        query.group("finance_records.category_id")
              .select(
-               'finance_records.category_id',
-               'categories.encrypted_label as encrypted_category',
-               'SUM(finance_records.amount) as total_amount',
-               'COUNT(*) as record_count'
+               "finance_records.category_id",
+               "categories.encrypted_label as encrypted_category",
+               "SUM(finance_records.amount) as total_amount",
+               "COUNT(*) as record_count"
              )
              .map do |record|
                {
@@ -135,9 +135,9 @@ module DB
         if begin_date && end_date
           query = query.where(date: begin_date..end_date)
         elsif begin_date
-          query = query.where('date >= ?', begin_date)
+          query = query.where("date >= ?", begin_date)
         elsif end_date
-          query = query.where('date <= ?', end_date)
+          query = query.where("date <= ?", end_date)
         end
 
         query.map do |record|

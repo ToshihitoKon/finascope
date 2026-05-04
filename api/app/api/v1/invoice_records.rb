@@ -1,17 +1,23 @@
 # frozen_string_literal: true
 
-require 'grape'
-require 'lib/id'
-require 'db/models'
-require 'services/invoice_records'
+require "grape"
+require "lib/id"
+require "db/models"
+require "services/invoice_records"
 
-require_relative 'entities/invoice_records'
-require_relative 'entities/common'
+require_relative "entities/invoice_records"
+require_relative "entities/common"
 
 module API
   module V1
     class InvoiceRecords < Grape::API
       resource :invoice_records do
+        desc "Get Invoice Records",
+             success: { model: API::Entities::InvoiceRecords::InvoiceRecord, is_array: true, as: :records }
+        params do
+          optional :year, type: Integer, desc: "(Integer) Target year"
+          optional :month, type: Integer, desc: "(Integer) Target month"
+        end
         get do
           if params[:year] && params[:month]
             year = params[:year].to_i
@@ -27,25 +33,27 @@ module API
           res = records.map do |record|
             withdrawal_date = record.dig(:invoice, :withdrawal_date) || record[:calced_withdrawal_date]
             {
-              id: record.dig(:invoice, :id) || '',
+              id: record.dig(:invoice, :id) || "",
               amount: record.dig(:invoice, :amount) || 0,
               withdrawal_date:,
-              state: record.dig(:invoice, :state) || '',
+              state: record.dig(:invoice, :state) || "",
               state_id: record.dig(:invoice, :state_id) || 0,
               payment_method: record.dig(:payment_method, :payment_method),
-              payment_method_id: record.dig(:payment_method, :id) || ''
+              payment_method_id: record.dig(:payment_method, :id) || ""
             }
           end
           present res, with: API::Entities::InvoiceRecords::InvoiceRecord, root: :records
         end
 
+        desc "Create an Invoice Record",
+             entity: API::Entities::CommonResponse
+        params do
+          requires :amount, type: Integer, desc: "(Integer) Invoice record amount"
+          requires :state_id, type: Integer, desc: "(Integer) Invoice record state ID"
+          requires :withdrawal_date, type: String, desc: "(String) Withdrawal date in ISO8601 format"
+          requires :payment_method_id, type: String, desc: "(String) Payment method ID"
+        end
         post do
-          params do
-            require :amount, type: Integer, desc: 'Invoice record amount'
-            require :state_id, type: Integer, desc: 'Invoice record state ID'
-            require :withdrawal_date, type: String, desc: 'Withdrawal date in ISO8601 format'
-            require :payment_method_id, type: String, desc: 'Payment method ID'
-          end
           puts params.inspect
 
           uid = request_userdata[:uid]
@@ -58,23 +66,24 @@ module API
           )
 
           if record
-            status = 'success'
+            status = "success"
           else
-            status = 'failed'
+            status = "failed"
             status 422
           end
           resp = { status:, id: record&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        put ':id' do
-          params do
-            require :id, type: Integer, desc: 'Invoice record ID'
-            require :amount, type: Integer, desc: 'Invoice record amount'
-            require :state_id, type: Integer, desc: 'Invoice record state ID'
-            require :withdrawal_date, type: String, desc: 'Withdrawal date in ISO8601 format'
-          end
-
+        desc "Update an Invoice Record",
+             entity: API::Entities::CommonResponse
+        params do
+          requires :id, type: Integer, desc: "(Integer) Invoice record ID"
+          requires :amount, type: Integer, desc: "(Integer) Invoice record amount"
+          requires :state_id, type: Integer, desc: "(Integer) Invoice record state ID"
+          requires :withdrawal_date, type: String, desc: "(String) Withdrawal date in ISO8601 format"
+        end
+        put ":id" do
           uid = request_userdata[:uid]
           invoice_records_service = Service::InvoiceRecords.new(uid:)
           record = invoice_records_service.update(
@@ -88,34 +97,37 @@ module API
           )
 
           if record.present?
-            status = 'success'
+            status = "success"
           else
-            status = 'failed'
+            status = "failed"
             status 422
           end
           resp = { status:, id: record&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        delete ':id' do
-          params do
-            requires :id, type: String, desc: 'Invoice record ID'
-          end
-
+        desc "Delete an Invoice Record",
+             entity: API::Entities::CommonResponse
+        params do
+          requires :id, type: String, desc: "(String) Invoice record ID"
+        end
+        delete ":id" do
           uid = request_userdata[:uid]
           Service::InvoiceRecords.new(uid:).delete( # NOTE: ダメなら exception が飛んでくる
             id: params[:id]
           )
 
-          status = 'success'
+          status = "success"
           resp = { status:, id: params[:id] }
           present resp, with: API::Entities::CommonResponse
         end
 
+        desc "Get Withdrawal Records Aggregation",
+             success: { model: API::Entities::InvoiceRecords::WithdrawalRecordsAggregation, as: :aggregation }
         params do
-          requires :year, type: Integer, desc: 'Target year'
-          requires :month, type: Integer, desc: 'Target month'
-          requires :payment_method_id, type: String, desc: 'Payment method ID'
+          requires :year, type: Integer, desc: "(Integer) Target year"
+          requires :month, type: Integer, desc: "(Integer) Target month"
+          requires :payment_method_id, type: String, desc: "(String) Payment method ID"
         end
         get :withdrawal_records_aggregation do
           uid = request_userdata[:uid]

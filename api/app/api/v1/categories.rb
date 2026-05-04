@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
-require 'grape'
-require 'lib/id'
-require 'db/models'
-require 'services/categories'
+require "grape"
+require "lib/id"
+require "db/models"
+require "services/categories"
 
-require_relative 'entities/categories'
-require_relative 'entities/common'
+require_relative "entities/categories"
+require_relative "entities/common"
 
 module API
   module V1
     class Categories < Grape::API
       resource :categories do
+        desc "Get Categories",
+             success: { model: API::Entities::Categories::Category, is_array: true, as: :categories }
         get do
           uid = request_userdata[:uid]
           categories_service = Service::Categories.new(uid:)
@@ -19,31 +21,33 @@ module API
           present categories, with: API::Entities::Categories::Category, root: :categories
         end
 
+        desc "Create a Category",
+             entity: API::Entities::CommonResponse
+        params do
+          requires :label, type: String, desc: "(String) Category label"
+        end
         post do
-          params do
-            requires :label, type: String, desc: 'Category label'
-          end
-
           uid = request_userdata[:uid]
           categories_service = Service::Categories.new(uid:)
           category = categories_service.create(label: params[:label])
 
           if category
-            status = 'success'
+            status = "success"
           else
-            status = 'failed'
+            status = "failed"
             status 422
           end
           resp = { status:, id: category&.id }
           present resp, with: API::Entities::CommonResponse
         end
 
-        put ':id' do
-          params do
-            requires :id, type: String, desc: 'PaymentMethod ID'
-            requires :label, type: String, desc: 'PaymentMethod label'
-          end
-
+        desc "Update a Category",
+             entity: API::Entities::CommonResponse
+        params do
+          requires :id, type: String, desc: "(String) Category ID"
+          requires :label, type: String, desc: "(String) Category label"
+        end
+        put ":id" do
           uid = request_userdata[:uid]
           categories_service = Service::Categories.new(uid:)
           category = categories_service.update(
@@ -54,9 +58,9 @@ module API
           )
 
           if category.present?
-            status = 'success'
+            status = "success"
           else
-            status = 'failed'
+            status = "failed"
             status 422
           end
           resp = { status:, id: category&.id }

@@ -1,104 +1,63 @@
 <script lang="ts">
-  import '../app.css';
-  import Menu from 'lucide-svelte/icons/menu';
-  import X from 'lucide-svelte/icons/x';
-  import { base } from '$app/paths';
-  import { Toaster } from '$lib/components/ui/sonner/index.js';
+  import '../app.scss';
+  import { Sidebar } from '$lib/components';
+  import { Toaster } from 'svelte-sonner';
 
   let { children } = $props();
-  let isOpen = $state(false);
 
-  import { onMount } from 'svelte';
-  import { Button } from '$lib/components/ui/button/index.js';
-  import { signInWithGoogle, logout, loginEventBus, auth } from '$lib/firebase/index.svelte.ts';
-
-  const loginHandler = async () => {
-    await signInWithGoogle();
-  };
-  const logoutHandler = async () => {
-    await logout();
-  };
-
-  let hideLoginButton = $state(true);
-  onMount(() => {
-    const unsubscribe = loginEventBus.subscribe(() => {
-      hideLoginButton = auth.currentUser !== null;
-    });
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  });
+  let sidebarOpen = $state(false);
 </script>
 
-<nav class="bg-card text-foreground shadow-md">
-  <div class="item-center container mx-auto flex justify-between p-4">
-    <a href="{base}/" class="text-x1 font-bold">Finascope</a>
-    <div class="hidden space-x-6 md:flex">
-      <a href="{base}/records" class="hover:text-primary">Records</a>
-      <a href="{base}/invoice-records" class="hover:text-primary">Invoice Records</a>
-      <a href="{base}/view" class="hover:text-primary">Views</a>
-      <a href="{base}/config" class="hover:text-primary">Config</a>
-      {#if !hideLoginButton}
-        <Button onclick={loginHandler} variant="outline" class="h-8">Login</Button>
-      {:else}
-        <Button onclick={logoutHandler} variant="outline" class="h-8">Logout</Button>
-      {/if}
-    </div>
-    <button class="md:hidden" onclick={() => (isOpen = !isOpen)}>
-      {#if isOpen}
-        <X class="h-6 w-6" />
-      {:else}
-        <Menu class="h-6 w-6" />
-      {/if}
-    </button>
-  </div>
+<div class="layout-app-wrapper style-app">
+  <Sidebar bind:open={sidebarOpen} onclose={() => (sidebarOpen = false)} />
 
-  <!-- モバイル用ドロップダウンメニュー -->
-  {#if isOpen}
-    <div class="animate-fade-in border-t border-border bg-card md:hidden">
-      <div class="container mx-auto flex flex-col space-y-4 p-4">
-        {#if !hideLoginButton}
-          <Button onclick={loginHandler} variant="outline" class="h-8">Login</Button>
-        {:else}
-          <Button onclick={logoutHandler} variant="outline" class="h-8">Logout</Button>
-        {/if}
-        <a href="{base}/" class="hover:text-primary" onclick={() => (isOpen = false)}> Home </a>
-        <a href="{base}/records" class="hover:text-primary" onclick={() => (isOpen = false)}>
-          Records
-        </a>
-        <a
-          href="{base}/invoice-records"
-          class="hover:text-primary"
-          onclick={() => (isOpen = false)}
-        >
-          Invoice Records
-        </a>
-        <a href="{base}/view" class="hover:text-primary" onclick={() => (isOpen = false)}>
-          Views
-        </a>
-        <a href="{base}/config" class="hover:text-primary" onclick={() => (isOpen = false)}>
-          Config
-        </a>
-      </div>
-    </div>
-  {/if}
-</nav>
-<Toaster
-  richColors
-  closeButton
-  toastOptions={{
-    classes: {
-      // Patch: fix bug https://github.com/wobsoriano/svelte-sonner/issues/122#issuecomment-2563566656
-      // toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-      toast: 'group toast group-[.toaster]:shadow-lg',
-      description: 'group-[.toast]:text-muted-foreground',
-      actionButton: 'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
-      cancelButton: 'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground'
-    }
-  }}
-/>
-<div class="container mx-auto px-4 py-6">
-  {@render children()}
+  <button
+    class="layout-hamburger style-hamburger"
+    onclick={() => (sidebarOpen = true)}
+    aria-label="Open menu"
+  >
+    &#9776;
+  </button>
+  <main class="layout-main">
+    {@render children()}
+  </main>
 </div>
+
+<Toaster />
+
+<style lang="scss">
+  .layout-app-wrapper {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .layout-main {
+    flex: 1;
+    max-width: var(--px-main-max-width);
+    margin: 0 auto;
+  }
+
+  .layout-hamburger {
+    display: none;
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 50;
+  }
+
+  .style-hamburger {
+    background: var(--color-sidebar-bg);
+    color: var(--color-sidebar-text);
+    border: none;
+    font-size: 1.5rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  @media (max-width: #{$px-sidebar-width + $px-main-max-width}) {
+    .layout-hamburger {
+      display: block;
+    }
+  }
+</style>

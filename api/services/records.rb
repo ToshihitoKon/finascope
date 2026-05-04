@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'constants'
-require 'db/repositories'
-require 'lib/id'
+require "constants"
+require "db/repositories"
+require "lib/id"
 
 module Service
   class FinanceRecords
@@ -21,21 +21,21 @@ module Service
     def format_record(record)
       # NOTE: encrypted_* が nil の場合は、eager_load で取得できなかった場合なので TODO として扱う
       payment_method = if record[:encrypted_payment_method].nil?
-                         'TODO'
+                         "TODO"
                        else
                          @uhash.decrypt(record[:encrypted_payment_method])
                        end
 
       category = if record[:encrypted_category].nil?
-                   'TODO'
+                   "TODO"
                  else
                    @uhash.decrypt(record[:encrypted_category])
                  end
 
       {
         **record,
-        title: record[:encrypted_title] ? @uhash.decrypt(record[:encrypted_title]) : '',
-        description: record[:encrypted_description] ? @uhash.decrypt(record[:encrypted_description]) : '',
+        title: record[:encrypted_title] ? @uhash.decrypt(record[:encrypted_title]) : "",
+        description: record[:encrypted_description] ? @uhash.decrypt(record[:encrypted_description]) : "",
         record_type: Constants.record_type(record[:record_type_id])[:label],
         state: Constants.record_state(record[:state_id])[:label],
         category:,
@@ -72,7 +72,7 @@ module Service
         date: params[:date],
         encrypted_description: @uhash.encrypt(params[:description])
       ).to_h.compact
-      raise Exceptions::InvalidArgument.exception('no params to update') if params_dto.empty?
+      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
 
       DB::Repository::FinanceRecord.update(id:, params: params_dto)
     end

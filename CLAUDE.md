@@ -1,523 +1,213 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルはリポジトリ内のコードを扱う際の Claude Code (claude.ai/code) へのガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-Finascope is a personal finance management application with a microservices architecture:
-- **Backend API**: Ruby/Grape framework with ActiveRecord and MySQL
-- **Frontend**: SvelteKit with TypeScript, TailwindCSS, and Firebase Auth
-- **Database**: MySQL 8.0 with encrypted user data
-- **Infrastructure**: Docker containers with Nginx reverse proxy
+Finascope は個人財務管理アプリケーションで、マイクロサービスアーキテクチャを採用しています：
+- バックエンド API: Ruby/Grape フレームワーク、ActiveRecord、MySQL
+- フロントエンド: SvelteKit + TypeScript + Firebase Auth
+- データベース: MySQL 8.0（ユーザーデータは暗号化）
+- インフラ: Docker コンテナ + Nginx リバースプロキシ
 
-## Directory Structure
+## ディレクトリ構成
 
-```
-finascope/
-├── api/                              # Backend API (Ruby/Grape)
-│   ├── app/api/
-│   │   ├── root.rb                   # Main API root with helpers
-│   │   └── v1/                       # API version 1
-│   │       ├── categories.rb         # Categories CRUD endpoints
-│   │       ├── invoice_records.rb    # Invoice records endpoints
-│   │       ├── payment_methods.rb    # Payment methods CRUD endpoints
-│   │       ├── records.rb            # Finance records CRUD endpoints
-│   │       ├── root.rb               # V1 API root
-│   │       ├── view.rb               # Aggregation/view endpoints
-│   │       └── entities/             # Grape response entities
-│   │           ├── categories.rb     # Category response format
-│   │           ├── common.rb         # Common response structures
-│   │           ├── invoice_records.rb
-│   │           ├── payment_methods.rb
-│   │           ├── records.rb        # Record response format
-│   │           └── view.rb           # View/aggregation response format
-│   ├── constants.rb                  # Application constants (TODO_ID, etc.)
-│   ├── db/
-│   │   ├── connection.rb             # Database connection setup
-│   │   ├── models.rb                 # ActiveRecord models
-│   │   └── repositories.rb           # Data access layer
-│   ├── envs.rb                       # Environment configuration
-│   ├── lib/                          # Utility libraries
-│   │   ├── exceptions.rb             # Custom exception classes
-│   │   ├── firebase.rb               # Firebase JWT verification
-│   │   ├── id.rb                     # ID generation utilities
-│   │   └── user_hash.rb              # User data encryption/decryption
-│   ├── scripts/                      # Utility scripts
-│   │   ├── create_database.rb        # Database initialization
-│   │   └── finascope-console.rb      # Interactive console
-│   └── services/                     # Business logic layer
-│       ├── categories.rb             # Category business logic
-│       ├── invoice_records.rb        # Invoice processing logic
-│       ├── payment_methods.rb        # Payment method logic
-│       ├── records.rb                # Finance record logic
-│       └── view.rb                   # Aggregation/view logic
-├── front/                            # Frontend (SvelteKit)
-│   ├── src/
-│   │   ├── app.html                  # Main HTML template
-│   │   ├── app.css                   # Global styles
-│   │   ├── lib/
-│   │   │   ├── api/v1/               # API client layer
-│   │   │   │   ├── api.ts            # Main API client functions
-│   │   │   │   ├── const.ts          # Frontend constants (TodoIds, etc.)
-│   │   │   │   ├── index.ts          # API exports
-│   │   │   │   ├── types.d.ts        # TypeScript API types
-│   │   │   │   └── mock/             # Mock data for development
-│   │   │   ├── components/
-│   │   │   │   ├── segment-control.svelte  # Custom UI components
-│   │   │   │   └── ui/               # shadcn/ui components
-│   │   │   │       ├── button/       # Button component
-│   │   │   │       ├── calendar/     # Calendar components
-│   │   │   │       ├── card/         # Card components
-│   │   │   │       ├── data-table/   # Data table components
-│   │   │   │       ├── dialog/       # Modal dialog components
-│   │   │   │       ├── input/        # Input components
-│   │   │   │       └── [other-ui]/   # Other UI components
-│   │   │   ├── firebase/
-│   │   │   │   └── index.svelte.ts   # Firebase auth integration
-│   │   │   ├── shadcn/               # shadcn/ui wrapper components
-│   │   │   │   ├── combobox.svelte   # Dropdown/select component
-│   │   │   │   ├── data-table/       # Enhanced data table
-│   │   │   │   ├── datepicker.svelte # Date picker component
-│   │   │   │   └── select.svelte     # Select component
-│   │   │   └── utils.ts              # Utility functions
-│   │   └── routes/                   # SvelteKit pages/routes
-│   │       ├── +layout.svelte        # Root layout
-│   │       ├── +page.svelte          # Home page
-│   │       ├── config/               # Configuration pages
-│   │       │   ├── +page.svelte      # Config main page
-│   │       │   └── components/       # Config-specific components
-│   │       │       ├── categories/   # Category management
-│   │       │       └── payment-methods/  # Payment method management
-│   │       ├── debug/                # Debug/development pages
-│   │       ├── invoice-records/      # Invoice record pages
-│   │       │   ├── +page.svelte      # Invoice records list
-│   │       │   ├── row-menu.svelte   # Record action menu
-│   │       │   └── year-month-form.svelte  # Date filter form
-│   │       ├── records/              # Finance record pages
-│   │       │   ├── +page.svelte      # Records list page
-│   │       │   ├── dialog-new-record.svelte  # New record dialog
-│   │       │   └── row-menu.svelte   # Record action menu
-│   │       └── view/                 # Data visualization pages
-│   │           ├── +page.svelte      # Views overview page
-│   │           └── categories/       # Category aggregation views
-│   │               ├── +page.svelte  # Category aggregation page
-│   │               ├── category-summary-table.svelte  # Summary table
-│   │               └── records-detail-table.svelte    # Detail records table
-│   ├── static/                       # Static assets
-│   ├── package.json                  # Frontend dependencies
-│   ├── svelte.config.js             # SvelteKit configuration
-│   ├── tailwind.config.ts           # TailwindCSS configuration
-│   ├── tsconfig.json                # TypeScript configuration
-│   └── vite.config.ts               # Vite build configuration
-├── mysql/
-│   └── init.d/
-│       └── 00_user_database.sql     # Database initialization SQL
-├── nginx/                           # Nginx reverse proxy
-│   ├── Dockerfile
-│   └── files/
-│       ├── conf.d/
-│       └── nginx.conf
-├── compose.yml                      # Production Docker Compose
-├── compose-dev.yml                  # Development Docker Compose
-├── compose-dev-mysql.yml            # Shared MySQL for development
-└── CLAUDE.md                        # This documentation file
-```
+### バックエンド (`api/`)
+- `app/api/`: API エンドポイント定義
+  - `root.rb`: 認証ヘルパーを含むメイン API ルート
+  - `v1/`: リソース別のバージョン付き API エンドポイント（categories, records, payment_methods, invoice_records, view）
+  - `v1/entities/`: レスポンスシリアライズ用の Grape エンティティ
+- `db/`: データベース層
+  - `models.rb`: ActiveRecord モデル定義
+  - `repositories.rb`: クエリメソッドを含むデータアクセス層
+  - `connection.rb`: データベース接続設定
+- `services/`: リソース別のビジネスロジック層
+- `lib/`: ユーティリティライブラリ（ユーザーデータ暗号化、Firebase JWT 検証、ID 生成、例外）
+- `constants.rb`: アプリケーション全体の定数
+- `envs.rb`: 環境変数設定
+- `scripts/`: データベースセットアップやコンソールアクセス用のユーティリティスクリプト
 
-### Key Directory Purposes
+### フロントエンド (`front/`)
+- `src/lib/`: 共有ライブラリ
+  - `api/v1/`: 型定義とモックデータを含む API クライアント層
+  - `firebase/`: Firebase 認証インテグレーション
+  - `utils.ts`: ユーティリティ関数
+- `src/routes/`: ファイルベースルーティングに従った SvelteKit ページ
+- `src/app.html`, `src/app.css`: アプリケーションテンプレートとグローバルスタイル
+- 設定ファイル: `package.json`, `svelte.config.js`, `tsconfig.json`, `vite.config.ts`
 
-**Backend (`api/`):**
-- `app/api/v1/`: REST API endpoints organized by resource
-- `entities/`: Response data serialization (JSON structure definitions)  
-- `services/`: Business logic layer (core application logic)
-- `db/repositories.rb`: Data access layer (database queries)
-- `lib/`: Utility libraries (encryption, Firebase, etc.)
-- `constants.rb`: Application-wide constants
+### インフラ
+- `mysql/init.d/`: データベース初期化 SQL スクリプト
+- `nginx/`: Nginx リバースプロキシ設定と Dockerfile
+- `compose.yml`: 本番・開発環境用の Docker Compose 設定
 
-**Frontend (`front/src/`):**
-- `lib/api/v1/`: API client and type definitions
-- `lib/components/ui/`: Reusable UI components (shadcn/ui)
-- `lib/shadcn/`: Wrapper components for complex UI patterns
-- `routes/`: SvelteKit pages following file-based routing
-- `routes/[resource]/`: Pages for each major resource (records, categories, etc.)
+### よく使うファイル
+- API エンドポイント追加: `api/app/api/v1/[resource].rb`
+- ページ追加: `front/src/routes/[page]/+page.svelte`
+- データベースクエリ: `api/db/repositories.rb`
+- ビジネスロジック: `api/services/[resource].rb`
+- API 型定義: `front/src/lib/api/v1/types.d.ts`
+- 定数: `api/constants.rb` と `front/src/lib/api/v1/const.ts`
 
-**Key Files for Common Tasks:**
-- Adding new API endpoint: `api/app/api/v1/[resource].rb`
-- Adding new page: `front/src/routes/[page]/+page.svelte`
-- Database queries: `api/db/repositories.rb`
-- Business logic: `api/services/[resource].rb`
-- API types: `front/src/lib/api/v1/types.d.ts`
-- Constants: `api/constants.rb` and `front/src/lib/api/v1/const.ts`
+## アーキテクチャパターン
 
-## Development Commands
+### セキュリティモデル
+プライバシーファーストの暗号化システムを実装しています：
+- Firebase Auth UID によるユーザー識別
+- ユーザー固有のハッシュによるデータ暗号化（`api/lib/user_hash.rb` 参照）
+- 別のソルトで隔離されたユーザーデータテーブル（`UserHash#user_info_hash`）
+- ユーザーデータと他テーブル間に直接の外部キー関係なし
 
-### Quick Start with Makefile (Recommended)
-```bash
-# Show all available commands
-make help
+### API 構造
+- フレームワーク: Grape API（JSON 形式）
+- 認証: Firebase JWT Bearer トークン
+- エンティティ: レスポンスシリアライズ用 Grape エンティティ（`api/app/api/v1/entities/`）
+- サービス: ビジネスロジック層（`api/services/`）
+- リポジトリ: データアクセス層（`api/db/repositories.rb`）
 
-# Start development environment (background)
-make dev
+### フロントエンドアーキテクチャ
+- フレームワーク: SvelteKit 5 + TypeScript
+- 認証: Firebase Auth + JWT トークン管理
+- API クライアント: `front/src/lib/api/v1/api.ts` に実装予定
 
-# Update database schema (after model changes)
-make schema-update
+### フロントエンド実装ガイドライン
 
-# View logs
-make logs
+ファイル構成の役割分担:
+- UI 要素（テーブル、フォーム、サイドバーなど）は `src/lib/components/` に実装する
+- `src/routes/+page.svelte` にはコンポーネントのインポート・配置、ページ固有の状態管理・TypeScript、ページレベルのレイアウト・スタイルを記述する
+- `src/lib/components/index.ts` でコンポーネントをまとめてエクスポートする
 
-# Access API console
-make console
+スタイリング方針:
+- グローバル CSS 変数とグローバル SCSS 変数は `src/app.scss` に定義する
+- CSS/SCSS 変数命名規則: `--{type}-{role}` 形式（CSS変数）、`${type}-{role}`（SCSS変数）
+  - タイプ接頭辞: `color`, `px`, `rem`, `font` など
+  - 例: `--color-primary`, `--px-sidebar-width`, `--px-main-max-width`
+- コンポーネントスタイルでは `var(--variable-name)` でグローバル CSS 変数を参照する
+- メディアクエリのブレークポイント計算には SCSS 変数を使用する（`@media (max-width: #{$px-sidebar-width + $px-main-max-width})`）
+  - dart-sass では `@media` 内の算術式を `#{}` で補間する必要がある
 
-# Connect to API container shell
-make api-shell
+クラス名のプレフィックスルール:
+- `layout-` クラス: DOM の配置・レイアウトに関するスタイル（`display`, `flex`, `position`, `margin`, `padding`, `text-align` など）
+  - 例: `layout-container`, `layout-summary`, `layout-money`, `layout-center`
+- `style-` クラス: 色・フォント・ボーダーなど見た目に関するスタイル（`color`, `background`, `border`, `font-size` など）
+  - 例: `style-table`, `style-button`, `style-divider`
+- 両方の性質を持つ要素には `layout-foo style-foo` のように両クラスを付与する
+- 各 Svelte ファイルの `<style>` ブロック内で `layout-*` と `style-*` を分けて記述する
 
-# Connect to MySQL shell
-make db-shell
+### データベース設計
+- モデル: `api/db/models.rb` の ActiveRecord モデル
+- 暗号化: 機密フィールドは `encrypted_` プレフィックス付き
+- ページネーション: Kaminari gem
+- 接続: `api/db/connection.rb` 経由で MySQL
 
-# Stop and clean up
-make clean
-```
+## 実装上の重要な注意点
 
-### Local Development (Manual Commands)
-```bash
-# First time: Start shared MySQL database
-docker compose -f compose-dev-mysql.yml up -d
-
-# Start full development environment (any worktree)
-docker compose -f compose-dev.yml up
-
-# Access points:
-# - Frontend: http://localhost:8080 (via nginx)
-# - API: http://localhost:9292 (direct)
-# - MySQL: localhost:3306 (shared across all worktrees)
-```
-
-### Individual Services
-
-**API Development:**
-```bash
-cd api
-bundle install
-bundle exec rerun -- rackup
-# Runs on http://localhost:9292
-```
-
-**Frontend Development:**
-```bash
-cd front
-pnpm install
-pnpm dev
-# Runs on http://localhost:5173
-```
-
-**Frontend Linting & Type Checking:**
-```bash
-cd front
-pnpm lint          # Prettier + ESLint
-pnpm check         # Svelte type checking
-pnpm format        # Format code
-```
-
-## Architecture Patterns
-
-### Security Model
-The application implements a privacy-first encryption system:
-- User identification via Firebase Auth UID
-- Data encrypted using user-specific hashes (see `api/lib/user_hash.rb`)
-- User data tables isolated with separate salt (`UserHash#user_info_hash`)
-- No direct foreign key relations between user data and other tables
-
-### API Structure
-- **Framework**: Grape API with JSON format
-- **Authentication**: Firebase JWT Bearer tokens
-- **Entities**: Grape entities for response serialization (`api/app/api/v1/entities/`)
-- **Services**: Business logic layer (`api/services/`)
-- **Repositories**: Data access layer (`api/db/repositories.rb`)
-
-### Frontend Architecture
-- **Framework**: SvelteKit 5 with TypeScript
-- **State**: Svelte stores with `svelte-persisted-store`
-- **Authentication**: Firebase Auth with JWT token management
-- **API Client**: Centralized in `front/src/lib/api/v1/api.ts`
-- **UI Components**: shadcn/ui components in `front/src/lib/components/ui/`
-
-### Database Design
-- **Models**: ActiveRecord models in `api/db/models.rb`
-- **Encryption**: Sensitive fields prefixed with `encrypted_` 
-- **Pagination**: Kaminari gem for API pagination
-- **Connection**: MySQL via `api/db/connection.rb`
-
-## Key Implementation Notes
-
-### User Data Encryption
-All user-sensitive data is encrypted using the `UserHash` class:
+### ユーザーデータ暗号化
+ユーザーの機密データはすべて `UserHash` クラスで暗号化します：
 ```ruby
 uhash = UserHash.new(firebase_uid)
 encrypted_data = uhash.encrypt(sensitive_string)
 decrypted_data = uhash.decrypt(encrypted_data)
 ```
 
-### API Authentication
-Every API endpoint expects Firebase JWT tokens:
+### API 認証
+すべての API エンドポイントは Firebase JWT トークンを要求します：
 ```ruby
-# In API helpers (api/app/api/root.rb)
+# API ヘルパー内 (api/app/api/root.rb)
 def request_userdata
   jwt = authorization_header&.gsub("Bearer ", "")
   Firebase.decode_jwt(jwt)
 end
 ```
 
-### Frontend API Communication
-API calls automatically include Firebase JWT tokens:
+### フロントエンド API 通信
+API 呼び出しには Firebase JWT トークンを含めます：
 ```typescript
-// All API calls in front/src/lib/api/v1/api.ts handle auth
+// front/src/lib/api/v1/api.ts に実装予定
 const jwt = await getFirebaseToken();
 opts.headers['Authorization'] = `Bearer ${jwt}`;
 ```
 
-### TODO Item Handling
-The application uses special TODO IDs for records with unset categories or payment methods:
+### TODO アイテム処理（非推奨）
+カテゴリや支払い方法が未設定のレコードには特別な TODO ID を使用します：
 
-**TODO ID Constants:**
-- Frontend: `front/src/lib/api/v1/const.ts` - `TodoIds.Category` and `TodoIds.PaymentMethod`
-- Backend: `api/constants.rb` - `TODO_ID[:category]` and `TODO_ID[:payment_method]`
-- Values: `'TODO_CATEGORY_ID'` and `'TODO_PAYMENT_METHOD_ID'`
+TODO ID 定数:
+- フロントエンド: `front/src/lib/api/v1/const.ts` - `TodoIds.Category` と `TodoIds.PaymentMethod`（実装予定）
+- バックエンド: `api/constants.rb` - `TODO_ID[:category]` と `TODO_ID[:payment_method]`
+- 値: `'TODO_CATEGORY_ID'` と `'TODO_PAYMENT_METHOD_ID'`
 
-**Implementation Details:**
-- Records can be created with `category_id: 'TODO_CATEGORY_ID'` for unset categories
-- TODO items are displayed as "TODO" in both lists and aggregations
-- Frontend record creation dialog includes TODO as default option
-- Backend repositories use `left_joins(:category)` to include TODO items in aggregations
-- TODO records are fully functional - can be created, edited, and aggregated
+実装詳細:
+- カテゴリ未設定のレコードは `category_id: 'TODO_CATEGORY_ID'` で作成可能
+- TODO アイテムは一覧・集計の両方で「TODO」として表示される
+- フロントエンドのレコード作成ダイアログにはデフォルトオプションとして TODO を含める予定（実装予定）
+- バックエンドリポジトリは `left_joins(:category)` で集計に TODO アイテムを含める
+- TODO レコードは作成・編集・集計が完全に機能する
 
-**Creating TODO Records:**
-```bash
-# Create a TODO record (category and payment method unset)
-curl -X POST "http://localhost:8080/finascope/api/v1/records" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "未分類の支出",
-    "type_id": 1,
-    "state_id": 1, 
-    "description": "カテゴリ未設定のレコード",
-    "amount": 1500,
-    "category_id": "TODO_CATEGORY_ID",
-    "date": "2025-01-01",
-    "payment_method_id": "TODO_PAYMENT_METHOD_ID"
-  }'
-```
+カテゴリ集計における TODO アイテム:
+TODO アイテムは `/view/categories/aggregation` で独立した「TODO」カテゴリとして表示され、クリックで詳細レコードを確認できます。
 
-**TODO Items in Category Aggregation:**
-TODO items appear as a separate "TODO" category in `/view/categories/aggregation` and can be clicked to see detailed records.
+## 型チェック
 
-## Testing & Quality
+### フロントエンド
 
-Currently, no automated test suite is configured. When adding tests:
-- For API: Consider RSpec or similar Ruby testing framework
-- For Frontend: Consider Vitest with SvelteKit testing utilities
-
-### Manual API Testing
-
-**Anonymous User Testing:**
-When testing API endpoints without authentication, the system automatically uses an anonymous user. This allows for easy manual testing:
+フロントエンドの型チェックは `svelte-check` で行う（TypeScript + Svelte テンプレートの両方をチェックする）：
 
 ```bash
-# Test endpoints without Authorization header
-curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation" -H "Content-Type: application/json"
+cd front
+pnpm svelte-check
 ```
 
-**Creating Sample Data for Testing:**
+`tsc --noEmit` は TypeScript のみのチェックで、Svelte テンプレート内の型エラーは検出されないため使わない。
 
-1. **Create a Category:**
+型チェックが通らない場合の確認事項:
+- `.svelte-kit/` の型が古い場合は `pnpm svelte-kit sync` で再生成する
+- `sass-embedded` が必要（`svelte-check` が SCSS プリプロセスに使用する）
+
+## Lint チェック
+
+### フロントエンド
+
+ESLint は `svelte-check` とは別に実行する：
+
 ```bash
-curl -X POST "http://localhost:8080/finascope/api/v1/categories" \
-  -H "Content-Type: application/json" \
-  -d '{"label": "食費"}'
-# Returns: {"status":"success","id":"CATEGORY_ID"}
+cd front
+pnpm eslint
 ```
 
-2. **Create a Payment Method:**
-```bash
-curl -X POST "http://localhost:8080/finascope/api/v1/payment_methods" \
-  -H "Content-Type: application/json" \
-  -d '{"label": "現金", "withdrawal_day_of_month": 1}'
-# Returns: {"status":"success","id":"PAYMENT_METHOD_ID"}
-```
+コード変更後は `svelte-check` と `eslint` の両方をパスさせること。
 
-3. **Create Records:**
-```bash
-# Replace CATEGORY_ID and PAYMENT_METHOD_ID with actual IDs from steps 1-2
-curl -X POST "http://localhost:8080/finascope/api/v1/records" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "ランチ",
-    "type_id": 1,
-    "state_id": 1,
-    "description": "コンビニで昼食",
-    "amount": 1000,
-    "category_id": "CATEGORY_ID",
-    "date": "2025-01-01",
-    "payment_method_id": "PAYMENT_METHOD_ID"
-  }'
+注意事項:
+- 未使用変数・引数は `_` プレフィックスで無視できる（例: `_error`, `_req`）
+- Svelte 5 のリアクティブ Map は `SvelteMap`（`svelte/reactivity`）を使う。`$state` でラップすると `svelte/no-unnecessary-state-wrap` エラーになるため不要
+- `SvelteMap` を変数ごと再代入するのではなく `.clear()` + `.set()` で変更する（再代入すると `$state` なしでは reactivity が失われる）
 
-curl -X POST "http://localhost:8080/finascope/api/v1/records" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "夕食",
-    "type_id": 1,
-    "state_id": 1,
-    "description": "スーパーで買い物",
-    "amount": 2500,
-    "category_id": "CATEGORY_ID",
-    "date": "2025-01-02",
-    "payment_method_id": "PAYMENT_METHOD_ID"
-  }'
-```
+## データベース操作
 
-4. **Test Category Aggregation:**
-```bash
-# 期間未指定（今月のデータを取得）
-curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation" \
-  -H "Content-Type: application/json"
-
-# 期間指定（両方の日付が必要）
-curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation?begin_date=2025-01-01&end_date=2025-01-31" \
-  -H "Content-Type: application/json"
-
-# バリデーションエラー例（片方の日付のみ指定）
-curl -X GET "http://localhost:8080/finascope/api/v1/view/categories/aggregation?begin_date=2025-01-01" \
-  -H "Content-Type: application/json"
-# Returns: {"error":"Both begin_date and end_date must be specified together"}
-```
-
-**Required Record Fields:**
-- `title`: Record title (string)
-- `type_id`: Record type ID (integer, typically 1)
-- `state_id`: Record state ID (integer, typically 1)
-- `description`: Record description (string)
-- `amount`: Amount in cents/smallest currency unit (integer)
-- `category_id`: Category ID from categories endpoint (string)
-- `date`: Date in YYYY-MM-DD format (string)
-- `payment_method_id`: Payment method ID from payment_methods endpoint (string)
-
-## Database Operations
-
-**Database Setup:**
-```bash
-# Initial setup handled by Docker init scripts
-# See mysql/init.d/00_user_database.sql
-```
-
-**Console Access:**
+コンソールアクセス:
 ```bash
 cd api
 bundle exec ruby scripts/finascope-console.rb
 ```
 
-## Testing & Quality Assurance
+## デプロイメント
 
-### API Endpoint Testing
+- フロントエンドは静的アセットをビルドする: `pnpm build`
+- 本番デプロイは SvelteKit の static adapter を使用
+- GCP デプロイは `pnpm deploy` スクリプトで設定済み
+- 環境変数は Docker compose ファイルで管理
 
-**Basic Health Check:**
-```bash
-curl -s http://localhost:8080/finascope/api/v1/healthcheck
-# Expected: {"status":"healthy"}
-```
+## AI Agent による変更実行前の Design Doc 作成
 
-**Complete API Testing Workflow:**
-```bash
-# 1. Test categories endpoint
-curl -s http://localhost:8080/finascope/api/v1/categories
-curl -s -X POST http://localhost:8080/finascope/api/v1/categories \
-  -H "Content-Type: application/json" \
-  -d '{"label": "食費"}'
+実装・リファクタリング・大きな変更を AI Agent に実行させる前に、`/make-ddoc` スキルを使って Design Doc を作成することを強く推奨する。
 
-# 2. Test payment methods endpoint
-curl -s http://localhost:8080/finascope/api/v1/payment_methods
-curl -s -X POST http://localhost:8080/finascope/api/v1/payment_methods \
-  -H "Content-Type: application/json" \
-  -d '{"label": "現金", "withdrawal_day_of_month": 1}'
+**対象となる作業の例:**
+- 新機能の実装
+- 既存コードのリファクタリング
+- API・データベーススキーマの変更
+- フロントエンドの大規模な改修
 
-# 3. Test records endpoint
-curl -s http://localhost:8080/finascope/api/v1/records
-curl -s -X POST http://localhost:8080/finascope/api/v1/records \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "ランチ",
-    "type_id": 1,
-    "state_id": 1,
-    "description": "テスト用レコード",
-    "amount": 1000,
-    "category_id": "CATEGORY_ID",
-    "date": "2025-01-01",
-    "payment_method_id": "PAYMENT_METHOD_ID"
-  }'
+**運用フロー:**
+1. `/make-ddoc` を実行して Design Doc を作成・保存する
+2. Design Doc を AI Agent に参照させてから実装を依頼する
 
-# 4. Test aggregation endpoint
-curl -s "http://localhost:8080/finascope/api/v1/view/categories/aggregation"
-```
-
-**All Endpoints Status Check:**
-- ✅ `/healthcheck` - Health status
-- ✅ `/categories` - Category CRUD operations
-- ✅ `/payment_methods` - Payment method CRUD operations
-- ✅ `/records` - Finance record CRUD operations
-- ✅ `/view/categories/aggregation` - Data aggregation and reporting
-
-### Code Quality & Formatting
-
-**Rubocop (Ruby Code Formatter):**
-```bash
-cd api
-
-# Check current formatting issues
-rubocop
-
-# Auto-fix basic formatting issues
-rubocop --autocorrect
-
-# Auto-fix all safe corrections (including unsafe ones)
-rubocop -A
-
-# Check specific files
-rubocop app/api/v1/records.rb
-```
-
-**Rubocop Configuration:**
-- Integrated into the Ruby API codebase
-- Enforces consistent code style across all Ruby files
-- Fixes common issues: string quotes, frozen string literals, whitespace, etc.
-- Run before committing changes to maintain code quality
-
-**Common Rubocop Fixes Applied:**
-- Add `# frozen_string_literal: true` to all Ruby files
-- Normalize string quotes (double → single quotes)
-- Remove trailing whitespace
-- Add empty lines after magic comments
-- Fix basic syntax and style violations
-
-**Creating Format Fix Branches:**
-```bash
-# Create branch from main
-git checkout main
-git checkout -b style/rubocop-format-fixes
-
-# Apply auto-corrections
-cd api && rubocop -A
-
-# Commit changes
-git add -A
-git commit -m "style: apply Rubocop auto-corrections for basic formatting"
-
-# Test all endpoints after formatting
-curl -s http://localhost:8080/finascope/api/v1/healthcheck
-# Continue with full API testing...
-```
-
-**Note:** Always verify API functionality after applying Rubocop changes. In rare cases, a server restart may be needed to reload modified files properly.
-
-## Deployment Notes
-
-- Frontend builds static assets: `pnpm build`
-- Production deployment uses static adapter for SvelteKit
-- GCP deployment configured via `pnpm deploy` script
-- Environment variables managed through Docker compose files
+Design Doc を事前に作成することで、実装方針のズレや手戻りを防ぎ、AI Agent の出力品質が向上する。

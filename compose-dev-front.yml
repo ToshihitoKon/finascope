@@ -1,0 +1,30 @@
+services:
+  front-dev:
+    container_name: front
+    environment:
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS=front
+      - SVELTE_KIT_OUT_DIR=/tmp/.svelte-kit
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    command:
+      [
+        "sh",
+        "-c",
+        "yes | pnpm install --frozen-lockfile && pnpm dev --host 0.0.0.0 --debug",
+      ]
+    volumes:
+      - ./front:/app
+      - node_modules:/app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - finascope-net
+
+volumes:
+  node_modules:
+
+networks:
+  finascope-net:
+    external: true
+    name: finascope-net

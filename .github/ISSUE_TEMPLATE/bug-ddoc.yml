@@ -1,0 +1,83 @@
+name: バグ / 不具合修正
+description: バグ報告とその修正計画。修正方針が大きい場合は Claude Code で /make-ddoc を起動して Design Doc にする。
+title: "[fix] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        この issue はバグ報告および修正の TODO として使う。
+        修正範囲が小さければ直接実装、複数ファイル / 設計判断を伴うなら Claude Code に
+        「この issue をもとに `/make-ddoc` を起動して」と依頼して Design Doc 化する。
+
+  - type: textarea
+    id: symptom
+    attributes:
+      label: 症状（何が起きているか）
+      description: 観測している挙動を書く。可能ならスクリーンショットや再現環境も。
+      placeholder: |
+        例）ExpenseDetails で日付入力欄に "13" を入れると blur 時にエラー表示が出ず
+        無効な日付のまま保存できてしまう。
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する挙動
+      placeholder: |
+        - blur 時に赤枠とメッセージが表示される
+        - 保存ボタンが押せない
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: 再現手順
+      placeholder: |
+        1. /records ページを開く
+        2. 既存レコードの月フィールドに 13 を入力
+        3. 別のフィールドに focus を移す
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: 影響範囲
+      options:
+        - label: api
+        - label: front
+        - label: db
+        - label: infra
+    validations:
+      required: false
+
+  - type: textarea
+    id: suspected_files
+    attributes:
+      label: 怪しいファイル / 箇所（分かれば）
+      placeholder: |
+        - front/src/lib/components/NumberDateField.svelte の blur ハンドラ
+    validations:
+      required: false
+
+  - type: textarea
+    id: open_questions
+    attributes:
+      label: 未解決の懸念点
+      placeholder: |
+        - 既存データに無効値が混ざっている可能性があるか
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### 次のアクション
+
+        - 修正範囲が単純なら、そのまま実装。
+        - 設計判断や複数ファイルにまたがるなら Claude Code に「この issue の内容で `/make-ddoc` を起動して」と依頼。

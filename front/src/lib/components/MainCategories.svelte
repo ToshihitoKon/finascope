@@ -1,0 +1,55 @@
+<script lang="ts">
+</script>
+
+<!-- 主要カテゴリ -->
+<div>
+  <h2>主要カテゴリ</h2>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <span>カテゴリ</span>
+          </th>
+          <th>
+            <span>金額</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span>食費</span>
+          </td>
+          <td>
+            <span>¥0</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span>交通費</span>
+          </td>
+          <td>
+            <span>¥0</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span>日用品</span>
+          </td>
+          <td>
+            <span>¥0</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span>その他</span>
+          </td>
+          <td>
+            <span>¥0</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

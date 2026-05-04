@@ -36,8 +36,15 @@ const apiBase = async (url: string, method: string, payload: object) => {
   }
 };
 
-export const fetchRecords = async (query: string): Promise<apitype.RecordsResponse> => {
-  return apiBase(`v1/records?${query}`, 'GET', {});
+export const fetchRecords = async (
+  beginDate?: string,
+  endDate?: string
+): Promise<apitype.RecordsResponse> => {
+  const params = new URLSearchParams();
+  if (beginDate) params.set('begin_date', beginDate);
+  if (endDate) params.set('end_date', endDate);
+  const query = params.toString();
+  return apiBase(`v1/records${query ? `?${query}` : ''}`, 'GET', {});
 };
 
 export const createRecord = async (
@@ -138,5 +145,9 @@ export const fetchInvoiceRecordsWithdrawalAggregation = async (
     month: req.month.toString(),
     payment_method_id: req.payment_method_id
   });
-  return apiBase(`v1/invoice_records/withdrawal_records_aggregation?${params.toString()}`, 'GET', {});
+  return apiBase(
+    `v1/invoice_records/withdrawal_records_aggregation?${params.toString()}`,
+    'GET',
+    {}
+  );
 };

@@ -164,6 +164,21 @@ pnpm lint:style
 
 ESLint の注意事項や Svelte 5 関連の注意点は `.claude/rules/front-component-structure.md` に記載されている。
 
+## API テスト実行
+
+前提: `compose-dev-middleware.yml` の MySQL が起動済みであること（起動していなければスクリプトが自動起動する）。
+
+```bash
+./scripts/test/api-test.sh
+```
+
+内部では `compose-dev-test-api.yml` の `api-test` コンテナで `bundle exec rake test` を実行する。rake test は `test:prepare_db`（finascope_test DB の作成）と `test:rspec`（rspec 実行）を順に呼ぶ。
+
+コンテナ内で直接 rspec を実行したい場合:
+```bash
+docker compose -f compose-dev-test-api.yml exec api-test bundle exec rspec
+```
+
 ## データベース操作
 
 コンソールアクセス:

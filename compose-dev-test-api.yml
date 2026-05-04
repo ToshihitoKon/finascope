@@ -1,0 +1,30 @@
+services:
+  api-test:
+    container_name: api-test
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    command: ["sh", "-c", "bundle install && tail -f /dev/null"]
+    volumes:
+      - ./api:/app
+      - bundle_cache:/var/bundle_cache
+    environment:
+      - BUNDLE_PATH=/var/bundle_cache
+      - DB_HOST=finascope-mysql
+      - DB_PORT=3306
+      - DB_USER=finascope_app
+      - DB_PASSWORD=finascope_app_password
+      - DB_NAME=finascope_test
+      - RACK_ENV=test
+    networks:
+      - finascope-net
+
+volumes:
+  bundle_cache:
+    external: true
+    name: finascope_bundle_cache
+
+networks:
+  finascope-net:
+    external: true
+    name: finascope-net

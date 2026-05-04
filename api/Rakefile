@@ -6,6 +6,26 @@ GrapeSwagger::Rake::OapiTasks.new(API::Documentation)
 task :environment do
 end
 
+namespace :test do
+  desc "Create test database if not exists (idempotent)"
+  task :prepare_db do
+    require_relative "envs"
+    cmd = "mysql -h #{Envs::DB_HOST} -P #{Envs::DB_PORT} -u root -pexample" \
+          " -e \"CREATE DATABASE IF NOT EXISTS finascope_test;" \
+          " GRANT ALL PRIVILEGES ON finascope_test.* TO 'finascope_app'@'%';" \
+          " FLUSH PRIVILEGES;\""
+    sh cmd
+  end
+
+  desc "Run rspec"
+  task :rspec do
+    sh "bundle exec rspec"
+  end
+end
+
+desc "Prepare DB and run rspec (run inside api-test container)"
+task test: ["test:prepare_db", "test:rspec"]
+
 namespace :openapi do
   desc "Generate OpenAPI documentation for the API"
   task :generate do

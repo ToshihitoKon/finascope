@@ -1,10 +1,13 @@
-# .rubocop.yml
 AllCops:
   TargetRubyVersion: 3.4
   DisabledByDefault: true
   Exclude:
     - "gems/**/*"
-    # NewCops: disable
+  NewCops: enable
+  SuggestExtensions: false
+
+plugins:
+  - rubocop-rspec
 
 Bundler:
   Enabled: true

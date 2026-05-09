@@ -2,6 +2,7 @@
 
 require "constants"
 require "db/repositories"
+require "lib/category_formatter"
 require "lib/id"
 
 module Service
@@ -9,17 +10,13 @@ module Service
     def initialize(uid:)
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
+      @formatter = CategoryFormatter.new(uhash: @uhash)
     end
 
     def all
       DB::Repository::Category
         .all(hashed_user_id: @hashed_uid)
-        .map do |record|
-        {
-          **record,
-          label: @uhash.decrypt(record[:encrypted_label])
-        }
-      end
+        .map { @formatter.format(it) }
     end
 
     def create(params)

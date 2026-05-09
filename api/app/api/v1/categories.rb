@@ -22,7 +22,7 @@ module API
         end
 
         desc "Create a Category",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :label, type: String, desc: "(String) Category label"
         end
@@ -38,11 +38,11 @@ module API
             status 422
           end
           resp = { status:, id: category&.id }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
 
         desc "Update a Category",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :id, type: String, desc: "(String) Category ID"
           requires :label, type: String, desc: "(String) Category label"
@@ -64,7 +64,7 @@ module API
             status 422
           end
           resp = { status:, id: category&.id }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
       end
     end

@@ -2,9 +2,11 @@
 
 module API
   module Entities
-    class CommonResponse < Grape::Entity
-      expose :status
-      expose :id
+    module Common
+      class Response < Grape::Entity
+        expose :status
+        expose :id
+      end
     end
   end
 end

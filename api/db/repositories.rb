@@ -81,13 +81,13 @@ module DB
         record = model.where(id:).first
         return record if record.update(**params)
 
-        raise Exceptions::InternalServerError.exception("failed to record update #{id}")
+        raise Exceptions::InternalServerError, "failed to record update #{id}"
       end
 
       def self.delete(id:)
         return if model.soft_delete(where_clause: { id: }).positive?
 
-        raise Exceptions::InternalServerError.exception("failed to record delete #{id}")
+        raise Exceptions::InternalServerError, "failed to record delete #{id}"
       end
 
       def self.get_aggregated_by_category(
@@ -199,7 +199,7 @@ module DB
         record = model.where(id:).first
         return record if record.update(**params)
 
-        raise Exceptions::InternalServerError.exception("failed to record update #{id}")
+        raise Exceptions::InternalServerError, "failed to record update #{id}"
       end
     end
 
@@ -227,7 +227,7 @@ module DB
         record = model.where(id:).first
         return record if record.update(**params)
 
-        raise Exceptions::InternalServerError.exception("failed to record update #{id}")
+        raise Exceptions::InternalServerError, "failed to record update #{id}"
       end
     end
 
@@ -267,13 +267,13 @@ module DB
         record = model.where(id:).first
         return record if record.update(**params)
 
-        raise Exceptions::InternalServerError.exception("failed to record update #{id}")
+        raise Exceptions::InternalServerError, "failed to record update #{id}"
       end
 
       def self.delete(id:)
         return if model.soft_delete(where_clause: { id: }).positive?
 
-        raise Exceptions::InternalServerError.exception("failed to delete invoice record #{id}")
+        raise Exceptions::InternalServerError, "failed to delete invoice record #{id}"
       end
     end
   end

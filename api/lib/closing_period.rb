@@ -2,10 +2,33 @@
 
 require "date"
 
+# Computes the billing-cycle date range that a given withdrawal month covers,
+# based on the payment method's closing day and withdrawal day.
+#
+# Used to aggregate finance_records into a single invoice for credit-card-like
+# payment methods, where charges made between a `closing_day` and the next
+# `closing_day` are billed together and withdrawn on `withdrawal_day`.
+#
+# closing_day_of_month conventions:
+#   0  -> no closing day; treat the previous calendar month as the cycle
+#   -1 -> end-of-month closing
+#   1..31 -> the day of month at which the cycle closes
 module ClosingPeriod
   NO_CLOSING_DAY = 0
   END_OF_MONTH = -1
 
+  # Returns [begin_date, end_date] (both inclusive) of the cycle whose
+  # withdrawal falls in the given (year, month).
+  #
+  # When the closing day precedes the withdrawal day in the same month, the
+  # cycle ending in `month` is finalized and withdrawn that same month
+  # (e.g. closing 15, withdrawal 27 -> cycle is prev-month-16 .. this-month-15).
+  # Otherwise the cycle ending in `month` is not yet finalized, so the
+  # withdrawal in `month` settles the previous cycle
+  # (e.g. closing 27, withdrawal 10 -> cycle is two-months-ago-28 .. prev-month-27).
+  #
+  # Falls back to the target month's full range when an invalid date is built
+  # (e.g. closing_day 31 against a month that has fewer days).
   def self.calculate(year:, month:, closing_day_of_month:, withdrawal_day_of_month:)
     year = year.to_i
     month = month.to_i
@@ -23,14 +46,11 @@ module ClosingPeriod
     return [prev_prev_month.beginning_of_month, prev_month.end_of_month] if closing_day_of_month == END_OF_MONTH
 
     if closing_day_of_month < withdrawal_day_of_month
-      # Closing precedes withdrawal within the same month, so the cycle ending in `month` is finalized.
-      # Range: (closing_day + 1) of the previous month .. closing_day of `month`.
+      # Cycle finalized in `month`: (closing_day + 1) prev-month .. closing_day this-month.
       begin_date = Date.new(year, month - 1, closing_day_of_month + 1)
       end_date = Date.new(year, month, closing_day_of_month)
     else
-      # Closing falls on or after withdrawal, so the cycle ending in `month` is not yet finalized;
-      # withdraw against the previous cycle.
-      # Range: (closing_day + 1) of two months ago .. closing_day of the previous month.
+      # Cycle finalized in prev month: (closing_day + 1) two-months-ago .. closing_day prev-month.
       begin_date = Date.new(year, month - 2, closing_day_of_month + 1)
       end_date = Date.new(year, month - 1, closing_day_of_month)
     end

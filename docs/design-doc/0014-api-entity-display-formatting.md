@@ -304,3 +304,53 @@ issue 本文が示唆していた、Entity の expose ブロック内で UserHas
 
 - `InvoiceRecordFormatter#format` のシグネチャは実装時に詰める。`monthly_records` 用と `withdrawal_records_aggregation` 用で別メソッド名にするか、ひとつにまとめるかは Formatter 内の見通しを見て判断する
 - `categories` / `payment_methods` の API spec が一部しか存在しないので、テスト追加範囲は実装時に「現状で互換性が担保できる最小範囲」を選ぶ
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-05-09
+
+### 変更ファイル
+
+- `api/lib/field_formatter.rb` — 新設（カラム単位の復号 / Constants ラベル参照を集約）
+- `api/lib/finance_record_formatter.rb` — `record_formatter.rb` からリネーム + `FieldFormatter` 経由に書き換え
+- `api/lib/category_formatter.rb` — 新設
+- `api/lib/payment_method_formatter.rb` — 新設
+- `api/lib/invoice_record_formatter.rb` — 新設（`monthly_records` 平坦化用 `format_monthly` メソッド）
+- `api/services/categories.rb` — `CategoryFormatter` 経由に変更
+- `api/services/payment_methods.rb` — `PaymentMethodFormatter` 経由に変更
+- `api/services/invoice_records.rb` — `monthly_records` を平坦ハッシュ返しに変更、`InvoiceRecordFormatter` 利用、`require` 整理
+- `api/services/records.rb` / `api/services/view.rb` — `FinanceRecordFormatter` への参照更新
+- `api/app/api/v1/invoice_records.rb` — 33-45 の平坦化ロジックを削除し、Service 戻り値を直接 `present`
+- `api/spec/lib/{field,finance_record,category,payment_method,invoice_record}_formatter_spec.rb` — 各 Formatter の spec
+- `api/spec/lib/record_formatter_spec.rb` → `finance_record_formatter_spec.rb` にリネーム
+
+### 実装内容
+
+ddoc の方針通りに 6 ステップで進めた:
+
+1. **Service 間結合の再検証**: `grep -rn "Service::" api/services/` で参照ゼロを確認。#50 で完全に解消済みだったため追加対応なし
+2. **`FieldFormatter` 新設** (commit `58898fe`)
+3. **`RecordFormatter` → `FinanceRecordFormatter` リネーム + `FieldFormatter` 経由化** (commit `bd5ef52`)
+4. **`CategoryFormatter` 新設、`Service::Categories#all` 切替** (commit `a63399b`)
+5. **`PaymentMethodFormatter` 新設、`Service::PaymentMethods#all` 切替** (commit `79f7af7`)
+6. **`InvoiceRecordFormatter` 新設、`monthly_records` 平坦化を Service へ移動、API 層 33-45 削除** (commit `cc46f0d`)
+
+その後、PR #64 のレビューフィードバック (commit `171cf36`) で `FieldFormatter` の API を以下に整理:
+
+- `module` から `class` に変更し、`uhash` をインスタンス変数で保持（再利用可能化）
+- `label` / `text` の 2 メソッドを `value(encrypted, default: nil)` に統合（差は nil 時のフォールバックだけだったため、呼び出し側で `default: TODO_LABEL` / `default: ""` を都度指定する形に）
+- `constant_label` の引数を「Constants の lookup 結果」から「Constants のメソッド参照 + id」に変更し、呼び出し側を短縮（`@field.constant_label(Constants.method(:record_type), record[:record_type_id])`）
+
+### 確認・検証
+
+- `./scripts/test/api-test.sh` で全テストパス（32 examples, 0 failures）
+- 既存の `categories_spec.rb` / `records_spec.rb` でレスポンス互換性を確認
+- API レスポンスの形は変更なし（フロントエンド側の対応不要）
+
+### 気づき・備考
+
+- `InvoiceRecordFormatter` は `format_monthly` のみ実装。`withdrawal_records_aggregation` の整形は既存の `FinanceRecordFormatter` で十分賄えており、追加メソッドは不要だった。ddoc の「未解決事項」で予想したとおりの結果
+- `FieldFormatter` を class 化したことで、各 Formatter が `@field = FieldFormatter.new(uhash:)` を保持する二段構成になった。コンストラクタ引数が同じため違和感はないが、Formatter が増えたときに「FieldFormatter を継承させてもよいのでは」という議論は将来生じる可能性がある（今回はその必要を感じなかったため見送り）
+- レビューで指摘された「`label` と `text` の差は default だけ」という観察は鋭く、最初から `value` 1 本にしておくのが筋だった。今後、似たヘルパーを増やすときは「差分が引数で吸収できないか」をまず検討する

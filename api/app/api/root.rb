@@ -50,7 +50,7 @@ module API
     add_swagger_documentation \
       models: [
         API::Entities::Categories::Category,
-        API::Entities::CommonResponse,
+        API::Entities::Common::Response,
         API::Entities::InvoiceRecords::InvoiceRecord,
         API::Entities::InvoiceRecords::WithdrawalRecordsAggregation,
         API::Entities::PaymentMethods::PaymentMethod,

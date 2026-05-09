@@ -24,7 +24,7 @@ module API
         end
 
         desc "Create a Payment Method",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :label, type: String, desc: "(String) PaymentMethod label"
           requires :withdrawal_day_of_month, type: Integer, desc: "(Integer) Withdrawal day of month"
@@ -46,11 +46,11 @@ module API
             status 422
           end
           resp = { status:, id: payment_method&.id }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
 
         desc "Update a Payment Method",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :id, type: String, desc: "(String) PaymentMethod ID"
           requires :label, type: String, desc: "(String) PaymentMethod label"
@@ -76,7 +76,7 @@ module API
             status 422
           end
           resp = { status:, id: payment_method&.id }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
       end
     end

@@ -65,6 +65,31 @@ Finascope は個人財務管理アプリケーションで、マイクロサー�
 - サービス: ビジネスロジック層（`api/services/`）
 - リポジトリ: データアクセス層（`api/db/repositories.rb`）
 
+### Entity 層の命名規則
+
+`api/app/api/v1/entities/` 配下に Entity を追加する際は以下に従う:
+
+- ファイル名はリソース名の複数形（snake_case）にする（例: `categories.rb`, `invoice_records.rb`）
+- 外側コンテナは `module ResourceNamePlural`（リソース名の複数形、PascalCase）で定義する
+- 内側で `class EntityName < Grape::Entity` を定義する
+- 共通レスポンスなどリソースに紐づかない Entity も `module Common` のようにラップし、フラット配置にしない
+
+例:
+```ruby
+module API
+  module Entities
+    module Categories
+      class Category < Grape::Entity
+        expose :id
+        expose :label
+      end
+    end
+  end
+end
+```
+
+新規 Entity を追加した場合は、Swagger 登録（`api/app/api/root.rb` の `add_swagger_documentation` の `models:` 配列）への追加も忘れない。
+
 ### フロントエンドアーキテクチャ
 - フレームワーク: SvelteKit 5 + TypeScript
 - 認証: Firebase Auth + JWT トークン管理

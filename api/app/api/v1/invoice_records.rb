@@ -34,7 +34,7 @@ module API
         end
 
         desc "Create an Invoice Record",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :amount, type: Integer, desc: "(Integer) Invoice record amount"
           requires :state_id, type: Integer, desc: "(Integer) Invoice record state ID"
@@ -60,11 +60,11 @@ module API
             status 422
           end
           resp = { status:, id: record&.id }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
 
         desc "Update an Invoice Record",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :id, type: Integer, desc: "(Integer) Invoice record ID"
           requires :amount, type: Integer, desc: "(Integer) Invoice record amount"
@@ -91,11 +91,11 @@ module API
             status 422
           end
           resp = { status:, id: record&.id }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
 
         desc "Delete an Invoice Record",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :id, type: String, desc: "(String) Invoice record ID"
         end
@@ -107,7 +107,7 @@ module API
 
           status = "success"
           resp = { status:, id: params[:id] }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
 
         desc "Get Withdrawal Records Aggregation",

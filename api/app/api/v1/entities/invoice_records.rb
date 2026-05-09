@@ -4,7 +4,7 @@ require_relative "records"
 
 module API
   module Entities
-    class InvoiceRecords
+    module InvoiceRecords
       class InvoiceRecord < Grape::Entity
         expose :id, documentation: { type: String, desc: "InvoiceRecord ID" }
         expose :amount, documentation: { type: Integer, desc: "InvoiceRecord amount" }

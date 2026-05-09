@@ -36,7 +36,7 @@ module API
         end
 
         desc "Create a Record",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :title, type: String, desc: "(String) Record title"
           requires :type_id, type: Integer, desc: "(Integer) Record type ID"
@@ -69,11 +69,11 @@ module API
           end
 
           resp = { status:, id: record&.id }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
 
         desc "Update a Record",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :id, type: String, desc: "(String) Record ID"
           requires :title, type: String, desc: "(String) Record title"
@@ -109,11 +109,11 @@ module API
             status 422
           end
           resp = { status:, id: record&.id }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
 
         desc "Delete a Record",
-             entity: API::Entities::CommonResponse
+             entity: API::Entities::Common::Response
         params do
           requires :id, type: String, desc: "(String) Record ID"
         end
@@ -126,7 +126,7 @@ module API
 
           status = "success"
           resp = { status:, id: params[:id] }
-          present resp, with: API::Entities::CommonResponse
+          present resp, with: API::Entities::Common::Response
         end
       end
     end

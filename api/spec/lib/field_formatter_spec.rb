@@ -10,34 +10,34 @@ RSpec.describe FieldFormatter do
       allow(double).to receive(:decrypt) { |value| "decrypted:#{value}" }
     end
   end
+  let(:formatter) { described_class.new(uhash:) }
 
-  describe ".label" do
+  describe "#value" do
     it "returns the decrypted value when encrypted is present" do
-      expect(described_class.label("enc_value", uhash)).to eq("decrypted:enc_value")
+      expect(formatter.value("enc_value")).to eq("decrypted:enc_value")
     end
 
-    it "returns TODO_LABEL when encrypted is nil" do
-      expect(described_class.label(nil, uhash)).to eq(FieldFormatter::TODO_LABEL)
+    it "returns nil by default when encrypted is nil" do
+      expect(formatter.value(nil)).to be_nil
+    end
+
+    it "returns the supplied default when encrypted is nil" do
+      expect(formatter.value(nil, default: FieldFormatter::TODO_LABEL)).to eq("TODO")
+      expect(formatter.value(nil, default: "")).to eq("")
     end
   end
 
-  describe ".text" do
-    it "returns the decrypted value when encrypted is present" do
-      expect(described_class.text("enc_text", uhash)).to eq("decrypted:enc_text")
+  describe "#constant_label" do
+    let(:lookup) do
+      ->(id) { id == 1 ? { id: 1, label: "income" } : nil }
     end
 
-    it "returns nil when encrypted is nil" do
-      expect(described_class.text(nil, uhash)).to be_nil
-    end
-  end
-
-  describe ".constant_label" do
-    it "returns the :label field of the lookup result" do
-      expect(described_class.constant_label({ id: 1, label: "income" })).to eq("income")
+    it "returns the :label of the looked-up entry" do
+      expect(formatter.constant_label(lookup, 1)).to eq("income")
     end
 
-    it "returns nil when the lookup result is nil" do
-      expect(described_class.constant_label(nil)).to be_nil
+    it "returns nil when the lookup returns nil" do
+      expect(formatter.constant_label(lookup, 999)).to be_nil
     end
   end
 end

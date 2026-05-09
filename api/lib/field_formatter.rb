@@ -1,30 +1,26 @@
 # frozen_string_literal: true
 
 # FieldFormatter centralizes column-level conversions used by Service-layer formatters:
-# decrypting encrypted_* columns, applying TODO fallbacks, and dereferencing constant labels.
-module FieldFormatter
+# decrypting encrypted_* columns with caller-specified defaults, and dereferencing
+# constant labels by id.
+class FieldFormatter
   TODO_LABEL = "TODO"
 
-  module_function
-
-  # Decrypt label-like encrypted columns (encrypted_label / encrypted_category etc).
-  # Returns TODO_LABEL when encrypted is nil so absent associations show as TODO.
-  def label(encrypted, uhash)
-    return TODO_LABEL if encrypted.nil?
-
-    uhash.decrypt(encrypted)
+  def initialize(uhash:)
+    @uhash = uhash
   end
 
-  # Decrypt free-text encrypted columns (encrypted_title / encrypted_description etc).
-  # Returns nil when encrypted is nil; callers decide the empty representation.
-  def text(encrypted, uhash)
-    return nil if encrypted.nil?
+  # Decrypt an encrypted_* column. Returns +default+ when the input is nil so callers
+  # can pick the per-field empty representation (TODO_LABEL, "", nil, etc).
+  def value(encrypted, default: nil)
+    return default if encrypted.nil?
 
-    uhash.decrypt(encrypted)
+    @uhash.decrypt(encrypted)
   end
 
-  # Extract the :label field from a Constants lookup result safely.
-  def constant_label(constants_lookup_result)
-    constants_lookup_result&.dig(:label)
+  # Look up a Constants entry by id and return its :label.
+  # +constants_method+ is a Method object (e.g., Constants.method(:record_type)).
+  def constant_label(constants_method, id)
+    constants_method.call(id)&.dig(:label)
   end
 end

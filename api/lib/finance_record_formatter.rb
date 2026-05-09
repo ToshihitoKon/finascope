@@ -5,18 +5,18 @@ require "lib/field_formatter"
 
 class FinanceRecordFormatter
   def initialize(uhash:)
-    @uhash = uhash
+    @field = FieldFormatter.new(uhash:)
   end
 
   def format(record)
     {
       **record,
-      title: FieldFormatter.text(record[:encrypted_title], @uhash) || "",
-      description: FieldFormatter.text(record[:encrypted_description], @uhash) || "",
-      record_type: FieldFormatter.constant_label(Constants.record_type(record[:record_type_id])),
-      state: FieldFormatter.constant_label(Constants.record_state(record[:state_id])),
-      category: FieldFormatter.label(record[:encrypted_category], @uhash),
-      payment_method: FieldFormatter.label(record[:encrypted_payment_method], @uhash)
+      title: @field.value(record[:encrypted_title], default: ""),
+      description: @field.value(record[:encrypted_description], default: ""),
+      record_type: @field.constant_label(Constants.method(:record_type), record[:record_type_id]),
+      state: @field.constant_label(Constants.method(:record_state), record[:state_id]),
+      category: @field.value(record[:encrypted_category], default: FieldFormatter::TODO_LABEL),
+      payment_method: @field.value(record[:encrypted_payment_method], default: FieldFormatter::TODO_LABEL)
     }
   end
 end

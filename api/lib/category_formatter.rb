@@ -4,13 +4,13 @@ require "lib/field_formatter"
 
 class CategoryFormatter
   def initialize(uhash:)
-    @uhash = uhash
+    @field = FieldFormatter.new(uhash:)
   end
 
   def format(record)
     {
       **record,
-      label: FieldFormatter.label(record[:encrypted_label], @uhash)
+      label: @field.value(record[:encrypted_label], default: FieldFormatter::TODO_LABEL)
     }
   end
 end

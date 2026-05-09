@@ -155,3 +155,48 @@ end
 
 - Entity 層への整形ロジック移譲（別 issue）の進捗次第では `RecordFormatter` をさらに薄くする方向もありうるが、それは当該 issue で扱う
 - ドメインクラス・モジュールが増えた段階で `api/domain/` ディレクトリへの移行を検討する
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-05-09
+
+### 変更ファイル
+
+- `api/lib/closing_period.rb` — 新規作成。`ClosingPeriod.calculate(year:, month:, closing_day_of_month:, withdrawal_day_of_month:)` モジュールメソッドとして実装。`NO_CLOSING_DAY = 0` / `END_OF_MONTH = -1` 定数で分岐意図を表現
+- `api/lib/record_formatter.rb` — 新規作成。`UserHash` を `initialize` で受け取り `format(record)` で整形する `RecordFormatter` クラス
+- `api/db/repositories.rb` — `DB::Repository::FinanceRecord.calculate_closing_period` を削除
+- `api/services/records.rb` — `Service::FinanceRecords#format_record` を削除し、`@formatter` 経由で整形するよう変更（ddoc に書いていた `api/services/finance_records.rb` は誤りで、実体ファイル名は `records.rb`）
+- `api/services/view.rb` — `@finance_records_service = Service::FinanceRecords.new(uid:)` を廃止し `@formatter = RecordFormatter.new(uhash: @uhash)` に置換。`require_relative "records"` も削除
+- `api/services/invoice_records.rb` — `@uid` 保持と `Service::FinanceRecords.new(uid: @uid)` 呼び出しを廃止。`ClosingPeriod.calculate(...)` を直接呼び、`@formatter` を保持してレコード整形
+- `api/spec/lib/closing_period_spec.rb` — 新規作成。締め日 0 / -1 / closing < withdrawal / closing >= withdrawal / `Date::Error` フォールバックの 5 ケース
+- `api/spec/lib/record_formatter_spec.rb` — 新規作成。`UserHash` を `instance_double` でスタブし、フル populated レコードと `encrypted_*` が nil の TODO 扱いの 2 ケース
+
+### 実装内容
+
+ddoc の設計ステップ 1〜5 をそのまま実施。`ClosingPeriod` の抽出 → `RecordFormatter` の抽出 → `Service::FinanceRecords` 内部利用の置換 → `Service::View` の DI 化 → `Service::InvoiceRecords` の DI 化と非対称構造解消、の順に進めた。
+
+設計通り進んだ点:
+
+- `ClosingPeriod` は状態を持たない純粋関数なのでクラスでなくモジュールメソッドとした
+- `RecordFormatter` は `UserHash` を `initialize` で受け取る形にし、各 Service が自前で生成して保持する設計に統一
+- `api/lib/` 配下にフラットに配置（`api/domain/` は作らず）
+- API のレスポンス内容は変更していないため、既存 E2E spec が無修正で通ることを確認
+
+設計と異なった点:
+
+- ddoc では `api/services/finance_records.rb` と書いていたが、実体ファイル名は `api/services/records.rb`（クラス名とファイル名がずれている既存状態）。今回は実体に合わせて修正し、ファイル名のリネームは別変更とする
+
+### 確認・検証
+
+- `./scripts/test/api-test.sh`: **21 examples, 0 failures**（既存 E2E + 新規ユニット 7 ケース）
+- 変更ファイル 8 個に対する `bundle exec rubocop`: offense なし
+- API レスポンス形の互換性は既存 E2E spec の通過で確認
+
+### 気づき・備考
+
+- `Service::FinanceRecords` のファイル名（`records.rb`）とクラス名（`FinanceRecords`）の不一致は今回の責務再整理とは別軸のため触らなかった。リネームは別 PR で扱うのが自然
+- `RecordFormatter` を切り出したことで、`Service::FinanceRecords` への依存が `format_record` 借用目的では消滅した。一方で `Service::InvoiceRecords` には `calc_withdrawal_date` 等の private メソッドが残っており、こちらも純粋計算なのでドメインモジュール候補（今後 `api/lib/` のドメインクラスが増えた段階で `api/domain/` 新設と合わせて検討）
+- 実装中、コード内のマルチバイト文字を新規に書かない方針を CLAUDE.md に追記する判断があり、別コミットで反映。spec ファイルでは `Constants.record_type(...)[:label]` 経由でラベルを参照することで spec ファイル本体に日本語リテラルを書かない形に統一した
+- 今回新規追加した spec は `api/spec/lib/` 配下に置いた。既存の `exceptions_spec.rb` と同階層で違和感なく収まっている

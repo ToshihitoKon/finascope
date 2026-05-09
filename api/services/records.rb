@@ -3,44 +3,20 @@
 require "constants"
 require "db/repositories"
 require "lib/id"
+require "lib/record_formatter"
 
 module Service
   class FinanceRecords
     def initialize(uid:)
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
+      @formatter = RecordFormatter.new(uhash: @uhash)
     end
 
     def get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
       opts = { hashed_user_id: @hashed_uid, sort:, page:, begin_date:, end_date: }.compact
       records = DB::Repository::FinanceRecord.get_page(**opts)
-      records.map { |record| format_record(record) }
-    end
-
-    # 他のサービスからも利用可能な公開メソッド
-    def format_record(record)
-      # NOTE: encrypted_* が nil の場合は、eager_load で取得できなかった場合なので TODO として扱う
-      payment_method = if record[:encrypted_payment_method].nil?
-                         "TODO"
-                       else
-                         @uhash.decrypt(record[:encrypted_payment_method])
-                       end
-
-      category = if record[:encrypted_category].nil?
-                   "TODO"
-                 else
-                   @uhash.decrypt(record[:encrypted_category])
-                 end
-
-      {
-        **record,
-        title: record[:encrypted_title] ? @uhash.decrypt(record[:encrypted_title]) : "",
-        description: record[:encrypted_description] ? @uhash.decrypt(record[:encrypted_description]) : "",
-        record_type: Constants.record_type(record[:record_type_id])[:label],
-        state: Constants.record_state(record[:state_id])[:label],
-        category:,
-        payment_method:
-      }
+      records.map { |record| @formatter.format(record) }
     end
 
     def create(params)

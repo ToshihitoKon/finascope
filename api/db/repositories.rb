@@ -11,49 +11,6 @@ module DB
       end
       private_class_method :model
 
-      # Invoice Records用の締め期間計算
-      # payment_methodの締め日と引き落とし日を考慮して集計期間を算出
-      # TODO: thinking calculate_closing_period は本当に Repository の責務か？
-      def self.calculate_closing_period(year, month, closing_day_of_month, withdrawal_day_of_month)
-        # パラメータの型変換
-        year = year.to_i
-        month = month.to_i
-        closing_day_of_month = closing_day_of_month.to_i if closing_day_of_month
-        withdrawal_day_of_month = withdrawal_day_of_month.to_i if withdrawal_day_of_month
-
-        target_date = Date.new(year, month, 1)
-        prev_prev_month = target_date.prev_month.prev_month
-        prev_month = target_date.prev_month
-
-        # 締め日なし（0）の場合は通常の月計算
-        return [prev_month.beginning_of_month, prev_month.end_of_month] if closing_day_of_month.zero?
-
-        # 月末締め（-1）の場合 → 月末締め翌月払い
-        if closing_day_of_month == -1
-          # 前々月1日〜前月末日
-          return [prev_prev_month.beginning_of_month, prev_month.end_of_month]
-        end
-
-        # 通常の締め日（1-31）の場合
-        if closing_day_of_month < withdrawal_day_of_month
-          # 締め日が引き落とし日以前の場合(当月確定)
-          # 前月(closing_day+1)〜当月closing_day
-          begin_date = Date.new(year, month - 1, closing_day_of_month + 1)
-          end_date = Date.new(year, month, closing_day_of_month)
-        else
-          # 締め日が引き落とし日以降の場合(当月未確定)
-          # 前々月(closing_day+1)〜前月closing_day
-          begin_date = Date.new(year, month - 2, closing_day_of_month + 1)
-          end_date = Date.new(year, month - 1, closing_day_of_month)
-        end
-
-        [begin_date, end_date]
-      rescue Date::Error
-        # 日付エラーの場合は月末日で調整
-        target_date = Date.new(year, month, 1)
-        [target_date.beginning_of_month, target_date.end_of_month]
-      end
-
       def self.get_page(
         hashed_user_id:,
         begin_date: Date.today.beginning_of_month,

@@ -2,14 +2,14 @@
 
 require "constants"
 require "db/repositories"
-require "lib/record_formatter"
+require "lib/finance_record_formatter"
 
 module Service
   class View
     def initialize(uid:)
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
-      @formatter = RecordFormatter.new(uhash: @uhash)
+      @formatter = FinanceRecordFormatter.new(uhash: @uhash)
     end
 
     def category_aggregation(begin_date: nil, end_date: nil)

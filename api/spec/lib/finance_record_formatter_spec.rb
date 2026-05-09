@@ -2,10 +2,10 @@
 
 require "spec_helper"
 require "constants"
-require "lib/record_formatter"
+require "lib/finance_record_formatter"
 require "lib/user_hash"
 
-RSpec.describe RecordFormatter do
+RSpec.describe FinanceRecordFormatter do
   let(:uhash) do
     instance_double(UserHash).tap do |double|
       allow(double).to receive(:decrypt) { |value| "decrypted:#{value}" }

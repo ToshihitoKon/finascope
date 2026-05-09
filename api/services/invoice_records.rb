@@ -4,14 +4,14 @@ require "constants"
 require "db/repositories"
 require "lib/closing_period"
 require "lib/id"
-require "lib/record_formatter"
+require "lib/finance_record_formatter"
 
 module Service
   class InvoiceRecords
     def initialize(uid:)
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
-      @formatter = RecordFormatter.new(uhash: @uhash)
+      @formatter = FinanceRecordFormatter.new(uhash: @uhash)
     end
 
     def create(params)

@@ -2,15 +2,16 @@
 
 require "constants"
 require "db/repositories"
+require "lib/closing_period"
 require "lib/id"
-require_relative "records"
+require "lib/record_formatter"
 
 module Service
   class InvoiceRecords
     def initialize(uid:)
-      @uid = uid
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
+      @formatter = RecordFormatter.new(uhash: @uhash)
     end
 
     def create(params)
@@ -78,21 +79,18 @@ module Service
       end
     end
 
-    # 指定支払い方法の締め期間内すべてのレコード集計
     def withdrawal_records_aggregation(year:, month:, payment_method_id:)
-      # 支払い方法の情報を取得
       payment_method = DB::Repository::PaymentMethod.get(id: payment_method_id)
 
       raise Exceptions::InvalidArgument, "payment method not found" unless payment_method
 
-      # 締め期間を計算
-      begin_date, end_date = DB::Repository::FinanceRecord.calculate_closing_period(
-        year, month,
-        payment_method[:closing_day_of_month],
-        payment_method[:withdrawal_day_of_month]
+      begin_date, end_date = ClosingPeriod.calculate(
+        year:,
+        month:,
+        closing_day_of_month: payment_method[:closing_day_of_month],
+        withdrawal_day_of_month: payment_method[:withdrawal_day_of_month]
       )
 
-      # 指定期間・支払い方法のすべてのレコードを取得
       records = DB::Repository::FinanceRecord.get_withdrawal_records_for_invoice(
         hashed_user_id: @hashed_uid,
         year:,
@@ -102,16 +100,10 @@ module Service
         end_date:
       )
 
-      # 支払い方法名を取得
       payment_method_name = @uhash.decrypt(payment_method[:encrypted_label])
 
-      # レコード詳細を整形（共通のformat_recordメソッドを使用）
-      finance_records_service = Service::FinanceRecords.new(uid: @uid)
-      formatted_records = records.map do |record|
-        finance_records_service.format_record(record)
-      end
+      formatted_records = records.map { @formatter.format(it) }
 
-      # 合計金額を計算
       total_amount = records.sum { |record| record[:amount] || 0 }
 
       {

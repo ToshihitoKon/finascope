@@ -16,7 +16,7 @@ module Service
     def get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
       opts = { hashed_user_id: @hashed_uid, sort:, page:, begin_date:, end_date: }.compact
       records = DB::Repository::FinanceRecord.get_page(**opts)
-      records.map { |record| @formatter.format(record) }
+      records.map { @formatter.format(it) }
     end
 
     def create(params)

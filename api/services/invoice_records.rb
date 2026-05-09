@@ -102,7 +102,7 @@ module Service
 
       payment_method_name = @uhash.decrypt(payment_method[:encrypted_label])
 
-      formatted_records = records.map { |record| @formatter.format(record) }
+      formatted_records = records.map { @formatter.format(it) }
 
       total_amount = records.sum { |record| record[:amount] || 0 }
 

@@ -33,7 +33,7 @@ module Service
           end_date: opts[:end_date]
         )
 
-        records = detail_records.map { |record| @formatter.format(record) }
+        records = detail_records.map { @formatter.format(it) }
 
         {
           category_id: actual_category_id,

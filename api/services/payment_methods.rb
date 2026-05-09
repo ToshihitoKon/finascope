@@ -2,25 +2,22 @@
 
 require "constants"
 require "db/repositories"
-require "lib/id"
 require "lib/exceptions"
+require "lib/id"
+require "lib/payment_method_formatter"
 
 module Service
   class PaymentMethods
     def initialize(uid:)
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
+      @formatter = PaymentMethodFormatter.new(uhash: @uhash)
     end
 
     def all
       DB::Repository::PaymentMethod
         .all(hashed_user_id: @hashed_uid)
-        .map do |record|
-        {
-          **record,
-          label: @uhash.decrypt(record[:encrypted_label])
-        }
-      end
+        .map { @formatter.format(it) }
     end
 
     def create(params)

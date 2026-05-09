@@ -205,7 +205,7 @@ module DB
                        .where(
                          deleted_at: nil,
                          hashed_user_id:,
-                         withdrawal_date: Date.new(year, month)...Date.new(year, month).end_of_month
+                         withdrawal_date: Date.new(year, month)..Date.new(year, month).end_of_month
                        )
         records.map do |record|
           model.to_dto(record).to_h.merge(

@@ -225,3 +225,26 @@ bundle exec ruby scripts/finascope-console.rb
 2. Design Doc を AI Agent に参照させてから実装を依頼する
 
 Design Doc を事前に作成することで、実装方針のズレや手戻りを防ぎ、AI Agent の出力品質が向上する。
+
+## Pull Request と issue の紐付け
+
+issue に紐づく PR を作成するときは、PR description に必ず `Closes: #<issue_number>` を 1 行で記載する。複数 issue を解決する場合は複数行記載する。
+
+```
+Closes: #41
+Closes: #43
+```
+
+これにより PR がマージされたタイミングで GitHub が自動的に該当 issue を close する。スキルを呼び出さずとも常にこのルールを守ること。
+
+## issue 依存グラフのメンテナンス
+
+issue 間の依存関係（`Depends-on:` / `Blocked-by:`）と GitHub ラベル（`pending: blocked by related issue` / `ready-to-start`）の整合性を保つため、**issue を close したとき / PR がマージされて issue が自動 close されたとき** に `/update-issue-dependencies` スキルを必ず実行する。
+
+スキルは以下を行う:
+
+- close された issue を `Blocked-by:` に持つ open issue を列挙する
+- 各候補について、本文の `## 依存関係` セクションに記載されたすべての前提 issue が closed であるかを確認する
+- 全前提が closed であれば、`pending: blocked by related issue` を外し `ready-to-start` を付与し、本文の `Blocked-by:` 行を `Depends-on: #X (closed: YYYY-MM-DD)` 形式に書き換える
+
+これにより、着手可能な issue を `gh issue list --label "ready-to-start"` で常に把握できる状態を保つ。

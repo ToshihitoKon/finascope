@@ -160,3 +160,37 @@ class InvalidArgument < Base; end
 ## 未解決事項
 
 - なし。後続 issue #49 で HTTP ステータス mapping を扱う際、本 doc で導入したクラス階層を前提に rescue_from を整備する。
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-05-09
+
+### 変更ファイル
+
+- `api/lib/exceptions.rb` — 4 クラス（InternalServerError / InvalidArgument / NotFound / Unauthorized）を `class X < StandardError; end` の独立クラス定義に置換
+- `api/lib/firebase.rb` — `JWT::DecodeError` 捕捉時の再 raise を `Exceptions::Unauthorized` に変更（意味的修正）。`.exception("msg")` 記法も `, "msg"` に置換
+- `api/db/repositories.rb` — 6 箇所の `raise Exceptions::InternalServerError.exception("...")` を `raise Exceptions::InternalServerError, "..."` に置換
+- `api/services/categories.rb` — 1 箇所の記法置換
+- `api/services/invoice_records.rb` — 3 箇所の記法置換
+- `api/services/payment_methods.rb` — 1 箇所の記法置換（引数なし `raise Exceptions::InvalidArgument` 形は変更不要）
+- `api/services/records.rb` — 1 箇所の記法置換
+- `api/spec/lib/exceptions_spec.rb` — 新規。階層継承と raise 挙動（メッセージ付き / 引数なし / 型分岐）を 8 example で確認
+
+### 実装内容
+
+ddoc の設計通り、フラットなクラス階層（`Base` 中間なし）で実装した。利用側 6 ファイルの `raise X.exception("msg")` 記法を `raise X, "msg"` に統一し、Ruby 標準の raise シンタックスに揃えた。
+
+**ddoc から変更した点:** `app/api/root.rb` への `rescue Exceptions::Unauthorized` 追加を取りやめた。RuboCop の `Lint/DuplicateBranch` 指摘により、`Exceptions::Unauthorized` と `StandardError` の両 rescue が同一処理となるため重複指摘を受けた。`Exceptions::Unauthorized < StandardError` の継承関係により既存 `rescue StandardError => e` で問題なく捕捉される（型別ハンドリングは #49 のスコープで扱うのが適切）と判断し、`firebase.rb` 側の例外型修正のみ残した。
+
+### 確認・検証
+
+- `./scripts/test/api-test.sh` で全 RSpec を実行。新規 8 + 既存 6 = 14 examples 全 pass
+- 変更ファイルに対する RuboCop も実施。残った指摘 1 件（`app/api/root.rb:7` の `Style/RedundantCurrentDirectoryInPath`）は今回の変更と無関係な既存問題
+
+### 気づき・備考
+
+- `rescue Exceptions::Unauthorized, StandardError => e` の併記も RuboCop の重複検知に引っかかるため、Grape の rescue_from を使った真の型別 HTTP ステータス mapping は #49 で本格的に整備する必要がある
+- 既存の `payment_methods.rb:34` の引数なし `raise Exceptions::InvalidArgument` はクラス化後も問題なく動作（Ruby 標準の `raise Class` は `Class.new` と等価）
+- `Firebase.decode_jwt` の `JWT::DecodeError` ハンドリングが本来 401 だった点は ddoc 設計時に発見し、本 PR でついでに修正した。後続 #49 で HTTP ステータス mapping を実装する際にこの修正の意味が活きる

@@ -171,3 +171,42 @@ end
 
 - `api/spec/` 内に `CommonResponse` 直接参照があるかは Step 2 で `grep` 確認後に追加対応する（無ければスキップ）
 - `entities/` 配下の README を新規作成するか、`CLAUDE.md` のみで済ませるかは実装時に判断（推奨は CLAUDE.md のみで集約）
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-05-09
+
+### 変更ファイル
+
+- `api/app/api/v1/entities/invoice_records.rb` — 外側を `class InvoiceRecords` から `module InvoiceRecords` に変更
+- `api/app/api/v1/entities/common.rb` — `class CommonResponse` を `module Common` + `class Response` に書き換え
+- `api/app/api/root.rb` — Swagger 登録の参照を `API::Entities::Common::Response` に変更
+- `api/app/api/v1/categories.rb` — `CommonResponse` 参照 4 箇所を置換
+- `api/app/api/v1/invoice_records.rb` — `CommonResponse` 参照 6 箇所を置換
+- `api/app/api/v1/payment_methods.rb` — `CommonResponse` 参照 4 箇所を置換
+- `api/app/api/v1/records.rb` — `CommonResponse` 参照 6 箇所を置換
+- `CLAUDE.md` — Entity 命名規則セクション追加
+
+### 実装内容
+
+ddoc の設計通り、3 ステップに分けて単独コミットで実施:
+
+1. `entities/invoice_records.rb` の外側コンテナを `class` から `module` に変更（commit `3a093ad`）。`module` と `class` は定数として同じパスで参照できるため、参照側の書き換えは不要で 1 行差分のみで完了
+2. `entities/common.rb` を `module Common` + `class Response` 構造にラップし、`API::Entities::CommonResponse` 参照 21 箇所を `API::Entities::Common::Response` に一括置換（commit `d404ec4`）。`sed` による機械置換で対応
+3. `CLAUDE.md` の `### API 構造` セクション直後に「Entity 層の命名規則」セクションを追記（commit `cc87e67`）。Swagger 登録忘れ防止の注意書きも併せて追加
+
+ddoc からの逸脱はなし。
+
+### 確認・検証
+
+- Step 1 / Step 2 完了後に `./scripts/test/api-test.sh` を実行 → **32 examples, 0 failures**
+- `grep -rn "CommonResponse" api/ --include="*.rb"` で残存参照ゼロを確認
+- 全 Entity ファイルが `module ResourceNamePlural + class EntityName < Grape::Entity` の統一構造になっていることを最終確認
+
+### 気づき・備考
+
+- ddoc の未解決事項に挙げていた「`api/spec/` 内の `CommonResponse` 直接参照」は調査の結果ゼロで、追加対応は不要だった
+- `entities/` 配下の README は作らず CLAUDE.md に集約する方針を採用。エンジニアが Entity を追加する際の参照導線として、プロジェクト全体ガイドの `CLAUDE.md` 一箇所にまとめたほうが見落としにくい
+- Step 1 の `class → module` は定数パスが不変のため参照側書き換えゼロで済む、という ddoc の見立てが実装でも実証された。今後同様の「外側コンテナの形式変更のみ」を行う場合の参考になる

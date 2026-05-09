@@ -10,7 +10,7 @@
 
 - `Exceptions::InvalidArgument` などを独自クラスにし、`rescue Exceptions::NotFound => e` のような型分岐ができる構造にする
 - 利用側の `raise Exceptions::X.exception("msg")` を Ruby 標準の `raise Exceptions::X, "msg"` 形に統一する
-- Grape ルートで `rescue_from Exceptions::Unauthorized` 等の最小限の型別ハンドリングを 1 件追加し、新しい階層が機能することを示す
+- Firebase JWT デコード失敗を `Exceptions::Unauthorized` で raise するよう修正（階層化の効果を活かした最小限の意味修正）
 - 例外クラス階層の継承関係を確認する spec を追加する
 
 ## 非目標
@@ -55,9 +55,9 @@ end
 | `raise Exceptions::InternalServerError.exception("failed to ...")` | `raise Exceptions::InternalServerError, "failed to ..."` |
 | `raise Exceptions::InvalidArgument` | `raise Exceptions::InvalidArgument`（変更なし） |
 
-### Grape rescue_from の最小整備
+### Firebase JWT デコード失敗の例外型修正
 
-`api/app/api/root.rb` の `request_userdata` 内で、JWT デコードの結果として発生する `Firebase` 由来例外を区別する。現状は `rescue StandardError => e` で広く受けているため、新階層が機能することを示す最小例として `Exceptions::Unauthorized` を追加し、`Firebase.decode_jwt` 内で JWT 不正時にこれを raise するよう変更する。
+`api/lib/firebase.rb` の `JWT::DecodeError` ハンドリングは現在 `Exceptions::InternalServerError` で再 raise しているが、JWT デコード失敗は本来 401 (Unauthorized) であり 500 (InternalServerError) は意味的に誤り。クラス階層化のついでに `Exceptions::Unauthorized` に修正する。
 
 **現状（`api/lib/firebase.rb:40-42`）:**
 ```ruby
@@ -73,20 +73,7 @@ rescue JWT::DecodeError => e
 end
 ```
 
-**`api/app/api/root.rb:28-33` の rescue:**
-```ruby
-begin
-  Firebase.decode_jwt(jwt)
-rescue Exceptions::Unauthorized => e
-  puts e.inspect
-  error!({ error: "Invalid JWT", status: 401 }, 401)
-rescue StandardError => e
-  puts e.inspect
-  error!({ error: "Invalid JWT", status: 401 }, 401)
-end
-```
-
-JWT デコード失敗は本来 401 (Unauthorized) であり、500 (InternalServerError) で raise していた既存実装は意味的に誤り。階層化のついでに修正する。
+`api/app/api/root.rb:28-33` の `rescue StandardError => e` は現状維持。`Exceptions::Unauthorized` は `StandardError` 継承なのでこの rescue で問題なく捕捉され、401 を返す挙動は変わらない。型別 rescue_from の整備は #49 のスコープに委ねる。
 
 ### テスト
 
@@ -134,7 +121,6 @@ end
 - `api/services/categories.rb` — 行 40 を新形式に置換
 - `api/services/payment_methods.rb` — 行 34（変更不要、引数なし）, 行 45 を新形式に置換
 - `api/services/records.rb` — 行 75 を新形式に置換
-- `api/app/api/root.rb` — `Exceptions::Unauthorized` 用の rescue を 1 件追加（行 28-33）
 - `api/spec/lib/exceptions_spec.rb` — 新規、階層と raise 挙動の spec
 
 ## 実装ステップ
@@ -145,9 +131,8 @@ end
 2. `api/spec/lib/exceptions_spec.rb` を追加し、新階層が動作することをテストで担保
 3. 利用側 6 ファイル（`firebase.rb` / `repositories.rb` / `services/*.rb`）の `raise X.exception("msg")` を `raise X, "msg"` に一括置換
 4. `firebase.rb` の `JWT::DecodeError` ハンドリングを `Exceptions::Unauthorized` に変更
-5. `app/api/root.rb` に `rescue Exceptions::Unauthorized` を追加
-6. RSpec 全体を実行し、既存サービス層 spec を含めて全部緑になることを確認
-7. RuboCop / 型チェック相当のリンタを実行（`api/` には RuboCop あり）
+5. RSpec 全体を実行し、既存サービス層 spec を含めて全部緑になることを確認
+6. RuboCop / 型チェック相当のリンタを実行（`api/` には RuboCop あり）
 
 ## 代替案
 

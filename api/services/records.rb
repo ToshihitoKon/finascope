@@ -72,7 +72,7 @@ module Service
         date: params[:date],
         encrypted_description: @uhash.encrypt(params[:description])
       ).to_h.compact
-      raise Exceptions::InvalidArgument.exception("no params to update") if params_dto.empty?
+      raise Exceptions::InvalidArgument, "no params to update" if params_dto.empty?
 
       DB::Repository::FinanceRecord.update(id:, params: params_dto)
     end

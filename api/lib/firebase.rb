@@ -21,7 +21,7 @@ class Firebase
       url = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"
       res = Net::HTTP.get_response(URI.parse(url))
       puts res.inspect
-      raise Exceptions::InternalServerError.exception("failed to download Firebase jwk") if res.code != "200"
+      raise Exceptions::InternalServerError, "failed to download Firebase jwk" if res.code != "200"
 
       @expires_at = Time.now + 3600 # 1 hour
       puts "expires at: #{@expires_at}"
@@ -38,7 +38,7 @@ class Firebase
 
       { uid: header["user_id"], name: header["name"], picture_url: header["picture"] }
     rescue JWT::DecodeError => e
-      raise Exceptions::InternalServerError.exception("failed to decode JWT: #{e}")
+      raise Exceptions::Unauthorized, "failed to decode JWT: #{e}"
     end
   end
 end

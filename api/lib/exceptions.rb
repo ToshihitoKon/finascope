@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Exceptions
-  InternalServerError = StandardError.exception("Internal Server Error")
-  InvalidArgument = StandardError.exception("Invalid Argument")
-  NotFound = StandardError.exception("Not Found")
-  Unauthorized = StandardError.exception("Unauthorized")
+  class InternalServerError < StandardError; end
+  class InvalidArgument < StandardError; end
+  class NotFound < StandardError; end
+  class Unauthorized < StandardError; end
 end

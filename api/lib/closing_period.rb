@@ -2,33 +2,31 @@
 
 require "date"
 
-# Computes the billing-cycle date range that a given withdrawal month covers,
-# based on the payment method's closing day and withdrawal day.
-#
-# Used to aggregate finance_records into a single invoice for credit-card-like
-# payment methods, where charges made between a `closing_day` and the next
-# `closing_day` are billed together and withdrawn on `withdrawal_day`.
-#
-# closing_day_of_month conventions:
-#   0  -> no closing day; treat the previous calendar month as the cycle
-#   -1 -> end-of-month closing
-#   1..31 -> the day of month at which the cycle closes
 module ClosingPeriod
   NO_CLOSING_DAY = 0
   END_OF_MONTH = -1
 
+  # Computes the billing-cycle date range that a given withdrawal month covers,
+  # based on the payment method's closing day and withdrawal day. Used to
+  # aggregate finance_records into a single invoice for credit-card-like
+  # payment methods.
+  #
   # Returns [begin_date, end_date] (both inclusive) of the cycle whose
   # withdrawal falls in the given (year, month).
   #
-  # When the closing day precedes the withdrawal day in the same month, the
-  # cycle ending in `month` is finalized and withdrawn that same month
-  # (e.g. closing 15, withdrawal 27 -> cycle is prev-month-16 .. this-month-15).
-  # Otherwise the cycle ending in `month` is not yet finalized, so the
-  # withdrawal in `month` settles the previous cycle
-  # (e.g. closing 27, withdrawal 10 -> cycle is two-months-ago-28 .. prev-month-27).
+  # closing_day_of_month conventions:
+  #   0  -> no closing day; the cycle is the previous calendar month
+  #   -1 -> end-of-month closing
+  #   1..31 -> day of month at which the cycle closes
+  #
+  # When closing < withdrawal, the cycle ending in `month` is finalized and
+  # withdrawn that same month (e.g. closing 15, withdrawal 27 ->
+  # prev-month-16 .. this-month-15). Otherwise the withdrawal in `month`
+  # settles the previous cycle (e.g. closing 27, withdrawal 10 ->
+  # two-months-ago-28 .. prev-month-27).
   #
   # Falls back to the target month's full range when an invalid date is built
-  # (e.g. closing_day 31 against a month that has fewer days).
+  # (e.g. closing_day 31 against a month with fewer days).
   def self.calculate(year:, month:, closing_day_of_month:, withdrawal_day_of_month:)
     year = year.to_i
     month = month.to_i

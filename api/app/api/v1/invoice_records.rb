@@ -30,19 +30,7 @@ module API
           uid = request_userdata[:uid]
           invoice_records_service = Service::InvoiceRecords.new(uid:)
           records = invoice_records_service.monthly_records(year:, month:)
-          res = records.map do |record|
-            withdrawal_date = record.dig(:invoice, :withdrawal_date) || record[:calced_withdrawal_date]
-            {
-              id: record.dig(:invoice, :id) || "",
-              amount: record.dig(:invoice, :amount) || 0,
-              withdrawal_date:,
-              state: record.dig(:invoice, :state) || "",
-              state_id: record.dig(:invoice, :state_id) || 0,
-              payment_method: record.dig(:payment_method, :payment_method),
-              payment_method_id: record.dig(:payment_method, :id) || ""
-            }
-          end
-          present res, with: API::Entities::InvoiceRecords::InvoiceRecord, root: :records
+          present records, with: API::Entities::InvoiceRecords::InvoiceRecord, root: :records
         end
 
         desc "Create an Invoice Record",

@@ -3,15 +3,17 @@
 require "constants"
 require "db/repositories"
 require "lib/closing_period"
+require "lib/finance_record_formatter"
 require "lib/id"
-require "lib/record_formatter"
+require "lib/invoice_record_formatter"
 
 module Service
   class InvoiceRecords
     def initialize(uid:)
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
-      @formatter = RecordFormatter.new(uhash: @uhash)
+      @formatter = FinanceRecordFormatter.new(uhash: @uhash)
+      @invoice_formatter = InvoiceRecordFormatter.new(uhash: @uhash)
     end
 
     def create(params)
@@ -48,34 +50,27 @@ module Service
       year ||= Date.today.year
       month ||= Date.today.month
 
-      records = DB::Repository::InvoiceRecord
-                .monthly_records(hashed_user_id: @hashed_uid, year:, month:)
-                .map do |record|
-        {
-          **record,
-          state: Constants.invoice_record_state(record[:state_id])[:label]
-        }
-      end
+      invoices = DB::Repository::InvoiceRecord.monthly_records(
+        hashed_user_id: @hashed_uid, year:, month:
+      )
 
       payment_methods = DB::Repository::PaymentMethod
                         .all(hashed_user_id: @hashed_uid)
                         .filter { it[:withdrawal_day_of_month] != 0 } # 0 は引き落とし日とかない
 
-      payment_methods.map do |record|
-        invoice = records.find { it[:payment_method_id] == record[:id] }
+      payment_methods.map do |payment_method|
+        invoice = invoices.find { it[:payment_method_id] == payment_method[:id] }
         calced_withdrawal_date = calc_withdrawal_date(
           year,
           month,
-          record[:withdrawal_day_of_month]
+          payment_method[:withdrawal_day_of_month]
         )
-        {
-          payment_method: {
-            **record,
-            payment_method: @uhash.decrypt(record[:encrypted_label])
-          },
+
+        @invoice_formatter.format_monthly(
           invoice:,
+          payment_method:,
           calced_withdrawal_date:
-        }
+        )
       end
     end
 

@@ -3,14 +3,14 @@
 require "constants"
 require "db/repositories"
 require "lib/id"
-require "lib/record_formatter"
+require "lib/finance_record_formatter"
 
 module Service
   class FinanceRecords
     def initialize(uid:)
       @uhash = UserHash.new(uid)
       @hashed_uid = @uhash.user_hash
-      @formatter = RecordFormatter.new(uhash: @uhash)
+      @formatter = FinanceRecordFormatter.new(uhash: @uhash)
     end
 
     def get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)

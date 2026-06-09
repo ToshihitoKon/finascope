@@ -184,3 +184,44 @@ delete は失敗時に例外を投げる設計で create / update とフロー�
 ## 未解決事項
 
 - 特になし。Service 層の戻り値契約は既存実装と整合しているため、API 層のリファクタのみで完結する。
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-06-09
+
+### 変更ファイル
+
+- `api/app/api/root.rb` — `helpers` ブロックに `present_mutation_response` / `present_delete_response` を追加
+- `api/app/api/v1/categories.rb` — post / put を `present_mutation_response` に置き換え（2 箇所）
+- `api/app/api/v1/payment_methods.rb` — post / put を `present_mutation_response` に置き換え（2 箇所）
+- `api/app/api/v1/records.rb` — post / put を `present_mutation_response`、delete を `present_delete_response` に置き換え（3 箇所）。create の代入順序の崩れも解消
+- `api/app/api/v1/invoice_records.rb` — post / put を `present_mutation_response`、delete を `present_delete_response` に置き換え（3 箇所）。あわせて PUT params の `:id` 型不整合を修正（後述）
+- `api/spec/api/v1/payment_methods_spec.rb` — 新規。GET / POST / PUT の正常系（3 ケース）
+- `api/spec/api/v1/invoice_records_spec.rb` — 新規。POST / PUT の正常系（2 ケース）
+
+コミットは 2 つに分割した。
+
+- `fix(api): correct invoice_records update :id param type to String`
+- `refactor(api): consolidate mutation response boilerplate into helpers`
+
+### 実装内容
+
+ddoc の設計どおり、helper 2 つを `root.rb` に追加し、4 リソース計 10 箇所の create / update / delete を helper 呼び出しに置き換えた。設計との差分は以下。
+
+- helper の実装は ddoc の擬似コードのとおり、`status`（Grape のレスポンスステータス設定メソッド）とローカル変数の衝突を避けるため `response_status` を使用した。
+- ddoc の After 例では呼び出し側で `Service::Categories.new(uid:).create(...)` とメソッドチェーンしていたが、差分最小化と既存の `*_service` 変数命名スタイル維持のため、status 設定 + present の箇所のみを helper 呼び出しに置き換えた（Service の生成・呼び出し部分は既存のまま）。
+- ddoc のテスト方針「カバレッジが薄ければ最小限の spec を追加」に従い、spec が未整備だった payment_methods / invoice_records に正常系 spec を新規追加した（categories / records には既存 spec あり）。
+
+### 確認・検証
+
+- `./scripts/test/api-test.sh` で全体実行。**37 examples, 1 failure**。
+- 追加した payment_methods 3 ケース・invoice_records 2 ケースを含め、失敗 1 件を除く全ケースがグリーン。
+- 唯一の失敗 `records_spec.rb:29`（GET で作成レコードが一覧に出ない）は、`git stash` で本変更を退避した HEAD 状態でも同一理由で失敗することを確認済み。**本リファクタとは無関係の既存問題**であり、本 PR のスコープ外。
+
+### 気づき・備考
+
+- **invoice_records の `:id` 型不整合（ddoc 外で発見・修正）**: PUT の params が `requires :id, type: Integer` だったが、ID は全リソース共通で `ID.generate`（nanoid の 12 文字英数字文字列）であり、DB スキーマ（`db/models.rb` の `InvoiceRecord`）も `id` を `string` primary_key として定義している。他の全エンドポイント（および invoice_records 自身の delete）は `type: String`。Integer 型強制のため、英字を含む nanoid を載せた PUT は 400 で弾かれ、数字のみの id が偶然来たときしか更新できなかった。invoice 実装初期に Integer 連番 PK を想定していた名残が nanoid String PK 統一時に PUT だけ直し漏れたものと推測。`type: String` に修正し、修正により書けるようになった PUT 正常系 spec も追加した。
+- **フロントへの影響なし**: `front/src/lib/api/v1/types.d.ts` の `UpdateInvoiceRecordRequest.id` は既に `string`、PUT 呼び出しも URL テンプレートへの文字列埋め込み（`v1/invoice_records/${req.id}`）。今回の API 修正はフロントの実態に API を一致させる方向であり、フロント側の変更は不要。むしろ従来フロントが nanoid で PUT すると更新失敗していた不具合が解消される。
+- **未着手の関連事項**: `records_spec.rb:29` の GET 一覧不一致（既存の問題）と、`invoice_records.rb` の post 先頭に残る `puts params.inspect`（デバッグ出力、本 PR スコープ外のため未削除）は別途対応の余地がある。

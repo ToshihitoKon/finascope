@@ -32,6 +32,29 @@ module API
           error!({ error: "Invalid JWT", status: 401 }, 401)
         end
       end
+
+      # Present a create/update mutation result with Common::Response.
+      # Truthy result -> success; falsy result -> HTTP 422 with failed status.
+      # @param result [ActiveRecord::Base, nil, false] the Service return value
+      def present_mutation_response(result)
+        if result
+          response_status = "success"
+        else
+          status 422
+          response_status = "failed"
+        end
+        resp = { status: response_status, id: result&.id }
+        present resp, with: API::Entities::Common::Response
+      end
+
+      # Present a delete result with Common::Response.
+      # Delete failures are surfaced as exceptions by the Service layer,
+      # so reaching here always means success.
+      # @param id [String] the deleted resource ID
+      def present_delete_response(id)
+        resp = { status: "success", id: }
+        present resp, with: API::Entities::Common::Response
+      end
     end
 
     prefix :api

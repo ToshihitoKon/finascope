@@ -52,15 +52,7 @@ module API
             withdrawal_date: Date.parse(params[:withdrawal_date]),
             payment_method_id: params[:payment_method_id]
           )
-
-          if record
-            status = "success"
-          else
-            status = "failed"
-            status 422
-          end
-          resp = { status:, id: record&.id }
-          present resp, with: API::Entities::Common::Response
+          present_mutation_response(record)
         end
 
         desc "Update an Invoice Record",
@@ -83,15 +75,7 @@ module API
               withdrawal_date: Date.parse(params[:withdrawal_date])
             }
           )
-
-          if record.present?
-            status = "success"
-          else
-            status = "failed"
-            status 422
-          end
-          resp = { status:, id: record&.id }
-          present resp, with: API::Entities::Common::Response
+          present_mutation_response(record)
         end
 
         desc "Delete an Invoice Record",
@@ -104,10 +88,7 @@ module API
           Service::InvoiceRecords.new(uid:).delete( # NOTE: ダメなら exception が飛んでくる
             id: params[:id]
           )
-
-          status = "success"
-          resp = { status:, id: params[:id] }
-          present resp, with: API::Entities::Common::Response
+          present_delete_response(params[:id])
         end
 
         desc "Get Withdrawal Records Aggregation",

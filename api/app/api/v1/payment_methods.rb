@@ -38,15 +38,7 @@ module API
             withdrawal_day_of_month: params[:withdrawal_day_of_month],
             closing_day_of_month: params[:closing_day_of_month]
           )
-
-          if payment_method
-            status = "success"
-          else
-            status = "failed"
-            status 422
-          end
-          resp = { status:, id: payment_method&.id }
-          present resp, with: API::Entities::Common::Response
+          present_mutation_response(payment_method)
         end
 
         desc "Update a Payment Method",
@@ -68,15 +60,7 @@ module API
               closing_day_of_month: params[:closing_day_of_month]
             }.compact
           )
-
-          if payment_method.present?
-            status = "success"
-          else
-            status = "failed"
-            status 422
-          end
-          resp = { status:, id: payment_method&.id }
-          present resp, with: API::Entities::Common::Response
+          present_mutation_response(payment_method)
         end
       end
     end

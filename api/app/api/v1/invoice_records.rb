@@ -66,7 +66,7 @@ module API
         desc "Update an Invoice Record",
              entity: API::Entities::Common::Response
         params do
-          requires :id, type: Integer, desc: "(Integer) Invoice record ID"
+          requires :id, type: String, desc: "(String) Invoice record ID"
           requires :amount, type: Integer, desc: "(Integer) Invoice record amount"
           requires :state_id, type: Integer, desc: "(Integer) Invoice record state ID"
           requires :withdrawal_date, type: String, desc: "(String) Withdrawal date in ISO8601 format"

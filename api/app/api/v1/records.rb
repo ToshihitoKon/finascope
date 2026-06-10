@@ -60,16 +60,7 @@ module API
             date: Date.parse(params[:date]),
             payment_method_id: params[:payment_method_id]
           )
-
-          if record
-            status = "success"
-          else
-            status 422
-            status = "failed"
-          end
-
-          resp = { status:, id: record&.id }
-          present resp, with: API::Entities::Common::Response
+          present_mutation_response(record)
         end
 
         desc "Update a Record",
@@ -101,15 +92,7 @@ module API
               payment_method_id: params[:payment_method_id]
             }
           )
-
-          if record.present?
-            status = "success"
-          else
-            status = "failed"
-            status 422
-          end
-          resp = { status:, id: record&.id }
-          present resp, with: API::Entities::Common::Response
+          present_mutation_response(record)
         end
 
         desc "Delete a Record",
@@ -123,10 +106,7 @@ module API
           finance_records_service.delete( # NOTE: ダメなら exception が飛んでくる
             id: params[:id]
           )
-
-          status = "success"
-          resp = { status:, id: params[:id] }
-          present resp, with: API::Entities::Common::Response
+          present_delete_response(params[:id])
         end
       end
     end

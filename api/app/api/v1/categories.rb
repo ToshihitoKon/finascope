@@ -30,15 +30,7 @@ module API
           uid = request_userdata[:uid]
           categories_service = Service::Categories.new(uid:)
           category = categories_service.create(label: params[:label])
-
-          if category
-            status = "success"
-          else
-            status = "failed"
-            status 422
-          end
-          resp = { status:, id: category&.id }
-          present resp, with: API::Entities::Common::Response
+          present_mutation_response(category)
         end
 
         desc "Update a Category",
@@ -56,15 +48,7 @@ module API
               label: params[:label]
             }
           )
-
-          if category.present?
-            status = "success"
-          else
-            status = "failed"
-            status 422
-          end
-          resp = { status:, id: category&.id }
-          present resp, with: API::Entities::Common::Response
+          present_mutation_response(category)
         end
       end
     end

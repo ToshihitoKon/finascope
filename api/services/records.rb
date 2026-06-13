@@ -33,7 +33,7 @@ module Service
         date: params[:date],
         encrypted_description: @uhash.encrypt(params[:description])
       )
-      raise Exceptions::InvalidArgument, "missing required fields: #{dto.invalid_members.join(', ')}" unless dto.valid?
+      dto.validate!
 
       DB::Repository::FinanceRecord.create(dto)
     end

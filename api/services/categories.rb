@@ -26,7 +26,7 @@ module Service
         hashed_user_id: @hashed_uid,
         encrypted_label: @uhash.encrypt(params[:label])
       )
-      raise Exceptions::InvalidArgument, "missing required fields: #{dto.invalid_members.join(', ')}" unless dto.valid?
+      dto.validate!
 
       DB::Repository::Category.create(dto)
     end

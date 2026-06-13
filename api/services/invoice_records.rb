@@ -26,7 +26,7 @@ module Service
         payment_method_id: params[:payment_method_id],
         withdrawal_date: params[:withdrawal_date]
       )
-      raise Exceptions::InvalidArgument, "missing required fields: #{dto.invalid_members.join(', ')}" unless dto.valid?
+      dto.validate!
 
       DB::Repository::InvoiceRecord.create(dto)
     end

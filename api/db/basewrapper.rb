@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "lib/exceptions"
+
 module DB
   module Model
     # BaseWrapper
@@ -35,6 +37,13 @@ module DB
 
           def valid?
             invalid_members.empty?
+          end
+
+          # Raises InvalidArgument listing the nil members when invalid.
+          def validate!
+            return if valid?
+
+            raise Exceptions::InvalidArgument, "missing required fields: #{invalid_members.join(', ')}"
           end
         end
         const_set("DTO", str)

@@ -22,6 +22,35 @@ RSpec.describe Exceptions do
     end
   end
 
+  describe "http_status mapping" do
+    it "maps InternalServerError to 500" do
+      expect(Exceptions::InternalServerError.http_status).to eq(500)
+    end
+
+    it "maps InvalidArgument to 422" do
+      expect(Exceptions::InvalidArgument.http_status).to eq(422)
+    end
+
+    it "maps NotFound to 404" do
+      expect(Exceptions::NotFound.http_status).to eq(404)
+    end
+
+    it "maps Unauthorized to 401" do
+      expect(Exceptions::Unauthorized.http_status).to eq(401)
+    end
+
+    it "exposes http_status on instances" do
+      expect(Exceptions::NotFound.new("x").http_status).to eq(404)
+    end
+
+    it "all exceptions inherit from Exceptions::Base" do
+      [Exceptions::InternalServerError, Exceptions::InvalidArgument,
+       Exceptions::NotFound, Exceptions::Unauthorized].each do |klass|
+        expect(klass.ancestors).to include(Exceptions::Base)
+      end
+    end
+  end
+
   describe "raise behavior" do
     it "can be raised with a message" do
       expect { raise Exceptions::NotFound, "missing" }

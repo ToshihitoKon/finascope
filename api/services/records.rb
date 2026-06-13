@@ -2,6 +2,7 @@
 
 require "constants"
 require "db/repositories"
+require "lib/exceptions"
 require "lib/id"
 require "lib/finance_record_formatter"
 
@@ -32,7 +33,7 @@ module Service
         date: params[:date],
         encrypted_description: @uhash.encrypt(params[:description])
       )
-      raise StandardError unless dto.valid? # TODO: ちゃんとした Exception を作る
+      raise Exceptions::InvalidArgument, "missing required fields: #{dto.invalid_members.join(', ')}" unless dto.valid?
 
       DB::Repository::FinanceRecord.create(dto)
     end

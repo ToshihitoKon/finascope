@@ -33,5 +33,28 @@ RSpec.describe "InvoiceRecords API" do
       expect(json_body[:status]).to eq("success")
       expect(json_body[:id]).to eq(id)
     end
+
+    it "returns 404 when updating a non-existent invoice record" do
+      put "/api/v1/invoice_records/does_not_exist",
+          { id: "does_not_exist", amount: 8000, state_id: 1, withdrawal_date: "2026-05-27" },
+          auth_header
+      expect(last_response.status).to eq(404)
+    end
+  end
+
+  describe "DELETE /api/v1/invoice_records/:id" do
+    it "deletes an existing invoice record" do
+      post "/api/v1/invoice_records", invoice_record_params, auth_header
+      id = json_body[:id]
+
+      delete "/api/v1/invoice_records/#{id}", {}, auth_header
+      expect(last_response.status).to eq(200)
+      expect(json_body[:status]).to eq("success")
+    end
+
+    it "returns 404 when deleting a non-existent invoice record" do
+      delete "/api/v1/invoice_records/does_not_exist", {}, auth_header
+      expect(last_response.status).to eq(404)
+    end
   end
 end

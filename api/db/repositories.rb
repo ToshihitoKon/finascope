@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "kaminari"
+require "lib/exceptions"
 require "lib/user_hash"
 
 module DB
@@ -36,6 +37,7 @@ module DB
 
       def self.update(id:, params:)
         record = model.where(id:).first
+        raise Exceptions::NotFound, "record not found: #{id}" if record.nil?
         return record if record.update(**params)
 
         raise Exceptions::InternalServerError, "failed to record update #{id}"
@@ -44,7 +46,7 @@ module DB
       def self.delete(id:)
         return if model.soft_delete(where_clause: { id: }).positive?
 
-        raise Exceptions::InternalServerError, "failed to record delete #{id}"
+        raise Exceptions::NotFound, "record not found: #{id}"
       end
 
       def self.get_aggregated_by_category(
@@ -154,6 +156,7 @@ module DB
 
       def self.update(id:, params:)
         record = model.where(id:).first
+        raise Exceptions::NotFound, "record not found: #{id}" if record.nil?
         return record if record.update(**params)
 
         raise Exceptions::InternalServerError, "failed to record update #{id}"
@@ -182,6 +185,7 @@ module DB
 
       def self.update(id:, params:)
         record = model.where(id:).first
+        raise Exceptions::NotFound, "record not found: #{id}" if record.nil?
         return record if record.update(**params)
 
         raise Exceptions::InternalServerError, "failed to record update #{id}"
@@ -222,6 +226,7 @@ module DB
 
       def self.update(id:, params:)
         record = model.where(id:).first
+        raise Exceptions::NotFound, "record not found: #{id}" if record.nil?
         return record if record.update(**params)
 
         raise Exceptions::InternalServerError, "failed to record update #{id}"
@@ -230,7 +235,7 @@ module DB
       def self.delete(id:)
         return if model.soft_delete(where_clause: { id: }).positive?
 
-        raise Exceptions::InternalServerError, "failed to delete invoice record #{id}"
+        raise Exceptions::NotFound, "invoice record not found: #{id}"
       end
     end
   end

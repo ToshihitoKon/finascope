@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "grape"
+require "lib/exceptions"
 require "lib/firebase"
 require "grape-swagger"
 require "grape-swagger-entity"
@@ -9,6 +10,11 @@ require_relative "./v1/root"
 module API
   class Root < Grape::API
     format :json
+
+    rescue_from Exceptions::Base do |e|
+      error!({ error: e.message, status: e.http_status }, e.http_status)
+    end
+
     helpers do
       def authorization_header
         headers["Authorization"]
@@ -25,12 +31,9 @@ module API
         jwt = authorization_header&.gsub("Bearer ", "")
         return { uid: Constants::EXAMPLE_USER_UID } if jwt.blank?
 
-        begin
-          Firebase.decode_jwt(jwt)
-        rescue StandardError => e
-          puts e.inspect
-          error!({ error: "Invalid JWT", status: 401 }, 401)
-        end
+        # JWT failures raise Exceptions::Unauthorized / InternalServerError,
+        # which rescue_from maps to the right HTTP status.
+        Firebase.decode_jwt(jwt)
       end
 
       # Present a create/update mutation result with Common::Response.

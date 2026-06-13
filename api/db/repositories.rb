@@ -1,11 +1,47 @@
 # frozen_string_literal: true
 
 require "kaminari"
+require "lib/exceptions"
 require "lib/user_hash"
 
 module DB
   module Repository
+    # Shared mutation helpers extended onto repository classes.
+    # Each module relies on the host class defining `self.model`.
+
+    # Provides `create(dto)`.
+    module Creatable
+      def create(dto)
+        model.create(**dto.to_h)
+      end
+    end
+
+    # Provides `update(id:, params:)`.
+    # Raises NotFound when the record is missing, InternalServerError on failure.
+    module Updatable
+      def update(id:, params:)
+        record = model.where(id:).first
+        raise Exceptions::NotFound, "record not found: #{id}" if record.nil?
+        return record if record.update(**params)
+
+        raise Exceptions::InternalServerError, "failed to record update #{id}"
+      end
+    end
+
+    # Provides `delete(id:)` via soft delete. Raises NotFound when nothing matched.
+    module SoftDeletable
+      def delete(id:)
+        return if model.soft_delete(where_clause: { id: }).positive?
+
+        raise Exceptions::NotFound, "record not found: #{id}"
+      end
+    end
+
     class FinanceRecord
+      extend Creatable
+      extend Updatable
+      extend SoftDeletable
+
       def self.model
         @model ||= DB::Model::FinanceRecord
       end
@@ -28,23 +64,6 @@ module DB
             }
           )
         end
-      end
-
-      def self.create(dto)
-        model.create(**dto.to_h)
-      end
-
-      def self.update(id:, params:)
-        record = model.where(id:).first
-        return record if record.update(**params)
-
-        raise Exceptions::InternalServerError, "failed to record update #{id}"
-      end
-
-      def self.delete(id:)
-        return if model.soft_delete(where_clause: { id: }).positive?
-
-        raise Exceptions::InternalServerError, "failed to record delete #{id}"
       end
 
       def self.get_aggregated_by_category(
@@ -137,6 +156,9 @@ module DB
     end
 
     class Category
+      extend Creatable
+      extend Updatable
+
       def self.model
         @model ||= DB::Model::Category
       end
@@ -147,20 +169,12 @@ module DB
           model.to_dto(record).to_h
         end
       end
-
-      def self.create(dto)
-        model.create(**dto.to_h)
-      end
-
-      def self.update(id:, params:)
-        record = model.where(id:).first
-        return record if record.update(**params)
-
-        raise Exceptions::InternalServerError, "failed to record update #{id}"
-      end
     end
 
     class PaymentMethod
+      extend Creatable
+      extend Updatable
+
       def self.model
         @model ||= DB::Model::PaymentMethod
       end
@@ -175,20 +189,13 @@ module DB
           model.to_dto(record).to_h
         end
       end
-
-      def self.create(dto)
-        model.create(**dto.to_h)
-      end
-
-      def self.update(id:, params:)
-        record = model.where(id:).first
-        return record if record.update(**params)
-
-        raise Exceptions::InternalServerError, "failed to record update #{id}"
-      end
     end
 
     class InvoiceRecord
+      extend Creatable
+      extend Updatable
+      extend SoftDeletable
+
       def self.model
         @model ||= DB::Model::InvoiceRecord
       end
@@ -214,23 +221,6 @@ module DB
             }
           )
         end
-      end
-
-      def self.create(dto)
-        model.create(**dto.to_h)
-      end
-
-      def self.update(id:, params:)
-        record = model.where(id:).first
-        return record if record.update(**params)
-
-        raise Exceptions::InternalServerError, "failed to record update #{id}"
-      end
-
-      def self.delete(id:)
-        return if model.soft_delete(where_clause: { id: }).positive?
-
-        raise Exceptions::InternalServerError, "failed to delete invoice record #{id}"
       end
     end
   end

@@ -3,6 +3,7 @@
 require "constants"
 require "db/repositories"
 require "lib/category_formatter"
+require "lib/exceptions"
 require "lib/id"
 
 module Service
@@ -25,7 +26,7 @@ module Service
         hashed_user_id: @hashed_uid,
         encrypted_label: @uhash.encrypt(params[:label])
       )
-      raise StandardError unless dto.valid?
+      dto.validate!
 
       DB::Repository::Category.create(dto)
     end

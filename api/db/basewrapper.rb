@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "lib/exceptions"
+
 module DB
   module Model
     # BaseWrapper
@@ -24,19 +26,24 @@ module DB
           *columns,
           keyword_init: true
         ) do
-          def valid?
-            # とりあえず nil チェックだけ
-            # TODO: NOT NULL だけコレにする
-            is_valid = true
-            members.each do |m|
-              next if [:created_at, :updated_at, :deleted_at].include?(m)
-
-              if self[m].nil?
-                is_valid = false
-                puts "Invalid: #{m} is nil" # TODO: logger にする
-              end
+          # Members that are nil and therefore fail validation.
+          # Timestamp columns are exempt.
+          # TODO: derive required members from NOT NULL constraints
+          def invalid_members
+            members.reject do |m|
+              [:created_at, :updated_at, :deleted_at].include?(m) || !self[m].nil?
             end
-            is_valid
+          end
+
+          def valid?
+            invalid_members.empty?
+          end
+
+          # Raises InvalidArgument listing the nil members when invalid.
+          def validate!
+            return if valid?
+
+            raise Exceptions::InvalidArgument, "missing required fields: #{invalid_members.join(', ')}"
           end
         end
         const_set("DTO", str)

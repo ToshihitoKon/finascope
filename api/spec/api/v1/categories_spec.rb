@@ -37,5 +37,10 @@ RSpec.describe "Categories API" do
       expect(labels).to include("New")
       expect(labels).not_to include("Old")
     end
+
+    it "returns 404 when updating a non-existent category" do
+      put "/api/v1/categories/does_not_exist", { id: "does_not_exist", label: "X" }, auth_header
+      expect(last_response.status).to eq(404)
+    end
   end
 end

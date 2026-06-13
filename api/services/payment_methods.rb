@@ -28,7 +28,7 @@ module Service
         withdrawal_day_of_month: params[:withdrawal_day_of_month],
         closing_day_of_month: params[:closing_day_of_month] || 0
       )
-      raise Exceptions::InvalidArgument unless dto.valid?
+      dto.validate!
 
       DB::Repository::PaymentMethod.create(dto)
     end

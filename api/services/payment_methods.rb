@@ -5,12 +5,12 @@ require "db/repositories"
 require "lib/exceptions"
 require "lib/id"
 require "lib/payment_method_formatter"
+require "services/base"
 
 module Service
-  class PaymentMethods
+  class PaymentMethods < Base
     def initialize(uid:)
-      @uhash = UserHash.new(uid)
-      @hashed_uid = @uhash.user_hash
+      super
       @formatter = PaymentMethodFormatter.new(uhash: @uhash)
     end
 
@@ -28,9 +28,7 @@ module Service
         withdrawal_day_of_month: params[:withdrawal_day_of_month],
         closing_day_of_month: params[:closing_day_of_month] || 0
       )
-      dto.validate!
-
-      DB::Repository::PaymentMethod.create(dto)
+      persist(dto)
     end
 
     def update(id:, params:)
@@ -43,5 +41,9 @@ module Service
 
       DB::Repository::PaymentMethod.update(id:, params: params_dto)
     end
+
+    private
+
+    def repository = DB::Repository::PaymentMethod
   end
 end

@@ -5,12 +5,12 @@ require "db/repositories"
 require "lib/category_formatter"
 require "lib/exceptions"
 require "lib/id"
+require "services/base"
 
 module Service
-  class Categories
+  class Categories < Base
     def initialize(uid:)
-      @uhash = UserHash.new(uid)
-      @hashed_uid = @uhash.user_hash
+      super
       @formatter = CategoryFormatter.new(uhash: @uhash)
     end
 
@@ -26,9 +26,7 @@ module Service
         hashed_user_id: @hashed_uid,
         encrypted_label: @uhash.encrypt(params[:label])
       )
-      dto.validate!
-
-      DB::Repository::Category.create(dto)
+      persist(dto)
     end
 
     def update(id:, params:)
@@ -39,5 +37,9 @@ module Service
 
       DB::Repository::Category.update(id:, params: params_dto)
     end
+
+    private
+
+    def repository = DB::Repository::Category
   end
 end

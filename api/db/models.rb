@@ -27,6 +27,7 @@ module DB
         t_def.string :payment_method_id, null: false
         t_def.date :date, null: false
         t_def.string :encrypted_description, null: true
+        t_def.boolean :recurring, null: false, default: false
 
         t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false

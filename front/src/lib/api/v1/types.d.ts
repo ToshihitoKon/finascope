@@ -23,6 +23,7 @@ export interface Record {
   state_id: number;
   category_id: string;
   payment_method_id: string;
+  recurring: boolean;
 }
 
 export interface RecordType {
@@ -48,6 +49,7 @@ export interface CreateRecordRequest {
   category_id: string;
   payment_method_id: string;
   date: string; // NOTE: ISO 8601 format
+  recurring?: boolean;
 }
 
 export interface CreateRecordResponse {
@@ -65,6 +67,7 @@ export interface UpdateRecordRequest {
   category_id: string;
   payment_method_id: string;
   date: string; // NOTE: ISO 8601 format
+  recurring?: boolean;
 }
 
 export interface UpdateRecordResponse {

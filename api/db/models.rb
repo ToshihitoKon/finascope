@@ -32,9 +32,15 @@ module DB
         t_def.timestamps null: false
       end
 
-      # TODO: add_index, remove_index に対応する
+      # define_index: returns index definitions for ActiveRecord::Schema.define
+      # Each hash: { columns:, name:, unique: }
       def self.define_index
-        [{}]
+        [
+          { columns: [:hashed_user_id], name: "index_finance_records_on_hashed_user_id" },
+          { columns: [:category_id], name: "index_finance_records_on_category_id" },
+          { columns: [:payment_method_id], name: "index_finance_records_on_payment_method_id" },
+          { columns: [:date], name: "index_finance_records_on_date" }
+        ]
       end
     end
 
@@ -50,6 +56,13 @@ module DB
 
         t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
+      end
+
+      # define_index: returns index definitions for ActiveRecord::Schema.define
+      def self.define_index
+        [
+          { columns: [:hashed_user_id], name: "index_categories_on_hashed_user_id" }
+        ]
       end
     end
 
@@ -75,6 +88,13 @@ module DB
         t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
       end
+
+      # define_index: returns index definitions for ActiveRecord::Schema.define
+      def self.define_index
+        [
+          { columns: [:hashed_user_id], name: "index_payment_methods_on_hashed_user_id" }
+        ]
+      end
     end
 
     class InvoiceRecord < DB::Model::BaseWrapper
@@ -92,7 +112,15 @@ module DB
 
         t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
-        # TODO: payment_method_id_withdrawal_day_index UNIQUE
+      end
+
+      # define_index: returns index definitions for ActiveRecord::Schema.define
+      def self.define_index
+        [
+          { columns: [:hashed_user_id], name: "index_invoice_records_on_hashed_user_id" },
+          { columns: [:payment_method_id], name: "index_invoice_records_on_payment_method_id" },
+          { columns: [:withdrawal_date], name: "index_invoice_records_on_withdrawal_date" }
+        ]
       end
     end
 

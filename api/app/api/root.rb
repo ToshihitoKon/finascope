@@ -5,7 +5,7 @@ require "lib/exceptions"
 require "lib/firebase"
 require "grape-swagger"
 require "grape-swagger-entity"
-require_relative "./v1/root"
+require_relative "v1/root"
 
 module API
   class Root < Grape::API
@@ -18,13 +18,6 @@ module API
     helpers do
       def authorization_header
         headers["Authorization"]
-      end
-
-      def request_bearer
-        b = authorization_header&.gsub("Bearer ", "")
-        return Constants::EXAMPLE_USER_UID if b.blank?
-
-        b
       end
 
       def request_userdata

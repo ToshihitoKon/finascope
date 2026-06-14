@@ -35,7 +35,7 @@ t_def.string  :category_id,        null: false
 t_def.string  :payment_method_id,  null: false
 t_def.string  :encrypted_description, null: true
 t_def.date    :start_date,         null: false  # 繰り返し開始月
-t_def.date    :end_date,           null: true   # 繰り返し終了月 (null: 無期限)
+t_def.integer :total_count,        null: true   # 支払い総回数 (null: 無期限)
 t_def.datetime :deleted_at,        null: true
 t_def.timestamps null: false
 ```
@@ -73,7 +73,7 @@ t_def.string :recurring_group_id, null: true  # recurring_records.id を参照
   "category_id": "cat_xxx",
   "payment_method_id": "pm_xxx",
   "start_date": "2026-06-01",
-  "end_date": null
+  "total_count": null
 }
 ```
 
@@ -90,7 +90,8 @@ t_def.string :recurring_group_id, null: true  # recurring_records.id を参照
       "category": "サブスク",
       "payment_method": "クレジットカード",
       "start_date": "2026-06-01",
-      "end_date": null,
+      "total_count": null,
+      "generated_count": 1,
       "record_type_id": 1,
       "state_id": 1,
       "category_id": "cat_xxx",
@@ -185,4 +186,4 @@ generate エンドポイント内で同月生成済みかを確認する際、DB
 
 ## 未解決事項
 
-- `end_date` を超えた recurring_record の扱い: 生成時にスキップするが、deleted_at を立てるかは今後判断
+- `total_count` に達した recurring_record の扱い: generate 時に 409 を返すが、`deleted_at` を立てるかは今後判断

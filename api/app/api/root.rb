@@ -22,7 +22,11 @@ module API
 
       def request_userdata
         jwt = authorization_header&.gsub("Bearer ", "")
-        return { uid: Constants::EXAMPLE_USER_UID } if jwt.blank?
+        if jwt.blank?
+          raise Exceptions::Unauthorized, "Unauthorized" unless Envs::DEV_UID
+
+          return { uid: Envs::DEV_UID }
+        end
 
         # JWT failures raise Exceptions::Unauthorized / InternalServerError,
         # which rescue_from maps to the right HTTP status.

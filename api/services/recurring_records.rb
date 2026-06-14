@@ -67,8 +67,9 @@ module Service
       recurring = DB::Repository::RecurringRecord.find(id:, hashed_user_id: @hashed_uid)
 
       if recurring[:total_count]
-        generated = DB::Repository::RecurringRecord.generated_count(recurring_group_id: id)
-        raise Exceptions::Conflict, "total_count reached for recurring record #{id}" if generated >= recurring[:total_count]
+        start = recurring[:start_date]
+        elapsed = (year - start.year) * 12 + (month - start.month) + 1
+        raise Exceptions::Conflict, "total_count reached for recurring record #{id}" if elapsed > recurring[:total_count]
       end
 
       raise Exceptions::Conflict, "finance record already exists for #{id} #{year}/#{month}" if
@@ -82,12 +83,10 @@ module Service
       month = Date.today.month
       return if CACHE.read(all_done_cache_key(year, month))
 
-      records = DB::Repository::RecurringRecord.all(hashed_user_id: @hashed_uid)
+      records = DB::Repository::RecurringRecord.all(hashed_user_id: @hashed_uid, year:, month:)
       records.each do |recurring|
         id = recurring[:id]
         next if DB::Repository::FinanceRecord.exists_in_month?(recurring_group_id: id, year:, month:)
-        next if recurring[:total_count] &&
-                DB::Repository::RecurringRecord.generated_count(recurring_group_id: id) >= recurring[:total_count]
 
         build_and_create_finance_record(recurring:, id:, year:, month:)
       rescue StandardError

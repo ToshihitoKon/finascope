@@ -22,10 +22,21 @@ module DB
       end
       private_class_method :with_encrypted_labels
 
-      def self.all(hashed_user_id:)
-        model.eager_load(:category, :payment_method)
-             .where(deleted_at: nil, hashed_user_id:)
-             .map { |r| with_encrypted_labels(r) }
+      def self.all(hashed_user_id:, year: nil, month: nil)
+        scope = model.eager_load(:category, :payment_method)
+                     .where(deleted_at: nil, hashed_user_id:)
+        if year && month
+          target_date = Date.new(year, month, 1)
+          # start_date is on or before the target month
+          scope = scope.where("start_date <= ?", target_date.end_of_month)
+          # total_count is null (unlimited) OR months elapsed since start_date <= total_count
+          # months elapsed = (year - start_year) * 12 + (month - start_month) + 1
+          scope = scope.where(
+            "total_count IS NULL OR (? - YEAR(start_date)) * 12 + (? - MONTH(start_date)) + 1 <= total_count",
+            year, month
+          )
+        end
+        scope.map { |r| with_encrypted_labels(r) }
       end
 
       def self.find(id:, hashed_user_id:)

@@ -5,6 +5,7 @@ require "lib/exceptions"
 require "lib/firebase"
 require "grape-swagger"
 require "grape-swagger-entity"
+require "services/recurring_records"
 require_relative "v1/root"
 
 module API
@@ -30,7 +31,9 @@ module API
 
         # JWT failures raise Exceptions::Unauthorized / InternalServerError,
         # which rescue_from maps to the right HTTP status.
-        Firebase.decode_jwt(jwt)
+        userdata = Firebase.decode_jwt(jwt)
+        Service::RecurringRecords.new(uid: userdata[:uid]).auto_generate_current_month
+        userdata
       end
 
       # Present a create/update mutation result with Common::Response.

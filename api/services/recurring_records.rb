@@ -69,12 +69,41 @@ module Service
         raise Exceptions::Conflict, "total_count reached for recurring record #{id}" if generated >= recurring[:total_count]
       end
 
-      cache_key = "#{@hashed_uid}-#{id}-#{year}-#{month}"
-      already_exists = CACHE.fetch(cache_key, expires_in: 30.days) do
+      raise Exceptions::Conflict, "finance record already exists for #{id} #{year}/#{month}" if
         DB::Repository::FinanceRecord.exists_in_month?(recurring_group_id: id, year:, month:)
-      end
-      raise Exceptions::Conflict, "finance record already exists for #{id} #{year}/#{month}" if already_exists
 
+      record = build_and_create_finance_record(recurring:, id:, year:, month:)
+      CACHE.write(cache_key(id, year, month), true, expires_in: 30.days)
+      record
+    end
+
+    def auto_generate_current_month
+      year = Date.today.year
+      month = Date.today.month
+      records = DB::Repository::RecurringRecord.all(hashed_user_id: @hashed_uid)
+      records.each do |recurring|
+        id = recurring[:id]
+        next if CACHE.read(cache_key(id, year, month))
+        next if DB::Repository::FinanceRecord.exists_in_month?(recurring_group_id: id, year:, month:)
+        next if recurring[:total_count] &&
+                DB::Repository::RecurringRecord.generated_count(recurring_group_id: id) >= recurring[:total_count]
+
+        build_and_create_finance_record(recurring:, id:, year:, month:)
+        CACHE.write(cache_key(id, year, month), true, expires_in: 30.days)
+      rescue StandardError
+        next
+      end
+    end
+
+    private
+
+    def repository = DB::Repository::RecurringRecord
+
+    def cache_key(id, year, month)
+      "#{@hashed_uid}-#{id}-#{year}-#{month}"
+    end
+
+    def build_and_create_finance_record(recurring:, id:, year:, month:)
       date = Date.new(year, month, 1)
       attrs = {
         id: ID.generate,
@@ -91,14 +120,8 @@ module Service
       attrs[:encrypted_description] = recurring[:encrypted_description] if recurring[:encrypted_description]
       dto = DB::Model::FinanceRecord.dto.new(**attrs)
       dto.validate!
-      record = DB::Repository::FinanceRecord.create(dto)
-      CACHE.write(cache_key, true, expires_in: 30.days)
-      record
+      DB::Repository::FinanceRecord.create(dto)
     end
-
-    private
-
-    def repository = DB::Repository::RecurringRecord
 
     def format_with_generated_count(record)
       generated_count = DB::Repository::RecurringRecord.generated_count(recurring_group_id: record[:id])

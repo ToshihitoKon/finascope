@@ -41,10 +41,10 @@ body:
     id: feature_name
     attributes:
       label: 機能名（英語スネークケース）
-      description: Design Doc のファイル名に使う短い識別子。`docs/design-doc/[連番]-[scope]-[ここ].md` の `ここ` に入る。
+      description: Design Doc のファイル名に使う短い識別子。`docs/design-doc/[連番]-[scope]-[ここ].md` の `ここ` に入る。空欄の場合はおまかせ。
       placeholder: 例）bulk-delete-records
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: goals

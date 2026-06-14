@@ -4,15 +4,14 @@
 
 ## 概要
 
-`recurring_records` テーブルを新設し、繰り返しレコードの定義を管理する。ログイン時に未生成月の `finance_records` を自動生成する仕組みと、手動で翌月分を生成するエンドポイントを追加する。また `finance_records` に `recurring_group_id` を追加して繰り返しグループと紐付ける。
+`recurring_records` テーブルを新設し、繰り返しレコードの定義を管理する。指定月 + 指定 recurring_id で `finance_records` を生成するエンドポイントを追加する。また `finance_records` に `recurring_group_id` を追加して繰り返しグループと紐付ける。
 
 ## 目標
 
 - `recurring_records` テーブルで繰り返し定義を CRUD できる
-- ログイン時に当月までの未生成分の `finance_records` を自動生成する
-- 手動で任意月の `finance_records` を生成するエンドポイントを持つ
+- 指定月 + 指定 recurring_id で `finance_records` を生成するエンドポイントを持つ
 - `finance_records` の作成・更新時に `recurring_group_id` を指定できる
-- recurring フラグで絞り込む GET エンドポイントを追加する
+- `recurring_group_id` の有無で絞り込む GET エンドポイントを追加する
 
 ## 非目標
 
@@ -103,9 +102,11 @@ t_def.string :recurring_group_id, null: true  # recurring_records.id を参照
 
 #### 月次生成エンドポイント
 
+指定月 + 指定 recurring_id の組み合わせで `finance_records` を 1 件生成する。
+
 | メソッド | パス | 説明 |
 |---------|------|------|
-| POST | /api/v1/recurring_records/generate | 指定月の finance_records を生成 |
+| POST | /api/v1/recurring_records/:id/generate | 指定 recurring_id・指定月の finance_record を生成 |
 
 **リクエスト:**
 ```json
@@ -118,27 +119,23 @@ t_def.string :recurring_group_id, null: true  # recurring_records.id を参照
 **レスポンス:**
 ```json
 {
-  "generated_count": 3,
-  "records": [{ "id": "fr_xxx", "status": "created" }]
+  "status": "created",
+  "id": "fr_xxx"
 }
 ```
 
-既に同 `recurring_group_id` + 同月のレコードが存在する場合はスキップ（冪等）。
+既に同 `recurring_group_id` + 同月のレコードが存在する場合は HTTP 409 を返す（冪等ではなく明示的エラー）。
 
 #### finance_records の変更
 
 - POST/PUT に `recurring_group_id` パラメータ（optional）を追加
-- GET に `recurring` フィルタパラメータを追加
+- GET に `recurring` フィルタパラメータを追加（`recurring_group_id IS NOT NULL` で絞り込む）
 
 ```
 GET /api/v1/records?recurring=true
 ```
 
-#### ログイン時自動生成
-
-`request_userdata` が呼ばれた後（認証成功後）、`RecurringRecordGenerator` サービスを呼んで当月までの未生成分を生成する。処理はバックグラウンドではなく同期的に行う（件数が少ない前提）。
-
-生成済み判定: `finance_records` に同じ `recurring_group_id` かつ同月（year + month が一致）のレコードが存在すれば生成済み。生成時の日付は月初（1日）で統一する。
+ログイン時の自動生成は行わない。`finance_records` の生成は上記 generate エンドポイントを明示的に呼ぶことで行う。
 
 ### Entity
 
@@ -148,8 +145,7 @@ GET /api/v1/records?recurring=true
 
 - `api/db/models.rb` — `RecurringRecord` モデル追加、`FinanceRecord` に `recurring_group_id` カラム追加
 - `api/db/repositories.rb` — `RecurringRecord` リポジトリ追加、`FinanceRecord` リポジトリに `recurring_group_id` フィルタ・`recurring` フィルタ追加
-- `api/services/recurring_records.rb` — 新規。RecurringRecord の CRUD サービス
-- `api/services/recurring_record_generator.rb` — 新規。月次生成ロジック（未生成月を検出して finance_records を生成）
+- `api/services/recurring_records.rb` — 新規。RecurringRecord の CRUD + generate サービス
 - `api/services/records.rb` — `create` / `update` に `recurring_group_id` パラメータ追加、`get_records` に `recurring` フィルタ追加
 - `api/app/api/v1/recurring_records.rb` — 新規。CRUD + generate エンドポイント
 - `api/app/api/v1/records.rb` — GET に `recurring` param 追加、POST/PUT に `recurring_group_id` param 追加
@@ -165,15 +161,13 @@ GET /api/v1/records?recurring=true
 1. `mysql/init.d/00_user_database.sql` に `recurring_records` テーブルと `finance_records.recurring_group_id` カラムを追加する
 2. `api/db/models.rb` に `RecurringRecord` モデルを追加し、`FinanceRecord` に `recurring_group_id` を追加する
 3. `api/db/repositories.rb` に `RecurringRecord` リポジトリを追加し、`FinanceRecord` リポジトリを更新する
-4. `api/services/recurring_records.rb` を新規作成（CRUD）
-5. `api/services/recurring_record_generator.rb` を新規作成（月次生成ロジック）
-6. `api/services/records.rb` を更新（`recurring_group_id` / `recurring` フィルタ対応）
+4. `api/services/recurring_records.rb` を新規作成（CRUD + generate ロジック）
+5. `api/services/records.rb` を更新（`recurring_group_id` / `recurring` フィルタ対応）
 7. `api/app/api/v1/entities/recurring_records.rb` を新規作成
-8. `api/app/api/v1/recurring_records.rb` を新規作成（CRUD + generate エンドポイント）
-9. `api/app/api/v1/records.rb` を更新（パラメータ追加）
-10. `api/app/api/v1/root.rb` と `api/app/api/root.rb` を更新（mount / swagger 登録）
-11. `api/app/api/root.rb` の `request_userdata` ヘルパーにログイン時自動生成を追加
-12. spec を追加・更新してテストを通す
+7. `api/app/api/v1/recurring_records.rb` を新規作成（CRUD + generate エンドポイント）
+8. `api/app/api/v1/records.rb` を更新（パラメータ追加）
+9. `api/app/api/v1/root.rb` と `api/app/api/root.rb` を更新（mount / swagger 登録）
+10. spec を追加・更新してテストを通す
 
 ## 代替案
 

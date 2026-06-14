@@ -22,17 +22,16 @@ module DB
         return const_get("DTO") if const_defined?("DTO")
 
         columns = DB::TableColumns.get_columns_set(self).to_a
+        nullable = DB::TableColumns.get_nullable_set(self)
         str = Struct.new(
           *columns,
           keyword_init: true
         ) do
           # Members that are nil and therefore fail validation.
-          # Timestamp columns are exempt.
-          # TODO: derive required members from NOT NULL constraints
-          def invalid_members
-            members.reject do |m|
-              [:created_at, :updated_at, :deleted_at].include?(m) || !self[m].nil?
-            end
+          # Timestamp columns and nullable columns are exempt.
+          define_method(:invalid_members) do
+            exempt = [:created_at, :updated_at, :deleted_at] + nullable.to_a
+            members.reject { |m| exempt.include?(m) || !self[m].nil? }
           end
 
           def valid?

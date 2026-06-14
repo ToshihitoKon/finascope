@@ -14,14 +14,14 @@ module Service
       @formatter = FinanceRecordFormatter.new(uhash: @uhash)
     end
 
-    def get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil)
-      opts = { hashed_user_id: @hashed_uid, sort:, page:, begin_date:, end_date: }.compact
+    def get_records(page: nil, sort: { date: :desc }, begin_date: nil, end_date: nil, recurring: nil)
+      opts = { hashed_user_id: @hashed_uid, sort:, page:, begin_date:, end_date:, recurring: }.compact
       records = DB::Repository::FinanceRecord.get_page(**opts)
       records.map { @formatter.format(it) }
     end
 
     def create(params)
-      dto = DB::Model::FinanceRecord.dto.new(
+      attrs = {
         id: ID.generate,
         hashed_user_id: @hashed_uid,
         record_type_id: params[:record_type_id],
@@ -31,9 +31,10 @@ module Service
         payment_method_id: params[:payment_method_id],
         state_id: params[:state_id],
         date: params[:date],
-        encrypted_description: @uhash.encrypt(params[:description]),
-        recurring: params[:recurring] || false
-      )
+        encrypted_description: @uhash.encrypt(params[:description])
+      }
+      attrs[:recurring_group_id] = params[:recurring_group_id] if params[:recurring_group_id]
+      dto = DB::Model::FinanceRecord.dto.new(**attrs)
       persist(dto)
     end
 
@@ -47,7 +48,7 @@ module Service
         state_id: params[:state_id],
         date: params[:date],
         encrypted_description: params[:description]&.present? ? @uhash.encrypt(params[:description]) : nil,
-        recurring: params[:recurring]
+        recurring_group_id: params[:recurring_group_id]
       ).to_h.compact
       raise Exceptions::InvalidArgument, "no params to update" if params_dto.empty?
 

@@ -78,6 +78,7 @@ module API
         API::Entities::InvoiceRecords::WithdrawalRecordsAggregation,
         API::Entities::PaymentMethods::PaymentMethod,
         API::Entities::Records::Record,
+        API::Entities::RecurringRecords::RecurringRecord,
         API::Entities::View::CategoryAggregation
       ]
   end

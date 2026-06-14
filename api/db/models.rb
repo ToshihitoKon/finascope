@@ -27,7 +27,7 @@ module DB
         t_def.string :payment_method_id, null: false
         t_def.date :date, null: false
         t_def.string :encrypted_description, null: true
-        t_def.boolean :recurring, null: false, default: false
+        t_def.string :recurring_group_id, null: true
 
         t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false
@@ -40,7 +40,8 @@ module DB
           { columns: [:hashed_user_id], name: "index_finance_records_on_hashed_user_id" },
           { columns: [:category_id], name: "index_finance_records_on_category_id" },
           { columns: [:payment_method_id], name: "index_finance_records_on_payment_method_id" },
-          { columns: [:date], name: "index_finance_records_on_date" }
+          { columns: [:date], name: "index_finance_records_on_date" },
+          { columns: [:recurring_group_id], name: "index_finance_records_on_recurring_group_id" }
         ]
       end
     end
@@ -125,6 +126,42 @@ module DB
       end
     end
 
+    class RecurringRecord < DB::Model::BaseWrapper
+      belongs_to :category
+      belongs_to :payment_method
+      belongs_to :hashed_user
+
+      # define_table_schema: for ActiveRecord::Schema.define
+      def self.define_table_schema(t_def)
+        t_def.string  :id,                    null: false, primary_key: true
+        t_def.string  :hashed_user_id,        null: false
+        t_def.integer :record_type_id,        null: false
+        t_def.integer :state_id,              null: false
+        t_def.string  :encrypted_title,       null: false
+        t_def.integer :amount,                null: false
+        t_def.string  :category_id,           null: false
+        t_def.string  :payment_method_id,     null: false
+        t_def.string  :encrypted_description, null: true
+        t_def.date    :start_date,            null: false
+        t_def.integer :total_count,           null: true
+        t_def.virtual :end_date, type: :date, null: true,
+                       as: "CASE WHEN total_count IS NULL THEN NULL ELSE DATE_ADD(start_date, INTERVAL (total_count - 1) MONTH) END",
+                       stored: true
+
+        t_def.datetime :deleted_at, null: true
+        t_def.timestamps null: false
+      end
+
+      # define_index: returns index definitions for ActiveRecord::Schema.define
+      def self.define_index
+        [
+          { columns: [:hashed_user_id],    name: "index_recurring_records_on_hashed_user_id" },
+          { columns: [:category_id],       name: "index_recurring_records_on_category_id" },
+          { columns: [:payment_method_id], name: "index_recurring_records_on_payment_method_id" }
+        ]
+      end
+    end
+
     class UserInformation < DB::Model::BaseWrapper
       # define_table_schema: for ActiveRecord::Schema.define
       # DO NOT CREATE RELATION TO HASHED_USER TABLE
@@ -162,6 +199,7 @@ module DB
       Category,
       PaymentMethod,
       InvoiceRecord,
+      RecurringRecord,
       UserInformation,
       User
     ].freeze

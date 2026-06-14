@@ -20,18 +20,20 @@ module API
         desc "Get Records",
              success: { model: API::Entities::Records::Record, is_array: true, as: :records }
         params do
-          optional :page, type: Integer, desc: "(Integer) Page number for pagination"
-          optional :begin_date, type: String, desc: "(String) Begin date in ISO8601 format"
-          optional :end_date, type: String, desc: "(String) End date in ISO8601 format"
+          optional :page,       type: Integer,          desc: "(Integer) Page number for pagination"
+          optional :begin_date, type: String,            desc: "(String) Begin date in ISO8601 format"
+          optional :end_date,   type: String,            desc: "(String) End date in ISO8601 format"
+          optional :recurring,  type: Grape::API::Boolean, desc: "(Boolean) Filter by recurring_group_id presence"
         end
         get do
           page = params[:page].to_i if params[:page]
           begin_date = Date.parse(params[:begin_date])&.beginning_of_day if params[:begin_date]
           end_date = Date.parse(params[:end_date])&.end_of_day if params[:end_date]
+          recurring = params[:recurring]
 
           uid = request_userdata[:uid]
           finance_records_service = Service::FinanceRecords.new(uid:)
-          records = finance_records_service.get_records(page:, begin_date:, end_date:)
+          records = finance_records_service.get_records(page:, begin_date:, end_date:, recurring:)
           present records, with: API::Entities::Records::Record, root: :records
         end
 
@@ -46,7 +48,7 @@ module API
           requires :category_id, type: String, desc: "(String) Record category ID"
           requires :date, type: String, desc: "(String) Record date in ISO8601 format"
           requires :payment_method_id, type: String, desc: "(String) Payment method ID"
-          optional :recurring, type: Grape::API::Boolean, desc: "(Boolean) Recurring record flag", default: false
+          optional :recurring_group_id, type: String, desc: "(String) Recurring record group ID"
         end
         post do
           uid = request_userdata[:uid]
@@ -60,7 +62,7 @@ module API
             category_id: params[:category_id],
             date: Date.parse(params[:date]),
             payment_method_id: params[:payment_method_id],
-            recurring: params[:recurring]
+            recurring_group_id: params[:recurring_group_id]
           )
           present_mutation_response(record)
         end
@@ -77,7 +79,7 @@ module API
           requires :category_id, type: String, desc: "(String) Record category ID"
           requires :date, type: String, desc: "(String) Record date in ISO8601 format"
           requires :payment_method_id, type: String, desc: "(String) Payment method ID"
-          optional :recurring, type: Grape::API::Boolean, desc: "(Boolean) Recurring record flag"
+          optional :recurring_group_id, type: String, desc: "(String) Recurring record group ID"
         end
         put ":id" do
           uid = request_userdata[:uid]
@@ -93,7 +95,7 @@ module API
               category_id: params[:category_id],
               date: Date.parse(params[:date]),
               payment_method_id: params[:payment_method_id],
-              recurring: params[:recurring]
+              recurring_group_id: params[:recurring_group_id]
             }
           )
           present_mutation_response(record)

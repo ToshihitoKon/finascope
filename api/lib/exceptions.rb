@@ -35,4 +35,10 @@ module Exceptions
       401
     end
   end
+
+  class Conflict < Base
+    def self.http_status
+      409
+    end
+  end
 end

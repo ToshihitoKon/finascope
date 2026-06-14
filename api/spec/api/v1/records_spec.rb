@@ -33,24 +33,24 @@ RSpec.describe "Records API" do
       expect(json_body[:id]).to be_a(String)
     end
 
-    it "defaults recurring to false when not specified" do
+    it "creates a record with recurring_group_id" do
+      post "/api/v1/records", record_params.merge(recurring_group_id: "rr_test_id"), auth_header
+      expect(last_response.status).to eq(201)
+      created_id = json_body[:id]
+
+      get "/api/v1/records", get_params, auth_header
+      record = json_body[:records].find { |r| r[:id] == created_id }
+      expect(record[:recurring_group_id]).to eq("rr_test_id")
+    end
+
+    it "defaults recurring_group_id to nil when not specified" do
       post "/api/v1/records", record_params, auth_header
       expect(last_response.status).to eq(201)
       created_id = json_body[:id]
 
       get "/api/v1/records", get_params, auth_header
       record = json_body[:records].find { |r| r[:id] == created_id }
-      expect(record[:recurring]).to eq(false)
-    end
-
-    it "creates a record with recurring true" do
-      post "/api/v1/records", record_params.merge(recurring: true), auth_header
-      expect(last_response.status).to eq(201)
-      created_id = json_body[:id]
-
-      get "/api/v1/records", get_params, auth_header
-      record = json_body[:records].find { |r| r[:id] == created_id }
-      expect(record[:recurring]).to eq(true)
+      expect(record[:recurring_group_id]).to be_nil
     end
   end
 
@@ -65,13 +65,25 @@ RSpec.describe "Records API" do
       expect(ids).to include(created_id)
     end
 
-    it "includes recurring field in response" do
+    it "includes recurring_group_id field in response" do
       post "/api/v1/records", record_params, auth_header
       created_id = json_body[:id]
 
       get "/api/v1/records", get_params, auth_header
       record = json_body[:records].find { |r| r[:id] == created_id }
-      expect(record).to have_key(:recurring)
+      expect(record).to have_key(:recurring_group_id)
+    end
+
+    it "filters by recurring=true" do
+      post "/api/v1/records", record_params, auth_header
+      post "/api/v1/records", record_params.merge(recurring_group_id: "rr_test_id"), auth_header
+      recurring_id = json_body[:id]
+
+      get "/api/v1/records", get_params.merge(recurring: true), auth_header
+      expect(last_response.status).to eq(200)
+      ids = json_body[:records].map { |r| r[:id] }
+      expect(ids).to include(recurring_id)
+      expect(json_body[:records].all? { |r| !r[:recurring_group_id].nil? }).to be true
     end
   end
 end

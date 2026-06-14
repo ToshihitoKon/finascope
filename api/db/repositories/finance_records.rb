@@ -42,12 +42,26 @@ module DB
         hashed_user_id:,
         begin_date: Date.today.beginning_of_month,
         end_date: Date.today.end_of_month,
-        page: 1, per_page: 50, sort: { created_at: :asc }
+        page: 1, per_page: 50, sort: { created_at: :asc },
+        recurring: nil
       )
-        records = model.eager_load(:category, :payment_method)
-                       .where(deleted_at: nil, date: begin_date..end_date, hashed_user_id:)
-                       .order(sort).page(page).per(per_page)
+        query = model.eager_load(:category, :payment_method)
+                     .where(deleted_at: nil, date: begin_date..end_date, hashed_user_id:)
+        query = if recurring == true
+                  query.where.not(recurring_group_id: nil)
+                elsif recurring == false
+                  query.where(recurring_group_id: nil)
+                else
+                  query
+                end
+        records = query.order(sort).page(page).per(per_page)
         records.map { |record| with_encrypted_labels(record) }
+      end
+
+      def self.exists_in_month?(recurring_group_id:, year:, month:)
+        begin_date = Date.new(year, month, 1)
+        end_date = begin_date.end_of_month
+        model.where(deleted_at: nil, recurring_group_id:, date: begin_date..end_date).exists?
       end
 
       def self.get_all_by_user(

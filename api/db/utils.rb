@@ -2,7 +2,7 @@
 
 module DB
   class TableColumns
-    attr_reader :columns
+    attr_reader :columns, :nullable_columns
 
     def self.get_columns_set(model_class)
       t = TableColumns.new
@@ -10,8 +10,15 @@ module DB
       t.columns
     end
 
+    def self.get_nullable_set(model_class)
+      t = TableColumns.new
+      model_class.define_table_schema(t)
+      t.nullable_columns
+    end
+
     def initialize
       @columns = Set.new
+      @nullable_columns = Set.new
     end
 
     # Override ActiveRecord::ConnectionAdapters::TableDefinition methods
@@ -29,13 +36,15 @@ module DB
     def references(*_args); end
     def set_primary_key(*_args); end
 
-    def column(name, *_args)
-      @columns << name.to_sym
+    def column(name, *_args, null: true, **_kwargs)
+      sym = name.to_sym
+      @columns << sym
+      @nullable_columns << sym if null
     end
 
     # ActiveRecord::Schema.define の t.string 等をキャッチする
-    def method_missing(_method, name, *_args) # rubocop:disable Style/MissingRespondToMissing
-      column(name)
+    def method_missing(_method, name, *args, **kwargs) # rubocop:disable Style/MissingRespondToMissing
+      column(name, *args, **kwargs)
     end
   end
 end

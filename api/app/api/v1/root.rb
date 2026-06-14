@@ -5,6 +5,7 @@ require_relative "records"
 require_relative "categories"
 require_relative "payment_methods"
 require_relative "invoice_records"
+require_relative "recurring_records"
 require_relative "view"
 
 module API
@@ -17,6 +18,7 @@ module API
       mount API::V1::Categories
       mount API::V1::PaymentMethods
       mount API::V1::InvoiceRecords
+      mount API::V1::RecurringRecords
       mount API::V1::View
 
       resource :healthcheck do

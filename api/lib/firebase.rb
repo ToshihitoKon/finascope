@@ -30,13 +30,13 @@ class Firebase
     end
 
     def decode_jwt(jwt)
-      payload = JWT.decode(jwt, nil, true, { algorithm: "RS256", jwks: jwks })
-      header = payload[0]
+      decoded = JWT.decode(jwt, nil, true, { algorithm: "RS256", jwks: jwks })
+      payload = decoded[0]
 
-      raise JWT::DecodeError.exception("aud not match") if header["aud"] != "temama-finascope"
-      raise JWT::DecodeError.exception("iss not match") if header["iss"] != "https://securetoken.google.com/temama-finascope"
+      raise JWT::DecodeError.exception("aud not match") if payload["aud"] != "temama-finascope"
+      raise JWT::DecodeError.exception("iss not match") if payload["iss"] != "https://securetoken.google.com/temama-finascope"
 
-      { uid: header["user_id"], name: header["name"], picture_url: header["picture"] }
+      { uid: payload["user_id"], name: payload["name"], picture_url: payload["picture"] }
     rescue JWT::DecodeError => e
       raise Exceptions::Unauthorized, "failed to decode JWT: #{e}"
     end

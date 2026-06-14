@@ -19,6 +19,8 @@ class UserHash
     @user_info_hash ||= Digest::SHA256.hexdigest(@base_uid + Constants::HASH[:user_infromation_salt])[0..23]
   end
 
+  # Encrypted data layout (Base64-encoded):
+  #   [IV: 12 bytes] + [ciphertext: N bytes] + [GCM auth_tag: 16 bytes]
   def encrypt(data)
     cipher = OpenSSL::Cipher.new(Constants::HASH[:algorithm])
     cipher.encrypt

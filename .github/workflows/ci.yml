@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  api-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: example
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -pexample"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: finascope_app
+      DB_PASSWORD: finascope_app_password
+      DB_NAME: finascope_test
+      RACK_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+          working-directory: api
+
+      - name: Initialize MySQL users and databases
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u root -pexample < mysql/init.d/00_user_database.sql
+          mysql -h 127.0.0.1 -P 3306 -u root -pexample < mysql/init.d/01_test_database.sql
+
+      - name: Run API tests
+        working-directory: api
+        run: bundle exec rake test

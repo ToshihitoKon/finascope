@@ -6,6 +6,7 @@ module Envs
   DB_USER = ENV.fetch("DB_USER", "app_user")
   DB_PASSWORD = ENV.fetch("DB_PASSWORD", "password")
   DB_PORT = ENV.fetch("DB_PORT", "3306")
+  DEV_UID = ENV.fetch("DEV_UID", nil)
   USER_SALT = ENV.fetch("USER_SALT", "dev_user_salt_placeholder")
   FIXED_SALT = ENV.fetch("FIXED_SALT", "dev_fixed_salt_placeholder")
 end

@@ -34,8 +34,8 @@ gem "grape-swagger-entity", "~> 0.7.0"
 gem "rake"
 
 group :test do
-  gem "rspec", "~> 3.13"
   gem "database_cleaner-active_record", "~> 2.2"
+  gem "rspec", "~> 3.13"
   gem "rubocop", require: false
   gem "rubocop-rspec", require: false
 end

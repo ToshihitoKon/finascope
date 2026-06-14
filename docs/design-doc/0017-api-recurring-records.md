@@ -137,6 +137,15 @@ GET /api/v1/records?recurring=true
 
 ログイン時の自動生成は行わない。`finance_records` の生成は上記 generate エンドポイントを明示的に呼ぶことで行う。
 
+#### 生成済み判定の on-memory cache
+
+generate エンドポイント内で同月生成済みかを確認する際、DB クエリ結果を on-memory（Ruby Hash）にキャッシュする。同一リクエスト内での重複クエリを避けるためのリクエストスコープキャッシュであり、プロセス間共有は不要。
+
+```ruby
+# Service 内でリクエストスコープの cache を持つ
+@generated_cache ||= {}  # "#{recurring_group_id}-#{year}-#{month}" => true
+```
+
 ### Entity
 
 `API::Entities::RecurringRecords::RecurringRecord` を新規作成。

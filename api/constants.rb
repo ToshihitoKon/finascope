@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "envs"
+
 module Constants
   RECORD_STATES = [
     { id: 0, label: "予定" },
@@ -31,10 +33,9 @@ module Constants
 
   HASH = {
     user_infromation_salt: "userinfo",
-    user_salt: "user",
-    algorithm: "aes-256-cbc",
-    fixed_salt: "fixedsalt123456",
-    fixed_iv: "fixediv123456789"
+    user_salt: Envs::USER_SALT,
+    algorithm: "aes-256-gcm",
+    fixed_salt: Envs::FIXED_SALT
   }.freeze
 
   EXAMPLE_USER_UID = "example_user_uid"

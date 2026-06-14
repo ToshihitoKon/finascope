@@ -14,33 +14,27 @@ module Service
 
     def category_aggregation(begin_date: nil, end_date: nil)
       opts = { hashed_user_id: @hashed_uid, begin_date:, end_date: }.compact
-      aggregated_records = DB::Repository::FinanceRecord.get_aggregated_by_category(**opts)
+      all_records = DB::Repository::FinanceRecord.get_all_by_user(**opts)
 
-      aggregated_records.map do |aggregated_record|
-        category = if aggregated_record[:category_id] == Constants::TODO_ID[:category] ||
-                      aggregated_record[:encrypted_category].nil?
+      grouped = all_records.group_by do |r|
+        r[:category_id] || Constants::TODO_ID[:category]
+      end
+
+      grouped.map do |category_id, records|
+        sample = records.first
+        category = if category_id == Constants::TODO_ID[:category] ||
+                      sample[:encrypted_category].nil?
                      "TODO"
                    else
-                     @uhash.decrypt(aggregated_record[:encrypted_category])
+                     @uhash.decrypt(sample[:encrypted_category])
                    end
 
-        actual_category_id = aggregated_record[:category_id] || Constants::TODO_ID[:category]
-
-        detail_records = DB::Repository::FinanceRecord.get_records_by_category(
-          hashed_user_id: @hashed_uid,
-          category_id: actual_category_id,
-          begin_date: opts[:begin_date],
-          end_date: opts[:end_date]
-        )
-
-        records = detail_records.map { @formatter.format(it) }
-
         {
-          category_id: actual_category_id,
+          category_id:,
           category:,
-          total_amount: aggregated_record[:total_amount],
-          record_count: aggregated_record[:record_count],
-          records: records
+          total_amount: records.sum { it[:amount] },
+          record_count: records.size,
+          records: records.map { @formatter.format(it) }
         }
       end
     end

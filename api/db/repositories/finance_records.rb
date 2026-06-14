@@ -50,40 +50,13 @@ module DB
         records.map { |record| with_encrypted_labels(record) }
       end
 
-      def self.get_aggregated_by_category(
+      def self.get_all_by_user(
         hashed_user_id:,
-        begin_date: nil,
-        end_date: nil
-      )
-        query = model.left_joins(:category)
-                     .where(deleted_at: nil, hashed_user_id:)
-        query = apply_date_range(query, begin_date:, end_date:)
-
-        query.group("finance_records.category_id")
-             .select(
-               "finance_records.category_id",
-               "categories.encrypted_label as encrypted_category",
-               "SUM(finance_records.amount) as total_amount",
-               "COUNT(*) as record_count"
-             )
-             .map do |record|
-               {
-                 category_id: record.category_id,
-                 encrypted_category: record.encrypted_category,
-                 total_amount: record.total_amount.to_i,
-                 record_count: record.record_count
-               }
-             end
-      end
-
-      def self.get_records_by_category(
-        hashed_user_id:,
-        category_id:,
         begin_date: nil,
         end_date: nil
       )
         query = model.eager_load(:payment_method, :category)
-                     .where(deleted_at: nil, hashed_user_id:, category_id:)
+                     .where(deleted_at: nil, hashed_user_id:)
         query = apply_date_range(query, begin_date:, end_date:)
 
         query.map { |record| with_encrypted_labels(record) }

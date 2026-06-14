@@ -3,12 +3,12 @@
 require "constants"
 require "db/repositories"
 require "lib/finance_record_formatter"
+require "services/base"
 
 module Service
-  class View
+  class View < Base
     def initialize(uid:)
-      @uhash = UserHash.new(uid)
-      @hashed_uid = @uhash.user_hash
+      super
       @formatter = FinanceRecordFormatter.new(uhash: @uhash)
     end
 

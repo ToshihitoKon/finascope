@@ -5,12 +5,12 @@ require "db/repositories"
 require "lib/exceptions"
 require "lib/id"
 require "lib/finance_record_formatter"
+require "services/base"
 
 module Service
-  class FinanceRecords
+  class FinanceRecords < Base
     def initialize(uid:)
-      @uhash = UserHash.new(uid)
-      @hashed_uid = @uhash.user_hash
+      super
       @formatter = FinanceRecordFormatter.new(uhash: @uhash)
     end
 
@@ -33,9 +33,7 @@ module Service
         date: params[:date],
         encrypted_description: @uhash.encrypt(params[:description])
       )
-      dto.validate!
-
-      DB::Repository::FinanceRecord.create(dto)
+      persist(dto)
     end
 
     def update(id:, params:)
@@ -55,7 +53,11 @@ module Service
     end
 
     def delete(id:)
-      DB::Repository::FinanceRecord.delete(id:)
+      destroy(id:)
     end
+
+    private
+
+    def repository = DB::Repository::FinanceRecord
   end
 end

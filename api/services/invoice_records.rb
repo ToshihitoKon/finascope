@@ -7,12 +7,12 @@ require "lib/exceptions"
 require "lib/finance_record_formatter"
 require "lib/id"
 require "lib/invoice_record_formatter"
+require "services/base"
 
 module Service
-  class InvoiceRecords
+  class InvoiceRecords < Base
     def initialize(uid:)
-      @uhash = UserHash.new(uid)
-      @hashed_uid = @uhash.user_hash
+      super
       @formatter = FinanceRecordFormatter.new(uhash: @uhash)
       @invoice_formatter = InvoiceRecordFormatter.new(uhash: @uhash)
     end
@@ -26,9 +26,7 @@ module Service
         payment_method_id: params[:payment_method_id],
         withdrawal_date: params[:withdrawal_date]
       )
-      dto.validate!
-
-      DB::Repository::InvoiceRecord.create(dto)
+      persist(dto)
     end
 
     def update(id:, params:)
@@ -43,7 +41,7 @@ module Service
     end
 
     def delete(id:)
-      DB::Repository::InvoiceRecord.delete(id:)
+      destroy(id:)
     end
 
     def monthly_records(year: nil, month: nil)
@@ -113,6 +111,8 @@ module Service
     end
 
     private
+
+    def repository = DB::Repository::InvoiceRecord
 
     def calc_withdrawal_date(year, month, day_of_month)
       begin

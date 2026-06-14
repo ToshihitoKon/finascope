@@ -12,7 +12,7 @@ RSpec.describe "Records API" do
       amount: 1000,
       category_id: "TODO_CATEGORY_ID",
       payment_method_id: "TODO_PAYMENT_METHOD_ID",
-      date: "2026-05-01"
+      date: Date.today.strftime("%Y-%m-01")
     }
   end
 

@@ -136,20 +136,23 @@ t_def.string :recurring_group_id, null: true  # recurring_records.id を参照
 GET /api/v1/records?recurring=true
 ```
 
-ログイン時の自動生成は行わない。`finance_records` の生成は上記 generate エンドポイントを明示的に呼ぶことで行う。
+**ログイン時の自動生成**: ユーザーが API を呼び出すたびに `request_userdata` 内で `auto_generate_current_month` を実行し、今月分の `finance_records` を自動生成する。generate エンドポイントは手動で特定月のレコードを生成したい場合に使用する。
 
 #### 生成済み判定の on-memory cache
 
-generate エンドポイント内で同月生成済みかを確認する際、`ActiveSupport::Cache::MemoryStore` をプロセスグローバルなキャッシュとして使用する。月イチ程度の更新頻度なので TTL は 1 ヶ月に設定する。ActiveSupport はすでに ActiveRecord 経由で依存済みのため追加コストなし。
+`auto_generate_current_month`（ログイン時フック）内で `ActiveSupport::Cache::MemoryStore` をプロセスグローバルなキャッシュとして使用する。月イチ程度の更新頻度なので TTL は 30 日に設定する。ActiveSupport はすでに ActiveRecord 経由で依存済みのため追加コストなし。
+
+generate エンドポイント（手動生成）は DB を直接参照して存在確認を行う（キャッシュは使用しない）。
 
 ```ruby
-RECURRING_CACHE = ActiveSupport::Cache::MemoryStore.new
+CACHE = ActiveSupport::Cache::MemoryStore.new
 
-# 生成済み確認
+# auto_generate_current_month 内: キャッシュが存在すればスキップ
 key = "#{hashed_user_id}-#{recurring_group_id}-#{year}-#{month}"
-RECURRING_CACHE.fetch(key, expires_in: 1.month) do
-  DB::Repository::FinanceRecord.exists_in_month?(recurring_group_id:, year:, month:)
-end
+next if CACHE.read(key)
+next if DB::Repository::FinanceRecord.exists_in_month?(recurring_group_id:, year:, month:)
+# 生成後にキャッシュに書き込む
+CACHE.write(key, true, expires_in: 30.days)
 ```
 
 ### Entity
@@ -192,3 +195,47 @@ end
 ## 未解決事項
 
 - `total_count` に達した recurring_record の扱い: generate 時に 409 を返すが、`deleted_at` を立てるかは今後判断
+
+---
+
+## 実装サマリー
+
+> **実装日**: 2026-06-14
+
+### 変更ファイル
+
+- `api/db/models.rb` — `RecurringRecord` モデル追加、`FinanceRecord` に `recurring_group_id` カラム追加（`recurring` boolean は削除）
+- `api/db/utils.rb` — `TableColumns` に nullable カラム追跡機能を追加（`null:` キーワード引数）
+- `api/db/basewrapper.rb` — DTO の `invalid_members` で nullable カラムを除外するよう修正
+- `api/db/repositories/recurring_records.rb` — 新規。`all`, `find`, `generated_count` メソッド
+- `api/db/repositories/finance_records.rb` — `get_page` に `recurring:` フィルタ追加、`exists_in_month?` 追加
+- `api/db/repositories.rb` — `recurring_records` リポジトリの require 追加
+- `api/lib/exceptions.rb` — `Exceptions::Conflict`（HTTP 409）追加
+- `api/services/recurring_records.rb` — 新規。CRUD + `generate` + `auto_generate_current_month`
+- `api/services/records.rb` — `recurring_group_id` パラメータ対応、`recurring` フィルタ追加
+- `api/app/api/v1/recurring_records.rb` — 新規。CRUD + `POST :id/generate` エンドポイント
+- `api/app/api/v1/records.rb` — `recurring` / `recurring_group_id` パラメータ追加
+- `api/app/api/v1/entities/recurring_records.rb` — 新規。`RecurringRecord` エンティティ
+- `api/app/api/v1/entities/records.rb` — `recurring_group_id` expose に変更
+- `api/app/api/v1/root.rb` — `RecurringRecords` を mount
+- `api/app/api/root.rb` — swagger の `models:` 追加、`request_userdata` に `auto_generate_current_month` フック追加
+- `api/spec/api/v1/recurring_records_spec.rb` — 新規。CRUD + generate + 409 ケースの spec
+- `api/spec/api/v1/records_spec.rb` — `recurring_group_id` / `recurring` フィルタのテスト更新
+- `mysql/init.d/00_user_database.sql` — `recurring_records` テーブル DDL、`finance_records.recurring_group_id` カラム追加
+
+### 実装内容
+
+ddoc の設計に沿って実装した。主な差分は以下:
+
+- **ログイン時フックの追加**: ddoc 途中で「ログイン時の自動生成は行わない」と誤記していたが、実装では `request_userdata` 内で `auto_generate_current_month` を呼ぶ形で実装した。これは当初から意図されていた設計（削除されたのは Cron ジョブのみ）。
+- **generate はキャッシュ不使用**: generate エンドポイントは DB を直接参照して重複確認を行う。キャッシュを使うと generate → キャッシュ書き込み → 次の auto_generate がスキップ、という流れが壊れるリスクがあるため。
+- **nullable カラムの DTO validation 問題**: `recurring_group_id` と `encrypted_description` が nullable にもかかわらず、DTO の `validate!` が nil を invalid として 422 を返すバグがあった。`TableColumns` に `null:` キーワード追跡を追加し `invalid_members` で除外することで解決。
+
+### 確認・検証
+
+`./scripts/test/api-test.sh` で全 60 テスト通過を確認。
+
+### 気づき・備考
+
+- `auto_generate_current_month` がテスト時にも実行されるため（spec の認証フックから呼ばれる）、generate の spec で「current month は auto_generate 済みなので next month を対象にする」という設計が必要だった。
+- `TableColumns#method_missing` が `null: true` をデフォルトに持つことで、既存モデルの nullable 設定が自動的に引き継がれる（後方互換性を維持）。

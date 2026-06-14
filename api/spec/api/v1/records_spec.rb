@@ -14,6 +14,7 @@ RSpec.describe "Records API" do
       amount: 1000,
       category_id: "TODO_CATEGORY_ID",
       payment_method_id: "TODO_PAYMENT_METHOD_ID",
+<<<<<<< HEAD
       date: today.iso8601
     }
   end

@@ -21,19 +21,12 @@ module DB
       end
 
       def self.monthly_records(hashed_user_id:, year:, month:)
-        records = model.eager_load(:payment_method)
-                       .where(
-                         deleted_at: nil,
-                         hashed_user_id:,
-                         withdrawal_date: Date.new(year, month)..Date.new(year, month).end_of_month
-                       )
-        records.map do |record|
-          model.to_dto(record).to_h.merge(
-            {
-              payment_method: record.payment_method&.encrypted_label
-            }
-          )
-        end
+        records = model.where(
+          deleted_at: nil,
+          hashed_user_id:,
+          withdrawal_date: Date.new(year, month)..Date.new(year, month).end_of_month
+        )
+        records.map { |record| model.to_dto(record).to_h }
       end
     end
   end

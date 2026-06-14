@@ -20,7 +20,7 @@ DB::Connection.establish
 class SchemaMismatchException < StandardError; end
 
 # https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html
-def check_schema(model_class)
+def schema_correct?(model_class)
   puts model_class.table_name
 
   begin
@@ -90,7 +90,7 @@ end
 
 ActiveRecord::Schema.define do
   DB::Model::RECORD_MODELS.each do |model_class|
-    unless check_schema(model_class)
+    unless schema_correct?(model_class)
       puts "Create table: #{model_class.table_name}."
       $stdin.gets.chomp
       apply_table(model_class, force: true)

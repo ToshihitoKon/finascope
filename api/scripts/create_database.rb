@@ -14,13 +14,14 @@ require "mysql2"
 
 require_relative "../db/connection"
 require_relative "../db/models"
+require_relative "../envs"
 
 DB::Connection.establish
 
 class SchemaMismatchException < StandardError; end
 
 # https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html
-def check_schema(model_class)
+def schema_correct?(model_class)
   puts model_class.table_name
 
   begin
@@ -35,11 +36,26 @@ def check_schema(model_class)
     end
 
     puts "Correct schema"
-  rescue StandardError => e
+  rescue ActiveRecord::StatementInvalid, ActiveRecord::NoDatabaseError => e
     puts "Error: #{e}"
     return false
   end
   true
+end
+
+def confirm_destructive_operation(table_name)
+  puts ""
+  puts "WARNING: Destructive operation about to be performed!"
+  puts "  Target host:     #{Envs::DB_HOST}:#{Envs::DB_PORT}"
+  puts "  Target database: #{Envs::DB_NAME}"
+  puts "  Table to drop and recreate: #{table_name}"
+  puts ""
+  puts "Type YES to confirm: "
+  input = $stdin.gets&.chomp
+  return if input == "YES"
+
+  puts "Aborted. Input was not 'YES'."
+  exit 1
 end
 
 def apply_table(model_class, force: false)
@@ -64,8 +80,8 @@ rescue SchemaMismatchException
     pp "expect: #{expect}"
     raise
   end
-rescue StandardError => e
-  pp e
+rescue ActiveRecord::StatementInvalid => e
+  pp "StatementInvalid for #{table_name}: #{e.message}"
   create_table table_name, id: false, if_not_exists: true do |t|
     model_class.define_table_schema(t)
   end
@@ -73,9 +89,9 @@ end
 
 ActiveRecord::Schema.define do
   DB::Model::RECORD_MODELS.each do |model_class|
-    unless check_schema(model_class)
-      puts "Create table: #{model_class.table_name}."
-      $stdin.gets.chomp
+    unless schema_correct?(model_class)
+      puts "Table '#{model_class.table_name}' needs to be created or recreated."
+      confirm_destructive_operation(model_class.table_name)
       apply_table(model_class, force: true)
     end
     puts

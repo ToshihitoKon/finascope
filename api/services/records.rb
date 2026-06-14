@@ -31,7 +31,8 @@ module Service
         payment_method_id: params[:payment_method_id],
         state_id: params[:state_id],
         date: params[:date],
-        encrypted_description: @uhash.encrypt(params[:description])
+        encrypted_description: @uhash.encrypt(params[:description]),
+        recurring: params[:recurring] || false
       )
       persist(dto)
     end
@@ -45,7 +46,8 @@ module Service
         payment_method_id: params[:payment_method_id],
         state_id: params[:state_id],
         date: params[:date],
-        encrypted_description: params[:description]&.present? ? @uhash.encrypt(params[:description]) : nil
+        encrypted_description: params[:description]&.present? ? @uhash.encrypt(params[:description]) : nil,
+        recurring: params[:recurring]
       ).to_h.compact
       raise Exceptions::InvalidArgument, "no params to update" if params_dto.empty?
 

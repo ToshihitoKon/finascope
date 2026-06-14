@@ -46,6 +46,7 @@ module API
           requires :category_id, type: String, desc: "(String) Record category ID"
           requires :date, type: String, desc: "(String) Record date in ISO8601 format"
           requires :payment_method_id, type: String, desc: "(String) Payment method ID"
+          optional :recurring, type: Grape::API::Boolean, desc: "(Boolean) Recurring record flag", default: false
         end
         post do
           uid = request_userdata[:uid]
@@ -58,7 +59,8 @@ module API
             amount: params[:amount],
             category_id: params[:category_id],
             date: Date.parse(params[:date]),
-            payment_method_id: params[:payment_method_id]
+            payment_method_id: params[:payment_method_id],
+            recurring: params[:recurring]
           )
           present_mutation_response(record)
         end
@@ -75,6 +77,7 @@ module API
           requires :category_id, type: String, desc: "(String) Record category ID"
           requires :date, type: String, desc: "(String) Record date in ISO8601 format"
           requires :payment_method_id, type: String, desc: "(String) Payment method ID"
+          optional :recurring, type: Grape::API::Boolean, desc: "(Boolean) Recurring record flag"
         end
         put ":id" do
           uid = request_userdata[:uid]
@@ -89,7 +92,8 @@ module API
               amount: params[:amount],
               category_id: params[:category_id],
               date: Date.parse(params[:date]),
-              payment_method_id: params[:payment_method_id]
+              payment_method_id: params[:payment_method_id],
+              recurring: params[:recurring]
             }
           )
           present_mutation_response(record)

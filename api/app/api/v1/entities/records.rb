@@ -19,6 +19,7 @@ module API
         expose :state_id, documentation: { type: Integer, desc: "State ID" }
         expose :category_id, documentation: { type: String, desc: "Category ID" }
         expose :payment_method_id, documentation: { type: String, desc: "Payment method ID" }
+        expose :recurring, documentation: { type: Grape::API::Boolean, desc: "Whether this is a recurring record" }
       end
     end
   end

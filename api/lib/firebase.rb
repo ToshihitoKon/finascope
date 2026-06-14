@@ -17,14 +17,14 @@ class Firebase
     def jwks
       return @jwks if @jwks && !jwks_expired?
 
-      puts "downloading Firebase jwk..."
+      warn "downloading Firebase jwk..."
       url = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"
       res = Net::HTTP.get_response(URI.parse(url))
-      puts res.inspect
+      warn res.inspect
       raise Exceptions::InternalServerError, "failed to download Firebase jwk" if res.code != "200"
 
       @expires_at = Time.now + 3600 # 1 hour
-      puts "expires at: #{@expires_at}"
+      warn "expires at: #{@expires_at}"
 
       @jwks = JSON.parse(res.body)
     end

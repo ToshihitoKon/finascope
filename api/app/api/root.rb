@@ -5,7 +5,7 @@ require "lib/exceptions"
 require "lib/firebase"
 require "grape-swagger"
 require "grape-swagger-entity"
-require_relative "./v1/root"
+require_relative "v1/root"
 
 module API
   class Root < Grape::API

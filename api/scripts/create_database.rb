@@ -58,6 +58,23 @@ def confirm_destructive_operation(table_name)
   exit 1
 end
 
+def apply_indexes(model_class)
+  return unless model_class.respond_to?(:define_index)
+
+  model_class.define_index.each do |index_def|
+    next if index_def.empty?
+
+    columns = index_def[:columns]
+    opts = {}
+    opts[:name] = index_def[:name] if index_def[:name]
+    opts[:unique] = index_def[:unique] if index_def[:unique]
+
+    add_index model_class.table_name, columns, **opts
+  rescue ArgumentError => e
+    puts "Index already exists or error: #{e.message}"
+  end
+end
+
 def apply_table(model_class, force: false)
   table_name = model_class.table_name
 
@@ -94,6 +111,7 @@ ActiveRecord::Schema.define do
       confirm_destructive_operation(model_class.table_name)
       apply_table(model_class, force: true)
     end
+    apply_indexes(model_class)
     puts
   end
 end

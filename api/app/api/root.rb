@@ -5,7 +5,7 @@ require "lib/exceptions"
 require "lib/firebase"
 require "grape-swagger"
 require "grape-swagger-entity"
-require_relative "./v1/root"
+require_relative "v1/root"
 
 module API
   class Root < Grape::API
@@ -20,16 +20,13 @@ module API
         headers["Authorization"]
       end
 
-      def request_bearer
-        b = authorization_header&.gsub("Bearer ", "")
-        return Constants::EXAMPLE_USER_UID if b.blank?
-
-        b
-      end
-
       def request_userdata
         jwt = authorization_header&.gsub("Bearer ", "")
-        return { uid: Constants::EXAMPLE_USER_UID } if jwt.blank?
+        if jwt.blank?
+          raise Exceptions::Unauthorized, "Unauthorized" unless Envs::DEV_UID
+
+          return { uid: Envs::DEV_UID }
+        end
 
         # JWT failures raise Exceptions::Unauthorized / InternalServerError,
         # which rescue_from maps to the right HTTP status.

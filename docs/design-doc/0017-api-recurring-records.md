@@ -204,32 +204,34 @@ CACHE.write(key, true, expires_in: 30.days)
 
 ### 変更ファイル
 
-- `api/db/models.rb` — `RecurringRecord` モデル追加、`FinanceRecord` に `recurring_group_id` カラム追加（`recurring` boolean は削除）
+- `api/db/models.rb` — `RecurringRecord` モデル追加（`end_date` Generated Column 含む）、`FinanceRecord` に `recurring_group_id` カラム追加（`recurring` boolean は削除）
 - `api/db/utils.rb` — `TableColumns` に nullable カラム追跡機能を追加（`null:` キーワード引数）
 - `api/db/basewrapper.rb` — DTO の `invalid_members` で nullable カラムを除外するよう修正
-- `api/db/repositories/recurring_records.rb` — 新規。`all`, `find`, `generated_count` メソッド
+- `api/db/repositories/recurring_records.rb` — 新規。`all(year:, month:)` フィルタ付き、`find`, `generated_count` メソッド
 - `api/db/repositories/finance_records.rb` — `get_page` に `recurring:` フィルタ追加、`exists_in_month?` 追加
 - `api/db/repositories.rb` — `recurring_records` リポジトリの require 追加
 - `api/lib/exceptions.rb` — `Exceptions::Conflict`（HTTP 409）追加
-- `api/services/recurring_records.rb` — 新規。CRUD + `generate` + `auto_generate_current_month`
+- `api/services/recurring_records.rb` — 新規。CRUD + `generate` + `auto_generate_current_month`（all_done キャッシュ最適化含む）
 - `api/services/records.rb` — `recurring_group_id` パラメータ対応、`recurring` フィルタ追加
 - `api/app/api/v1/recurring_records.rb` — 新規。CRUD + `POST :id/generate` エンドポイント
 - `api/app/api/v1/records.rb` — `recurring` / `recurring_group_id` パラメータ追加
-- `api/app/api/v1/entities/recurring_records.rb` — 新規。`RecurringRecord` エンティティ
+- `api/app/api/v1/entities/recurring_records.rb` — 新規。`RecurringRecord` エンティティ（`end_date` expose 含む）
 - `api/app/api/v1/entities/records.rb` — `recurring_group_id` expose に変更
 - `api/app/api/v1/root.rb` — `RecurringRecords` を mount
 - `api/app/api/root.rb` — swagger の `models:` 追加、`request_userdata` に `auto_generate_current_month` フック追加
 - `api/spec/api/v1/recurring_records_spec.rb` — 新規。CRUD + generate + 409 ケースの spec
 - `api/spec/api/v1/records_spec.rb` — `recurring_group_id` / `recurring` フィルタのテスト更新
-- `mysql/init.d/00_user_database.sql` — `recurring_records` テーブル DDL、`finance_records.recurring_group_id` カラム追加
 
 ### 実装内容
 
-ddoc の設計に沿って実装した。主な差分は以下:
+ddoc の設計に沿って実装した。PR レビューで複数の改善を加えた。主な差分は以下:
 
 - **ログイン時フックの追加**: ddoc 途中で「ログイン時の自動生成は行わない」と誤記していたが、実装では `request_userdata` 内で `auto_generate_current_month` を呼ぶ形で実装した。これは当初から意図されていた設計（削除されたのは Cron ジョブのみ）。
-- **generate はキャッシュ不使用**: generate エンドポイントは DB を直接参照して重複確認を行う。キャッシュを使うと generate → キャッシュ書き込み → 次の auto_generate がスキップ、という流れが壊れるリスクがあるため。
-- **nullable カラムの DTO validation 問題**: `recurring_group_id` と `encrypted_description` が nullable にもかかわらず、DTO の `validate!` が nil を invalid として 422 を返すバグがあった。`TableColumns` に `null:` キーワード追跡を追加し `invalid_members` で除外することで解決。
+- **generate はキャッシュ不使用**: generate エンドポイントは DB を直接参照して重複確認を行う。
+- **auto_generate のキャッシュ最適化**: per-record のキャッシュから `userid + year + month` の all_done フラグに変更。全件処理済みなら次回ログイン時は即 early return。TTL は 1 時間。新規 recurring 作成時にキャッシュを invalidate。
+- **`total_count` 判定の最適化**: `generated_count` DB クエリを廃止し、`start_date` からの経過月数計算に置き換え。`RecurringRecord.all` に `year/month` フィルタを追加し SQL レベルで有効な recurring のみ取得。
+- **`end_date` Generated Column の追加**: フィルタクエリ簡略化とフロント表示のため、`STORED` Generated Column として追加。`DATE_ADD(start_date, INTERVAL (total_count - 1) MONTH)` で自動算出、アプリからの書き込み不可。
+- **nullable カラムの DTO validation 問題**: `recurring_group_id` と `encrypted_description` が nullable にもかかわらず `validate!` が 422 を返すバグを修正。`TableColumns` に `null:` 追跡を追加し `invalid_members` で除外。
 
 ### 確認・検証
 
@@ -237,5 +239,6 @@ ddoc の設計に沿って実装した。主な差分は以下:
 
 ### 気づき・備考
 
-- `auto_generate_current_month` がテスト時にも実行されるため（spec の認証フックから呼ばれる）、generate の spec で「current month は auto_generate 済みなので next month を対象にする」という設計が必要だった。
+- `auto_generate_current_month` がテスト時にも実行されるため（spec の認証フックから呼ばれる）、generate の spec では current month は auto_generate 済みを前提に next month を対象とする設計が必要だった。テスト前に `CACHE.clear` を入れることで各テストが独立するよう対処。
+- `end_date` Generated Column は ActiveRecord の `t.virtual` で定義。`TableColumns#method_missing` がキャッチし nullable として扱われる。
 - `TableColumns#method_missing` が `null: true` をデフォルトに持つことで、既存モデルの nullable 設定が自動的に引き継がれる（後方互換性を維持）。

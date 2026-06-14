@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe "RecurringRecords API" do
-  before { stub_authenticated_user }
+  before do
+    stub_authenticated_user
+    Service::RecurringRecords::CACHE.clear
+  end
 
   let(:today) { Date.today }
 

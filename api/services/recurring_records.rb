@@ -37,7 +37,9 @@ module Service
       attrs[:encrypted_description] = @uhash.encrypt(params[:description]) if params[:description].present?
       attrs[:total_count] = params[:total_count] if params[:total_count]
       dto = DB::Model::RecurringRecord.dto.new(**attrs)
-      persist(dto)
+      result = persist(dto)
+      invalidate_all_done_cache
+      result
     end
 
     def update(id:, params:)
@@ -72,35 +74,40 @@ module Service
       raise Exceptions::Conflict, "finance record already exists for #{id} #{year}/#{month}" if
         DB::Repository::FinanceRecord.exists_in_month?(recurring_group_id: id, year:, month:)
 
-      record = build_and_create_finance_record(recurring:, id:, year:, month:)
-      CACHE.write(cache_key(id, year, month), true, expires_in: 30.days)
-      record
+      build_and_create_finance_record(recurring:, id:, year:, month:)
     end
 
     def auto_generate_current_month
       year = Date.today.year
       month = Date.today.month
+      return if CACHE.read(all_done_cache_key(year, month))
+
       records = DB::Repository::RecurringRecord.all(hashed_user_id: @hashed_uid)
       records.each do |recurring|
         id = recurring[:id]
-        next if CACHE.read(cache_key(id, year, month))
         next if DB::Repository::FinanceRecord.exists_in_month?(recurring_group_id: id, year:, month:)
         next if recurring[:total_count] &&
                 DB::Repository::RecurringRecord.generated_count(recurring_group_id: id) >= recurring[:total_count]
 
         build_and_create_finance_record(recurring:, id:, year:, month:)
-        CACHE.write(cache_key(id, year, month), true, expires_in: 30.days)
       rescue StandardError
         next
       end
+      CACHE.write(all_done_cache_key(year, month), true, expires_in: 1.hour)
     end
 
     private
 
     def repository = DB::Repository::RecurringRecord
 
-    def cache_key(id, year, month)
-      "#{@hashed_uid}-#{id}-#{year}-#{month}"
+    def all_done_cache_key(year, month)
+      "#{@hashed_uid}-#{year}-#{month}-all_done"
+    end
+
+    def invalidate_all_done_cache
+      year = Date.today.year
+      month = Date.today.month
+      CACHE.delete(all_done_cache_key(year, month))
     end
 
     def build_and_create_finance_record(recurring:, id:, year:, month:)

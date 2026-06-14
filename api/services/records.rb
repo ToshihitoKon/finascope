@@ -39,13 +39,13 @@ module Service
     def update(id:, params:)
       params_dto = DB::Model::FinanceRecord.dto.new(
         record_type_id: params[:record_type_id],
-        encrypted_title: @uhash.encrypt(params[:title]),
+        encrypted_title: params[:title]&.present? ? @uhash.encrypt(params[:title]) : nil,
         amount: params[:amount],
         category_id: params[:category_id],
         payment_method_id: params[:payment_method_id],
         state_id: params[:state_id],
         date: params[:date],
-        encrypted_description: @uhash.encrypt(params[:description])
+        encrypted_description: params[:description]&.present? ? @uhash.encrypt(params[:description]) : nil
       ).to_h.compact
       raise Exceptions::InvalidArgument, "no params to update" if params_dto.empty?
 

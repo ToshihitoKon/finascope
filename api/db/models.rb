@@ -144,6 +144,9 @@ module DB
         t_def.string  :encrypted_description, null: true
         t_def.date    :start_date,            null: false
         t_def.integer :total_count,           null: true
+        t_def.virtual :end_date, type: :date, null: true,
+                       as: "CASE WHEN total_count IS NULL THEN NULL ELSE DATE_ADD(start_date, INTERVAL (total_count - 1) MONTH) END",
+                       stored: true
 
         t_def.datetime :deleted_at, null: true
         t_def.timestamps null: false

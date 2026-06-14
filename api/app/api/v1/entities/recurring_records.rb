@@ -14,6 +14,9 @@ module API
         expose :category,         documentation: { type: String,  desc: "Category" }
         expose :payment_method,   documentation: { type: String,  desc: "Payment method" }
         expose :start_date, format_with: :iso_date, documentation: { type: String, desc: "Start date" }
+        expose :end_date, documentation: { type: String, desc: "End date (null: unlimited, derived from total_count)" } do |r, _|
+          r[:end_date]&.iso8601
+        end
         expose :total_count,      documentation: { type: Integer, desc: "Total count (null: unlimited)" }
         expose :generated_count,  documentation: { type: Integer, desc: "Number of generated finance records" }
         expose :record_type_id,   documentation: { type: Integer, desc: "Record type ID" }

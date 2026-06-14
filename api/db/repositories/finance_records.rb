@@ -29,9 +29,9 @@ module DB
         if begin_date && end_date
           query.where(date: begin_date..end_date)
         elsif begin_date
-          query.where("date >= ?", begin_date)
+          query.where(date: begin_date..)
         elsif end_date
-          query.where("date <= ?", end_date)
+          query.where(date: ..end_date)
         else
           query
         end

@@ -20,7 +20,7 @@ DB::Connection.establish
 class SchemaMismatchException < StandardError; end
 
 # https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html
-def check_schema(model_class)
+def schema_correct?(model_class)
   puts model_class.table_name
 
   begin
@@ -40,6 +40,23 @@ def check_schema(model_class)
     return false
   end
   true
+end
+
+def apply_indexes(model_class)
+  return unless model_class.respond_to?(:define_index)
+
+  model_class.define_index.each do |index_def|
+    next if index_def.empty?
+
+    columns = index_def[:columns]
+    opts = {}
+    opts[:name] = index_def[:name] if index_def[:name]
+    opts[:unique] = index_def[:unique] if index_def[:unique]
+
+    add_index model_class.table_name, columns, **opts
+  rescue ArgumentError => e
+    puts "Index already exists or error: #{e.message}"
+  end
 end
 
 def apply_table(model_class, force: false)
@@ -73,11 +90,12 @@ end
 
 ActiveRecord::Schema.define do
   DB::Model::RECORD_MODELS.each do |model_class|
-    unless check_schema(model_class)
+    unless schema_correct?(model_class)
       puts "Create table: #{model_class.table_name}."
       $stdin.gets.chomp
       apply_table(model_class, force: true)
     end
+    apply_indexes(model_class)
     puts
   end
 end

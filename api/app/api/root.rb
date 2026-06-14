@@ -20,17 +20,6 @@ module API
         headers["Authorization"]
       end
 
-      def request_bearer
-        b = authorization_header&.gsub("Bearer ", "")
-        if b.blank?
-          raise Exceptions::Unauthorized, "Unauthorized" unless Envs::DEV_UID
-
-          return Envs::DEV_UID
-        end
-
-        b
-      end
-
       def request_userdata
         jwt = authorization_header&.gsub("Bearer ", "")
         if jwt.blank?

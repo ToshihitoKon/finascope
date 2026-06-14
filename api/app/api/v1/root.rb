@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require "grape"
-require_relative "./records"
-require_relative "./categories"
-require_relative "./payment_methods"
-require_relative "./invoice_records"
-require_relative "./view"
+require_relative "records"
+require_relative "categories"
+require_relative "payment_methods"
+require_relative "invoice_records"
+require_relative "view"
 
 module API
   module V1

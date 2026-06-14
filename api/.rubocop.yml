@@ -55,3 +55,6 @@ Style/RescueModifier:
   Enabled: false
 Style/BarePercentLiterals:
   Enabled: false
+Style/OneClassPerFile:
+  Exclude:
+    - "db/models.rb"

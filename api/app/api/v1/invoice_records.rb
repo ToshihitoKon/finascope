@@ -42,8 +42,6 @@ module API
           requires :payment_method_id, type: String, desc: "(String) Payment method ID"
         end
         post do
-          puts params.inspect
-
           uid = request_userdata[:uid]
           invoice_records_service = Service::InvoiceRecords.new(uid:)
           record = invoice_records_service.create(
@@ -62,6 +60,7 @@ module API
           requires :amount, type: Integer, desc: "(Integer) Invoice record amount"
           requires :state_id, type: Integer, desc: "(Integer) Invoice record state ID"
           requires :withdrawal_date, type: String, desc: "(String) Withdrawal date in ISO8601 format"
+          optional :payment_method_id, type: String, desc: "(String) Payment method ID"
         end
         put ":id" do
           uid = request_userdata[:uid]

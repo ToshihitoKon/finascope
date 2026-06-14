@@ -3,17 +3,16 @@ require "grape-swagger/rake/oapi_tasks"
 require "app/api/root"
 GrapeSwagger::Rake::OapiTasks.new(API::Documentation)
 
-task :environment do
-end
+task :environment
 
 namespace :test do
   desc "Create test database if not exists (idempotent)"
   task :prepare_db do
     require_relative "envs"
-    cmd = "mysql -h #{Envs::DB_HOST} -P #{Envs::DB_PORT} -u root -pexample" \
-          " -e \"CREATE DATABASE IF NOT EXISTS finascope_test;" \
-          " GRANT ALL PRIVILEGES ON finascope_test.* TO 'finascope_app'@'%';" \
-          " FLUSH PRIVILEGES;\""
+    cmd = "mysql -h #{Envs::DB_HOST} -P #{Envs::DB_PORT} -u root -pexample " \
+          "-e \"CREATE DATABASE IF NOT EXISTS finascope_test; " \
+          "GRANT ALL PRIVILEGES ON finascope_test.* TO 'finascope_app'@'%'; " \
+          "FLUSH PRIVILEGES;\""
     sh cmd
   end
 
@@ -31,6 +30,6 @@ namespace :openapi do
   task :generate do
     ENV["store"] = "../docs/openapi.json"
     Rake::Task["oapi:fetch"].invoke
-    puts "OpenAPI documentation generated at #{ENV['store']}"
+    puts "OpenAPI documentation generated at #{ENV.fetch('store', nil)}"
   end
 end

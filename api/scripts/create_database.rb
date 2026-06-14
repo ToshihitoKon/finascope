@@ -50,11 +50,11 @@ def confirm_destructive_operation(table_name)
   puts "  Target database: #{Envs::DB_NAME}"
   puts "  Table to drop and recreate: #{table_name}"
   puts ""
-  puts "Type YES to confirm: "
+  puts "Type y or yes to confirm: "
   input = $stdin.gets&.chomp
-  return if input == "YES"
+  return if input&.match?(/\Ay(es)?\z/i)
 
-  puts "Aborted. Input was not 'YES'."
+  puts "Aborted. Please type y or yes to confirm."
   exit 1
 end
 

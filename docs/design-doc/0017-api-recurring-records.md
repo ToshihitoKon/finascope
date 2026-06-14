@@ -140,11 +140,16 @@ GET /api/v1/records?recurring=true
 
 #### 生成済み判定の on-memory cache
 
-generate エンドポイント内で同月生成済みかを確認する際、DB クエリ結果を on-memory（Ruby Hash）にキャッシュする。同一リクエスト内での重複クエリを避けるためのリクエストスコープキャッシュであり、プロセス間共有は不要。
+generate エンドポイント内で同月生成済みかを確認する際、`ActiveSupport::Cache::MemoryStore` をプロセスグローバルなキャッシュとして使用する。月イチ程度の更新頻度なので TTL は 1 ヶ月に設定する。ActiveSupport はすでに ActiveRecord 経由で依存済みのため追加コストなし。
 
 ```ruby
-# Service 内でリクエストスコープの cache を持つ
-@generated_cache ||= {}  # "#{recurring_group_id}-#{year}-#{month}" => true
+RECURRING_CACHE = ActiveSupport::Cache::MemoryStore.new
+
+# 生成済み確認
+key = "#{hashed_user_id}-#{recurring_group_id}-#{year}-#{month}"
+RECURRING_CACHE.fetch(key, expires_in: 1.month) do
+  DB::Repository::FinanceRecord.exists_in_month?(recurring_group_id:, year:, month:)
+end
 ```
 
 ### Entity

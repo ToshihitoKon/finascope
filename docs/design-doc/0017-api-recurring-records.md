@@ -34,7 +34,6 @@ t_def.string  :encrypted_title,    null: false
 t_def.integer :amount,             null: false
 t_def.string  :category_id,        null: false
 t_def.string  :payment_method_id,  null: false
-t_def.integer :day_of_month,       null: false  # 毎月何日に生成するか (1-31, -1: 末日)
 t_def.string  :encrypted_description, null: true
 t_def.date    :start_date,         null: false  # 繰り返し開始月
 t_def.date    :end_date,           null: true   # 繰り返し終了月 (null: 無期限)
@@ -74,7 +73,6 @@ t_def.string :recurring_group_id, null: true  # recurring_records.id を参照
   "amount": 1980,
   "category_id": "cat_xxx",
   "payment_method_id": "pm_xxx",
-  "day_of_month": 1,
   "start_date": "2026-06-01",
   "end_date": null
 }
@@ -92,7 +90,6 @@ t_def.string :recurring_group_id, null: true  # recurring_records.id を参照
       "state": "確定",
       "category": "サブスク",
       "payment_method": "クレジットカード",
-      "day_of_month": 1,
       "start_date": "2026-06-01",
       "end_date": null,
       "record_type_id": 1,
@@ -141,7 +138,7 @@ GET /api/v1/records?recurring=true
 
 `request_userdata` が呼ばれた後（認証成功後）、`RecurringRecordGenerator` サービスを呼んで当月までの未生成分を生成する。処理はバックグラウンドではなく同期的に行う（件数が少ない前提）。
 
-生成済み判定: `finance_records` に同じ `recurring_group_id` かつ同月の日付のレコードが存在すれば生成済み。
+生成済み判定: `finance_records` に同じ `recurring_group_id` かつ同月（year + month が一致）のレコードが存在すれば生成済み。生成時の日付は月初（1日）で統一する。
 
 ### Entity
 
@@ -185,5 +182,4 @@ GET /api/v1/records?recurring=true
 
 ## 未解決事項
 
-- `day_of_month: 31` で存在しない月（2月など）への対応: 末日にフォールバックする
 - `end_date` を超えた recurring_record の扱い: 生成時にスキップするが、deleted_at を立てるかは今後判断
